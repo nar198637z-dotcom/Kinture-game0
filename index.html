@@ -1,1 +1,4249 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五勢力混戰 - 數量博弈版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            /* 背景設定：半透明遮罩 + 圖片 */
+            background: 
+                /* linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 漸層遮罩 */
+                url(icons/tablea.png);                                    /* 你的圖片檔案 */
+            
+            background-size: cover;          /* 圖片填滿整個螢幕 */
+            background-position: center;     /* 圖片置中對齊 */
+            background-repeat: no-repeat;    /* 不重複顯示 */
+            background-attachment: fixed;    /* 視差效果：滾動時背景固定 */
+            background-color: #1a1a1a;      /* 備用底色（圖片載入失敗時顯示）*/
+            min-height: 100vh;
+            overflow-y: auto;
+            color: white;
+            padding-bottom: 50px;
+        }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(135deg, #a78bfa, #7c3aed); 
+            border-radius: 5px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #c4b5fd, #a78bfa); }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 340px 1fr 340px; /* 左右對稱，確保中間區域居中 */
+            gap: 15px;
+            padding: 15px;
+            max-width: 1800px;
+            margin: 0 auto;
+            min-height: 85vh;
+        }
+
+        .luck-tower-container {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            height: fit-content;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 15px;
+        }
+
+        .luck-tower-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #a78bfa;
+            padding: 12px;
+            border-bottom: 2px solid rgba(167, 139, 250, 0.3);
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 13px 13px 0 0;
+            flex-shrink: 0;
+        }
+
+        .luck-tower-wrapper { flex: 1; overflow-y: auto; padding: 15px; min-height: 0; }
+
+        .luck-tower-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            padding-bottom: 20px;
+        }
+
+        .luck-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            min-height: 40px;
+        }
+
+        .luck-cell:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .luck-cell.clover-spot {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(220, 220, 220, 0.25));
+            border: 2px solid rgba(192, 192, 192, 0.6);
+            box-shadow: 0 0 12px rgba(192, 192, 192, 0.4);
+        }
+
+        .clover-icon {
+            position: absolute;
+            font-size: 1.8em;
+            opacity: 0.7;
+            color: #c0c0c0;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            z-index: 0;
+            animation: cloverGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes cloverGlow {
+            0%, 100% { 
+                opacity: 0.6; 
+                transform: scale(1); 
+                text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            }
+            50% { 
+                opacity: 0.9; 
+                transform: scale(1.1); 
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            }
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 0.6em;
+            opacity: 0.5;
+            z-index: 1;
+        }
+        .speed-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .speed-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #a78bfa;
+            color: white;
+            padding: 4px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .speed-btn:hover { 
+            background: rgba(167, 139, 250, 0.4); 
+        }
+
+        .speed-btn.active { 
+            background: #a78bfa; 
+            color: black; 
+            font-weight: bold; 
+            box-shadow: 0 0 8px #a78bfa; 
+        }
+        .faction-tokens {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 2px;
+        }
+
+        .faction-token {
+            font-size: 1.3em;
+            filter: drop-shadow(0 0 3px black);
+            transition: transform 0.3s;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255,255,255,0.4);
+            position: relative;
+        }
+
+        .faction-token.mega-blessing {
+            font-size: 1.6em;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            animation: megaPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes megaPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+            50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 215, 0, 1); }
+        }
+
+        .faction-token:hover { transform: scale(1.4); z-index: 20; }
+        .luck-cell.crowded .faction-token { font-size: 1em; width: 20px; height: 20px; }
+        .luck-cell.crowded .faction-token.mega-blessing { font-size: 1.4em; width: 24px; height: 24px; }
+
+        .game-area {
+            display: grid;
+            grid-template-rows: 180px auto 200px;
+            gap: 15px;
+            min-height: 0;
+        }
+
+        .top-players { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .middle-area { 
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; /* 三等分：左空白 + 戰場 + 右側控制 */
+            align-items: center;
+            position: relative;
+            padding: 15px;
+            width: 100%;
+        }
+        .bottom-players { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .round-display {
+            position: absolute;
+            top: 10px;
+            left: 80%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffd43b;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #ffd43b;
+            z-index: 10;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(255, 212, 59, 0.4);
+        }
+
+        .discard-pile-container {
+            grid-column: 3; /* 放在右側區域 */
+            justify-self: end; /* 靠右對齊 */
+            
+            /* 保持原有樣式 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 120px;
+        }
+
+        .discard-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #a78bfa;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .discard-pile {
+            width: 90px;
+            height: 120px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .discard-pile:hover {
+            border-color: rgba(255,255,255,0.5);
+            transform: scale(1.05);
+        }
+
+        .discard-pile.empty::after {
+            content: '空';
+            color: rgba(255,255,255,0.3);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .discard-count {
+            background: rgba(0,0,0,0.8);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            border: 1px solid #a78bfa;
+            color: #a78bfa;
+        }
+
+        .btn-reset { 
+            background: linear-gradient(135deg, #868e96, #a78bfa); 
+            color: white; 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            transition: all 0.3s ease; 
+            font-size: 0.85em; 
+            margin-top: 8px;
+        }
+        .btn-reset:hover { transform: translateY(-2px) scale(1.05); }
+        /* 🔊 音效開關按鈕樣式 */
+        .btn-sound {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #a78bfa;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .btn-sound:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+        }
+
+        /* 🟢 音效開啟狀態 */
+        .btn-sound.active {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.25), rgba(46, 160, 67, 0.35));
+            border-color: #51cf66;
+            color: #51cf66;
+            box-shadow: 0 4px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .btn-sound.active:hover {
+            box-shadow: 0 6px 20px rgba(81, 207, 102, 0.6);
+        }
+
+        /* 🔴 音效關閉狀態 */
+        .btn-sound.inactive {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(231, 76, 60, 0.3));
+            border-color: #ff6b6b;
+            color: #ff8787;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-sound.inactive:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        /* 按鈕點擊動畫 */
+        .btn-sound:active {
+            transform: translateY(0) scale(0.98);
+            transition: all 0.1s ease;
+        }
+
+        .player-card {
+            --faction-color: rgba(255,255,255,0.25); /* CSS 變數：預設中性色 */
+            --faction-glow: rgba(255,255,255,0.1);   /* CSS 變數：預設微光 */
+            
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.8) 60%, 
+                var(--faction-glow) 100%
+            );
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            border: 3px solid transparent;
+            border-left: 6px solid var(--faction-color); /* 使用動態顏色變數 */
+            box-shadow: 0 4px 12px var(--faction-glow); /* 動態陰影 */
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑過渡效果 */
+            position: relative;
+            min-height: 140px;
+        }
+
+        /* 回合高亮效果（優先級最高） */
+        .player-card.active-turn {
+            border-color: #ffd43b !important;
+            border-left-color: #ffd43b !important;
+            box-shadow: 0 0 25px rgba(255, 212, 59, 0.8) !important;
+            transform: scale(1.03);
+            animation: activeGlow 2s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 212, 59, 0.8); }
+            50% { box-shadow: 0 0 35px rgba(255, 212, 59, 1); }
+        }
+
+        .player-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 8px; 
+        }
+
+        .player-info { display: flex; flex-direction: column; gap: 6px; }
+        .player-name-row { display: flex; align-items: center; gap: 10px; }
+        .player-avatar { 
+            font-size: 2em; 
+            transition: transform 0.2s;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .player-order-badge {
+            font-size: 0.75em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .player-faction-display { display: flex; flex-direction: column; gap: 3px; }
+        .faction-badge {
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .faction-badge.main { font-size: 0.8em; padding: 3px 8px; border-width: 2px; }
+        
+        .faction-badge.charm { background: linear-gradient(135deg, #e74c3c, #c0392b); border-color: #e74c3c; }
+        .faction-badge.capital { background: linear-gradient(135deg, #e67e22, #d35400); border-color: #e67e22; }
+        .faction-badge.wisdom { background: linear-gradient(135deg, #f1c40f, #f39c12); border-color: #f1c40f; color: #000; }
+        .faction-badge.harmony { background: linear-gradient(135deg, #27ae60, #229954); border-color: #27ae60; }
+        .faction-badge.power { background: linear-gradient(135deg, #3498db, #2980b9); border-color: #3498db; }
+
+        .player-name { font-weight: bold; font-size: 1.1em; line-height: 1; }
+
+        .player-stats { 
+            display: flex; 
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+        }
+
+        .score-badge {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1em;
+            box-shadow: 0 3px 10px rgba(255, 212, 59, 0.4);
+            border: 2px solid rgba(255, 212, 59, 0.6);
+            min-width: 140px;
+        }
+
+        .score-main {
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .score-breakdown {
+            font-size: 0.65em;
+            opacity: 0.8;
+            text-align: center;
+            line-height: 1.1;
+            font-family: monospace;
+        }
+
+        .stat { 
+            display: flex; 
+            align-items: center; 
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .deck-count { color: #ffd43b; }
+
+        .hand-area { 
+            flex: 1; 
+            display: flex; 
+            gap: 4px; 
+            align-items: center; 
+            justify-content: flex-start; 
+            flex-wrap: nowrap; 
+            min-height: 80px; 
+            overflow-x: auto; 
+            padding-bottom: 5px; 
+        }
+
+        .ai-hand-display { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; }
+        .ai-card-back { 
+            width: 26px; 
+            height: 36px; 
+            background: linear-gradient(135deg, #4a5568, #2d3748); 
+            border-radius: 3px; 
+            border: 1px solid rgba(255,255,255,0.3); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.8em; 
+        }
+
+        .battlefield { 
+            grid-column: 2; /* 鎖定在正中央 */
+            justify-self: center; /* 額外保險的居中 */
+            
+            /* 保持原有樣式 */
+            display: grid; 
+            grid-template-columns: repeat(4, 90px); 
+            grid-template-rows: repeat(4, 90px); 
+            gap: 8px; 
+            background: rgba(0,0,0,0.6); 
+            padding: 20px; 
+            border-radius: 15px; 
+            border: 3px solid rgba(255,255,255,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .grid-slot { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px dashed rgba(255,255,255,0.3); 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+        }
+        .grid-slot:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+        .grid-slot.empty::before { content: '+'; color: rgba(255,255,255,0.4); font-size: 2em; font-weight: bold; }
+        .grid-slot.highlighted { 
+            background: rgba(81, 207, 102, 0.3); 
+            border: 2px solid #51cf66; 
+            animation: slotPulse 1s ease-in-out infinite; 
+        }
+        .grid-slot.timeline-active {
+            background: rgba(255, 215, 0, 0.4);
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            animation: timelinePulse 0.8s ease-in-out;
+        }
+
+        @keyframes slotPulse { 
+            0%, 100% { box-shadow: 0 0 15px rgba(81, 207, 102, 0.7); } 
+            50% { box-shadow: 0 0 25px rgba(81, 207, 102, 1); } 
+        }
+        @keyframes timelinePulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 1); }
+        }
+        .slot-charm { border: 2px solid #e74c3c; background: rgba(231, 76, 60, 0.25); }
+        .slot-capital { border: 2px solid #e67e22; background: rgba(230, 126, 34, 0.25); }
+        .slot-wisdom { border: 2px solid #f1c40f; background: rgba(241, 196, 15, 0.25); }
+        .slot-harmony { border: 2px solid #27ae60; background: rgba(39, 174, 96, 0.25); }
+        .slot-power { border: 2px solid #3498db; background: rgba(52, 152, 219, 0.25); }
+
+
+        .card { 
+            transform-style: preserve-3d;
+            width: 50px; 
+            height: 68px; 
+            border-radius: 8px; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 6px 4px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            user-select: none; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            color: white; 
+            border: 2px solid rgba(255,255,255,0.3); 
+            flex-shrink: 0; 
+        }
+
+        .card-tier-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.85);
+            border: 2px solid;
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transform: translateZ(0);
+        }
+
+        .card-type-icon {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #ffd43b;
+            font-size: 0.7em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transform: translateZ(0);
+        }
+
+        .card:hover { transform: translateY(-6px) scale(1.08); z-index: 15; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .card.selected { border: 3px solid #ffd43b; box-shadow: 0 0 20px #ffd43b; transform: translateY(-10px) scale(1.1); }
+        .card.playable { border: 2px solid #51cf66; box-shadow: 0 0 12px rgba(81, 207, 102, 0.7); }
+        
+        .card.charm { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .card.capital { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .card.wisdom { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        .card.harmony { background: linear-gradient(135deg, #27ae60, #229954); }
+        .card.power { background: linear-gradient(135deg, #3498db, #2980b9); }
+        
+        .card-emoji { font-size: 1.4em; margin: 6px 0; }
+        .card-name { 
+            font-size: 0.65em; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-top: auto;
+            line-height: 1.1; 
+            white-space: normal; 
+            overflow: visible; 
+            max-width: 100%; 
+            word-break: break-word;
+            padding: 0 2px;
+            letter-spacing: -0.3px;
+        }
+
+        .tier-A { border-color: #a78bfa; color: #a78bfa; }
+        .tier-B { border-color: #a78bfa; color: #a78bfa; }
+        .tier-P { border-color: #a78bfa; color: #a78bfa; }
+
+        .card-flip-btn {
+            position: absolute;
+            bottom: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            border: 2px solid #f39c12;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            cursor: pointer;
+            z-index: 4;
+            transition: all 0.3s ease;
+        }
+
+        .card-flip-btn:hover {
+            transform: scale(1.2) rotate(180deg);
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.8);
+        }
+
+        .discard-card {
+            width: 100%;
+            height: 100%;
+            font-size: 0.8em;
+        }
+        .discard-card .card-emoji { font-size: 1.8em; margin: 10px 0; }
+        .discard-card .card-name { font-size: 0.7em; }
+
+        .right-panel {
+            display: grid;
+            grid-template-rows: 1fr;
+            gap: 10px;
+            height: fit-content;
+            max-height: 85vh;
+            position: sticky;
+            top: 15px;
+        }
+
+        .faction-display-panel {
+            background: rgba(0,0,0,0.85);
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            font-weight: bold;
+            text-align: center;
+            color: #ffd43b;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            border-bottom: 1px solid rgba(255, 212, 59, 0.4);
+            padding-bottom: 6px;
+        }
+
+        .faction-display-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .display-faction-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid;
+            transition: all 0.2s ease;
+        }
+
+        .display-faction-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.02);
+        }
+
+        .df-icon { 
+            font-size: 1.8em; 
+            margin-right: 10px; 
+            width: 35px; 
+            text-align: center; 
+        }
+
+        .df-info { 
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .df-main { 
+            font-weight: bold; 
+            font-size: 0.9em; 
+            margin-bottom: 2px; 
+        }
+
+        .df-sub { 
+            font-size: 0.75em; 
+            opacity: 0.8; 
+        }
+
+        .df-blessing { 
+            background: rgba(192, 192, 192, 0.3); 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            color: #e0e0e0;
+            min-width: 50px; 
+            text-align: center;
+            font-size: 0.85em;
+            border: 1px solid #c0c0c0;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .battle-log-panel { 
+            background: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(15px); 
+            border-radius: 12px; 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            border: 2px solid rgba(255, 255, 255, 0.2); 
+            overflow: hidden; 
+            min-height: 0;
+        }
+        .log-header { 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 1em; 
+            margin-bottom: 10px; 
+            color: #ffd43b; 
+            border-bottom: 1px solid rgba(255, 212, 59, 0.4); 
+            padding-bottom: 6px; 
+            flex-shrink: 0; 
+        }
+        .log-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            font-size: 0.8em; 
+            min-height: 0; 
+        }
+        .log-entry { 
+            padding: 6px 8px; 
+            border-radius: 5px; 
+            background: rgba(255,255,255,0.1); 
+            border-left: 3px solid #4dabf7; 
+            line-height: 1.3; 
+            animation: logSlideIn 0.3s ease-out; 
+            flex-shrink: 0; 
+        }
+        @keyframes logSlideIn { 
+            from { transform: translateX(10px); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
+        .log-player1 { border-left-color: #4dabf7; background: rgba(77, 171, 247, 0.15); }
+        .log-player2 { border-left-color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
+        .log-player3 { border-left-color: #51cf66; background: rgba(81, 207, 102, 0.15); }
+        .log-player4 { border-left-color: #cc5de8; background: rgba(204, 93, 232, 0.15); }
+        .log-system { border-left-color: #ffd43b; background: rgba(255, 212, 59, 0.15); font-weight: bold; }
+        .log-timeline { border-left-color: #ff8c00; background: rgba(255, 140, 0, 0.15); color: #ff8c00; font-weight: bold; }
+        .log-time { font-size: 0.7em; opacity: 0.7; margin-bottom: 2px; }
+
+        .skills-section {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .skills-title {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #a78bfa;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(167, 139, 250, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .skill-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            border-color: #a78bfa(255, 255, 255, 0.2);
+        }
+
+        .skill-icon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 60px;
+        }
+
+        .skill-emoji {
+            font-size: 2.5em;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .skill-tier-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.8em;
+            border: 2px solid;
+        }
+
+        .skill-info {
+            flex: 1;
+        }
+
+        .skill-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ffd43b;
+            margin-bottom: 5px;
+        }
+
+        .skill-description {
+            font-size: 0.9em;
+            line-height: 1.4;
+            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #a78bfa;
+        }
+
+        .damage-text { 
+            position: fixed; 
+            font-weight: bold; 
+            font-size: 1.5em; 
+            text-shadow: 2px 2px 4px black; 
+            pointer-events: none; 
+            animation: floatUp 1s forwards; 
+            z-index: 200; 
+        }
+        @keyframes floatUp { 
+            0% { transform: translateY(0) scale(1); opacity: 1; } 
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; } 
+        }
+        .turn-indicator { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-size: 3em; 
+            font-weight: bold; 
+            text-shadow: 0 0 20px black; 
+            pointer-events: none; 
+            opacity: 0; 
+            z-index: 300; 
+        }
+        .turn-indicator.show { animation: turnAnnounce 2s forwards; }
+        @keyframes turnAnnounce { 
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 
+            20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } 
+        }
+
+        .setup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .setup-title { 
+            font-size: 2.5em; 
+            margin: 20px 0 30px 0; 
+            color: #ffd43b; 
+            text-shadow: 0 0 20px #ffd43b; 
+            font-weight: bold; 
+        }
+
+        .setup-section {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(167, 139, 250, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        .setup-subtitle {
+            font-size: 1.2em;
+            color: #a78bfa;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .order-selection {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .order-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .order-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .order-btn.selected {
+            background: rgba(255, 212, 59, 0.2);
+            border-color: #ffd43b;
+            box-shadow: 0 0 15px rgba(255, 212, 59, 0.4);
+            color: #ffd43b;
+        }
+
+        .set-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .set-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .set-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .set-card.selected {
+            background: rgba(255, 212, 59, 0.2);
+            border-color: #ffd43b;
+            box-shadow: 0 0 15px rgba(255, 212, 59, 0.4);
+        }
+
+        .set-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ffd43b;
+            margin-bottom: 8px;
+        }
+
+        .set-description {
+            font-size: 0.85em;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, #51cf66, #2b8a3e);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(81, 207, 102, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(81, 207, 102, 0.6);
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .draft-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .draft-title { font-size: 2.5em; margin: 20px 0 15px 0; color: #ffd43b; text-shadow: 0 0 20px #ffd43b; font-weight: bold; }
+        .draft-subtitle { font-size: 1.2em; margin-bottom: 20px; color: #51cf66; text-align: center; line-height: 1.5; }
+        
+        .draft-info-panel {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .draft-set-info, .draft-discard-info {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #a78bfa;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .draft-discard-info {
+            border-color: #a78bfa;
+        }
+
+        .draft-hand-preview {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .draft-hand-title {
+            text-align: center;
+            font-size: 1.1em;
+            color: #a78bfa;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .draft-hand-cards {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .draft-hand-cards .card {
+            transform: scale(0.85);
+            cursor: default;
+            transition: transform 0.2s ease;
+        }
+
+        .draft-hand-cards .card:hover {
+            transform: scale(0.9);
+        }
+        
+        .draft-current-player { font-size: 1.5em; margin-bottom: 20px; color: #ff6b6b; font-weight: bold; }
+        
+        .draft-selected-info {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            min-width: 60%;
+        }
+        
+        .selected-faction-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: 2px solid;
+        }
+        
+        .draft-options { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; max-width: 900px; margin-bottom: 40px; }
+        .faction-btn {
+            background: rgba(255,255,255,0.1);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            width: 150px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        .faction-btn:hover:not(.disabled) { transform: translateY(-8px); background: rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .faction-btn.disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+        .faction-btn.taken { 
+            background: rgba(255,0,0,0.2); 
+            border-color: #ff6b6b; 
+            opacity: 0.5;
+        }
+        
+        .taken-label {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff6b6b;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .bonus-label {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: #51cf66;
+            color: white;
+            font-size: 0.6em;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .draft-icon { font-size: 3.5em; }
+        .draft-name { font-weight: bold; font-size: 1.1em; }
+        .draft-desc { font-size: 0.8em; opacity: 0.8; text-align: center; line-height: 1.3; }
+        .draft-subs { 
+            font-size: 0.75em; 
+            opacity: 0.9; 
+            text-align: center; 
+            line-height: 1.2;
+            margin-top: 4px;
+            color: #ffd43b;
+        }
+
+        .game-over { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: rgba(0,0,0,0.95); 
+            color: white; 
+            padding: 30px 40px; 
+            border-radius: 15px; 
+            font-size: 1.5em; 
+            text-align: center; 
+            z-index: 400; 
+            display: none; 
+            border: 3px solid #ffd43b; 
+            box-shadow: 0 0 40px rgba(255, 212, 59, 0.5); 
+            min-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .game-over.show { display: block; animation: gameOverSlide 0.8s ease-out; }
+        @keyframes gameOverSlide { 
+            from { transform: translate(-50%, -100%); opacity: 0; } 
+            to { transform: translate(-50%, -50%); opacity: 1; } 
+        }
+
+        @media (max-width: 1400px) {
+            .main-container { grid-template-columns: 300px 1fr 300px; /* 響應式調整時保持對稱 */
+            }
+        }
+
+        .grid-slot.has-royal-attached {
+            position: relative;
+        }
+
+        .royal-card-behind {
+            position: absolute;
+            top: -8px;
+            left: 18px;
+            width: 50px;
+            height: 68px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.95;
+        }
+
+        .grid-slot.has-priest-attached {
+            position: relative;
+        }
+
+        .priest-card-behind {
+            position: absolute;
+            top: 25px;
+            left: 18px;
+            width: 50px;
+            height: 68px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.9;
+            transform: rotate(90deg);
+            transform-origin: center center;
+        }
+
+        .main-card-front {
+            position: relative;
+            z-index: 2;
+        }
+
+        .luck-popup {
+            position: fixed;
+            font-weight: bold;
+            font-size: 1.8em;
+            text-shadow: 0 0 8px black, 2px 2px 4px black;
+            pointer-events: none;
+            animation: luckBounce 1.2s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes luckBounce {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.6); 
+                opacity: 0; 
+            }
+            25% { 
+                transform: translate(-50%, -70%) scale(1.4); 
+                opacity: 1; 
+            }
+            75% { 
+                transform: translate(-50%, -85%) scale(1.1); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translate(-50%, -100%) scale(1); 
+                opacity: 0; 
+            }
+        }
+
+        .grid-slot.skill-target {
+            background: rgba(0, 255, 255, 0.35);
+            border: 3px solid #00ffff;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+            animation: targetPulse 1.5s ease-in-out infinite;
+            cursor: pointer;
+            transform: scale(1.05);
+        }
+
+        .grid-slot.control-target {
+            background: rgba(138, 43, 226, 0.3);
+            border: 3px solid #8a2be2;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+            animation: controlPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes royalPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes controlPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(138, 43, 226, 1);
+                transform: scale(1.02);
+            }
+        }
+
+        .grid-slot.invalid-target {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(0.7);
+        }
+
+        .grid-slot.invalid-target:hover {
+            transform: none;
+            background: rgba(255,255,255,0.05);
+        }
+
+        @keyframes targetPulse {
+            0%, 100% { 
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.7); 
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(0, 255, 255, 1); 
+            }
+        }
+
+        .skill-instruction {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ffff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #00ffff;
+            z-index: 600;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+            display: none;
+        }
+
+        .skill-instruction.show {
+            display: block;
+            animation: instructionSlide 0.5s ease-out;
+        }
+
+        @keyframes instructionSlide {
+            from { transform: translateX(-50%) translateY(-30px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- SET與順位選擇介面 -->
+    <div class="setup-overlay" id="setup-overlay">
+        <div class="setup-title">⚙️ 遊戲設定</div>
+        
+        <div class="setup-section">
+            <div class="setup-subtitle">1. 選擇你的出牌順位 (勢力選擇將為逆序輪抽)</div>
+            <div class="order-selection">
+                <div class="order-btn selected" onclick="selectOrder(1)">順位 1 (最後選勢力)</div>
+                <div class="order-btn" onclick="selectOrder(2)">順位 2</div>
+                <div class="order-btn" onclick="selectOrder(3)">順位 3</div>
+                <div class="order-btn" onclick="selectOrder(4)">順位 4 (最先選勢力)</div>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <div class="setup-subtitle">2. 選擇本場使用的角色卡 SET</div>
+            <div class="set-grid" id="set-grid"></div>
+        </div>
+
+        <button class="confirm-btn" id="confirm-btn" onclick="confirmSetup()" disabled>確認並進入勢力選擇 ➔</button>
+    </div>
+
+    <div class="main-container">
+        <div class="luck-tower-container">
+            <div class="luck-tower-title">☘️ 運氣軌道 (60格)</div>
+            <div class="luck-tower-wrapper">
+                <div class="luck-tower-grid" id="luck-tower-grid"></div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="top-players">
+                <div class="player-card player2-theme" id="player2-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name-row">
+                                <span class="player-order-badge">順位 2</span>
+                                <span class="player-avatar">👹</span>
+                                <div>
+                                    <div class="player-name">烈焰魔王</div>
+                                    <div class="player-faction-display" id="player2-faction-display">
+                                        <div class="faction-badge">🎭 未選擇</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="score-badge">
+                                <div class="score-main">☘️ <span id="player2-score">0</span></div>
+                                <div class="score-breakdown" id="player2-breakdown">等待選擇...</div>
+                            </div>
+                            <div class="stat deck-count">📚 <span id="player2-deck">8</span></div>
+                        </div>
+                    </div>
+                    <div class="ai-hand-display" id="player2-hand"></div>
+                </div>
+                <div class="player-card player3-theme" id="player3-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name-row">
+                                <span class="player-order-badge">順位 3</span>
+                                <span class="player-avatar">🧙‍♂️</span>
+                                <div>
+                                    <div class="player-name">自然法師</div>
+                                    <div class="player-faction-display" id="player3-faction-display">
+                                        <div class="faction-badge">🎭 未選擇</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="score-badge">
+                                <div class="score-main">☘️ <span id="player3-score">0</span></div>
+                                <div class="score-breakdown" id="player3-breakdown">等待選擇...</div>
+                            </div>
+                            <div class="stat deck-count">📚 <span id="player3-deck">8</span></div>
+                        </div>
+                    </div>
+                    <div class="ai-hand-display" id="player3-hand"></div>
+                </div>
+            </div>
+            <div class="middle-area">
+                <div class="battlefield" id="battlefield"></div>
+                <div class="discard-pile-container">
+                    <!-- 回合數看板移到棄牌區最上方 -->
+                    <div class="round-display" id="round-display">回合 1 / 8</div>
+                    <div class="discard-title">🗑️ 棄牌堆</div>
+                    <div class="discard-pile" id="discard-pile"></div>
+                    <div class="discard-count" id="discard-count">0 張</div>
+                    <button class="btn-reset" onclick="resetGame()">重新開始 🔄</button>
+                    <button id="sound-toggle-btn" class="btn-sound active" onclick="toggleSound()">🔊 音效開</button>
+                    <div class="speed-controls">
+                        <button class="speed-btn active" onclick="setGameSpeed(1)">×1</button>
+                        <button class="speed-btn" onclick="setGameSpeed(2)">×2</button>
+                        <button class="speed-btn" onclick="setGameSpeed(3)">×3</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-players">
+                <div class="player-card player1-theme" id="player1-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name-row">
+                                <span class="player-order-badge">順位 1</span>
+                                <span class="player-avatar">👤</span>
+                                <div>
+                                    <div class="player-name">你</div>
+                                    <div class="player-faction-display" id="player1-faction-display">
+                                        <div class="faction-badge">🎭 未選擇</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="score-badge">
+                                <div class="score-main">☘️ <span id="player1-score">0</span></div>
+                                <div class="score-breakdown" id="player1-breakdown">等待選擇...</div>
+                            </div>
+                            <div class="stat deck-count">📚 <span id="player1-deck">8</span></div>
+                        </div>
+                    </div>
+                    <div class="hand-area" id="player1-hand"></div>
+                </div>
+                <div class="player-card player4-theme" id="player4-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name-row">
+                                <span class="player-order-badge">順位 4</span>
+                                <span class="player-avatar">🔮</span>
+                                <div>
+                                    <div class="player-name">虛空行者</div>
+                                    <div class="player-faction-display" id="player4-faction-display">
+                                        <div class="faction-badge">🎭 未選擇</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="score-badge">
+                                <div class="score-main">☘️ <span id="player4-score">0</span></div>
+                                <div class="score-breakdown" id="player4-breakdown">等待選擇...</div>
+                            </div>
+                            <div class="stat deck-count">📚 <span id="player4-deck">8</span></div>
+                        </div>
+                    </div>
+                    <div class="ai-hand-display" id="player4-hand"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="battle-log-panel">
+                <div class="log-header">📜 戰鬥記錄</div>
+                <div class="log-content" id="battle-log-content"></div>
+            </div>
+        </div>
+
+        <div class="skills-section">
+            <div class="skills-title">⚡ 本局角色技能一覽</div>
+            <div class="skills-grid" id="skills-grid"></div>
+        </div>
+    </div>
+
+    <div class="draft-overlay" id="draft-overlay">
+        <div class="draft-title">🏴 勢力選擇階段</div>
+        <div class="draft-subtitle">
+            <strong style="color: #51cf66;">最終分數 = 主勢力祝福×2 + 副勢力祝福 + 副勢力祝福</strong><br>
+            <strong style="color: #ff8c00;">⚡ 打出技能:打出時立即發動效果 | 🔑 一次性:觸發後執行並移除 | ⏳ 多次性:觸發後保留</strong><br>
+            <strong style="color: #c0c0c0;">🌟 祝福循環:勢力到達60格後獲得大祝福(15分)並回到起點</strong>
+        </div>
+
+        <div class="draft-info-panel">
+            <div class="draft-set-info" id="draft-set-info"></div>
+            <div class="draft-discard-info" id="draft-discard-info"></div>
+        </div>
+        
+        <div class="draft-hand-preview">
+            <div class="draft-hand-title">🎴 你的初始手牌 (6張A/B卡,供選擇勢力參考)</div>
+            <div class="draft-hand-cards" id="draft-hand-cards"></div>
+        </div>
+        
+        <div class="draft-current-player" id="draft-current">正在等待選擇勢力...</div>
+        <div class="draft-selected-info" id="draft-selected-info"></div>
+        <div class="draft-options" id="draft-options"></div>
+    </div>
+
+    <div class="turn-indicator" id="turn-indicator"></div>
+    <div class="game-over" id="game-over"></div>
+
+    <script>
+        let game;
+
+        let gameSpeedMultiplier = 1;
+
+        // ====== 🎵 音效系統核心 ======
+        let audioContext = null;
+        let isSoundEnabled = true;
+
+        // 初始化 Web Audio API（需要用戶互動後解鎖）
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // 解鎖音訊上下文（現代瀏覽器要求）
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // 🎶 生成清脆的運氣增加音效
+        function playLuckSound() {
+            if (!isSoundEnabled) return;
+            
+            try {
+                initAudioContext();
+                
+                // 創建音效節點
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                // 🎼 音效參數設計
+                oscillator.type = 'sine'; // 正弦波，聲音柔和清脆
+                
+                // 頻率滑音：800Hz → 1200Hz 創造「叮✨」效果
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+                
+                // 音量包絡：快速響起 → 漸弱消失
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.12, audioContext.currentTime + 0.05); // 適中音量
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                
+                // 連接音訊節點
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // 播放音效
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.4);
+                
+            } catch (error) {
+                console.warn('音效播放失敗:', error);
+                // 靜默處理，不影響遊戲進行
+            }
+        }
+
+        // 🔄 切換音效開關
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('sound-toggle-btn');
+            
+            if (!btn) return;
+            
+            if (isSoundEnabled) {
+                btn.classList.add('active');
+                btn.classList.remove('inactive');
+                btn.innerHTML = '🔊 音效開';
+                
+                // 解鎖音訊權限
+                initAudioContext();
+                
+                // 播放測試音效
+                setTimeout(() => playLuckSound(), 100);
+                
+                if (game) {
+                    game.addBattleLog('system', '🔊 音效已開啟');
+                }
+            } else {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+                btn.innerHTML = '🔇 音效關';
+                
+                if (game) {
+                    game.addBattleLog('system', '🔇 音效已關閉');
+                }
+            }
+            
+            // 💾 記憶玩家設定
+            try {
+                localStorage.setItem('luckGameSoundEnabled', isSoundEnabled ? '1' : '0');
+            } catch (error) {
+                console.warn('無法儲存音效設定:', error);
+            }
+        }
+
+        // 🔄 載入時恢復上次設定
+        function loadSoundSettings() {
+            try {
+                const savedSetting = localStorage.getItem('luckGameSoundEnabled');
+                if (savedSetting === '0') {
+                    isSoundEnabled = false;
+                }
+            } catch (error) {
+                console.warn('無法讀取音效設定:', error);
+            }
+            
+            // 更新按鈕狀態
+            updateSoundButtonDisplay();
+        }
+
+        // 🎨 更新按鈕視覺狀態
+        function updateSoundButtonDisplay() {
+            const btn = document.getElementById('sound-toggle-btn');
+            if (!btn) return;
+            
+            if (isSoundEnabled) {
+                btn.classList.add('active');
+                btn.classList.remove('inactive');
+                btn.innerHTML = '🔊 音效開';
+            } else {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+                btn.innerHTML = '🔇 音效關';
+            }
+        }
+
+        // 🚀 頁面載入時初始化
+        window.addEventListener('load', () => {
+            loadSoundSettings();
+        });
+        // ====== 🎵 音效系統結束 ======
+
+        function setGameSpeed(speed) {
+            gameSpeedMultiplier = speed;
+            document.querySelectorAll('.speed-btn').forEach((btn, i) => {
+                if (i + 1 === speed) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            
+            if (game) {
+                game.addBattleLog('system', `⏱️ 遊戲速度已調整為 ${speed === 1 ? '×1 (標準)' : speed === 2 ? '×2 (快速)' : '×3 (極速)'}`);
+            }
+        }
+
+        function getDelay(baseDelay) {
+            const factorMap = { 1: 1, 2: 0.5, 3: 0.33 };
+            return baseDelay * (factorMap[gameSpeedMultiplier] || 1);
+        }
+
+        const CHAR_GENDERS = {
+            '魔術師': 'male',
+            '守衛': 'male', 
+            '強盜': 'male',
+            '小丑': 'male',
+            '精靈': 'male',
+            '戀人男': 'male',
+            '祭司': 'female',
+            '詐欺師': 'female',
+            '平民': 'female',
+            '傀儡師': 'female',
+            '惡魔': 'female',
+            '戀人女': 'female',
+            'AI機器人': 'female',
+            '王族': 'neutral'
+        };
+
+        function getCharGender(cardName) {
+            return CHAR_GENDERS[cardName] || 'neutral';
+        }
+
+        const FACTIONS = {
+            charm: { id: 'charm', name: '魅力', icon: '🎭', color: '#e74c3c', position: 1, megaBlessings: 0, description: '社交影響力', subs: ['capital', 'wisdom'] },
+            capital: { id: 'capital', name: '資本', icon: '💰', color: '#e67e22', position: 1, megaBlessings: 0, description: '經濟掌控', subs: ['wisdom', 'harmony'] },
+            wisdom: { id: 'wisdom', name: '智慧', icon: '🧠', color: '#f1c40f', position: 1, megaBlessings: 0, description: '知識力量', subs: ['harmony', 'power'] },
+            harmony: { id: 'harmony', name: '協調', icon: '🤝', color: '#27ae60', position: 1, megaBlessings: 0, description: '和平共處', subs: ['power', 'charm'] },
+            power: { id: 'power', name: '力量', icon: '⚔️', color: '#3498db', position: 1, megaBlessings: 0, description: '武力征服', subs: ['charm', 'capital'] }
+        };
+
+        const SKILL_TYPE = {
+            ON_PLAY: { icon: '⚡', name: '打出技能', desc: '打出時立即發動' },
+            ONE_TIME: { icon: '🔑', name: '事件線(一次性)', desc: '觸發後移除' },
+            RECURRING: { icon: '⏳', name: '事件線(多次性)', desc: '觸發後保留' }
+        };
+
+        const CHAR_TEMPLATES = [
+            { name: '祭司', emoji: '⛪', skill: 'heal', desc: '感化場上1張未感化異色角色為同色;祭司橫置於其背,該牌離場時祭司移除', tier: 'A', type: 'ONE_TIME' },
+            { name: '魔術師', emoji: '🎩', skill: 'magic', desc: '轉移場上1張牌至魔術師位置執行技能,魔術師移除並+2運氣', tier: 'A', type: 'ONE_TIME' },
+            { name: '詐欺師', emoji: '🃏', skill: 'steal', desc: '偽裝成場上任意角色,結算該角色技能後移除', tier: 'A', type: 'ONE_TIME' },
+            { name: '貴族', emoji: '🍷', skill: 'noble', desc: '【官僚】為卡牌勢力+(5-N)運氣,N=當前事件線貴族數', tier: 'B', type: 'RECURRING' },
+            { name: '平民', emoji: '🧑', skill: 'basic', desc: '【共享】為卡牌勢力+(1+N)運氣,N=當前事件線平民數', tier: 'B', type: 'RECURRING' },
+            { name: '守衛', emoji: '🛡️', skill: 'defend', desc: '守衛≥強盜時移除所有強盜;為卡牌勢力+3N運氣(N=移除數)', tier: 'B', type: 'RECURRING' },
+            { name: '強盜', emoji: '🗡️', skill: 'attack', desc: '強盜>守衛時移除所有守衛/貴族/平民;為卡牌勢力+2N運氣(N=移除數)', tier: 'B', type: 'RECURRING' },
+            { name: '王族/傀儡師', emoji: '👑🧶', tier: 'P', isDual: true, 
+                option1: { name: '王族', emoji: '👑', skill: 'royal', desc: '出牌時加冕場上1張非貴族卡成為貴族並建立依附關係', type: 'ON_PLAY' }, 
+                option2: { name: '傀儡師', emoji: '🧶', skill: 'control', desc: '出牌時替換場上1張非傀儡師卡回手牌並+2運氣', type: 'ON_PLAY' } },
+            { name: 'AI/小丑', emoji: '🤖🤡', tier: 'P', isDual: true, 
+                option1: { name: 'AI機器人', emoji: '🤖', skill: 'tech', desc: '【同色掃描】獲得2N運氣後移除(N=場上同色角色數)，若N=0則不執行不移除', type: 'ONE_TIME' }, 
+                option2: { name: '小丑', emoji: '🤡', skill: 'chaos', desc: '【全場掃描】獲得N運氣後移除(N=場上角色總數)，若N=0則不執行不移除', type: 'ONE_TIME' } },
+            { name: '戀人男/女', emoji: '👨‍❤️‍👨👩‍❤️‍👩', tier: 'P', isDual: true, 
+                option1: { name: '戀人男', emoji: '👨‍❤️‍👨', skill: 'love_m', desc: '與場上任意女性角色配對，雙方勢力各+5運氣，觸發者抽1張牌後雙方移除', type: 'ONE_TIME' }, 
+                option2: { name: '戀人女', emoji: '👩‍❤️‍👩', skill: 'love_f', desc: '與場上任意男性角色配對，雙方勢力各+5運氣，觸發者抽1張牌後雙方移除', type: 'ONE_TIME' } },
+            { name: '惡魔/精靈', emoji: '👿🧝', tier: 'P', isDual: true, 
+                option1: { name: '惡魔', emoji: '👿', skill: 'demon', desc: '移除場上1張精靈並+3運氣,事件線中所有角色勢力-1運氣', type: 'RECURRING' }, 
+                option2: { name: '精靈', emoji: '🧝', skill: 'nature', desc: '移除場上1張惡魔並+3運氣,事件線中所有角色勢力+2運氣', type: 'RECURRING' } }
+        ];
+
+        const GAME_SETS = [
+            { id: 1, name: 'SET 1 - 4星神聖王權', aCard: '祭司', pCards: ['王族/傀儡師', 'AI/小丑'] },
+            { id: 2, name: 'SET 2 - 4星魔法愛情', aCard: '魔術師', pCards: ['王族/傀儡師', '戀人男/女'] },
+            { id: 3, name: 'SET 3 - 4星全面控制', aCard: '詐欺師', pCards: ['王族/傀儡師', '惡魔/精靈'] },
+            { id: 4, name: 'SET 4 - 5星神聖奇緣', aCard: '祭司', pCards: ['王族/傀儡師', '戀人男/女'] },
+            { id: 5, name: 'SET 5 - 5星自然魔法', aCard: '魔術師', pCards: ['王族/傀儡師', '惡魔/精靈'] },
+            { id: 6, name: 'SET 6 - 2星混沌詐術', aCard: '詐欺師', pCards: ['王族/傀儡師', 'AI/小丑'] },
+            { id: 7, name: 'SET 7 - 6星完全神聖', aCard: '祭司', pCards: ['王族/傀儡師', '惡魔/精靈'] },
+            { id: 8, name: 'SET 8 - 3星魔法科技', aCard: '魔術師', pCards: ['王族/傀儡師', 'AI/小丑'] },
+            { id: 9, name: 'SET 9 - 3星詐術組合', aCard: '詐欺師', pCards: ['王族/傀儡師', '戀人男/女'] }
+        ];
+
+        let selectedOrder = 1;
+        let selectedSet = null;
+
+        function renderSetOptions() {
+            const container = document.getElementById('set-grid');
+            container.innerHTML = GAME_SETS.map(set => `
+                <div class="set-card ${set.id === selectedSet ? 'selected' : ''}" onclick="selectSet(${set.id})">
+                    <div class="set-name">${set.name}</div>
+                    <div class="set-description">
+                        A卡:${set.aCard}<br>
+                        B卡:全部 (貴族、平民、守衛、強盗)<br>
+                        P卡:${set.pCards.join('、')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOrder(order) {
+            selectedOrder = order;
+            const btns = document.querySelectorAll('.order-btn');
+            btns.forEach((btn, i) => {
+                if (i + 1 === order) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+            updateConfirmButton();
+        }
+
+        function selectSet(setId) {
+            selectedSet = setId;
+            renderSetOptions();
+            updateConfirmButton();
+        }
+
+        function updateConfirmButton() {
+            const btn = document.getElementById('confirm-btn');
+            if (selectedOrder && selectedSet) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        function confirmSetup() {
+            if (!selectedOrder || !selectedSet) return;
+            
+            document.getElementById('setup-overlay').style.display = 'none';
+            
+            if (!game) {
+                game = new Game();
+            }
+            
+            game.startWithConfig(selectedOrder, selectedSet);
+        }
+
+        renderSetOptions();
+
+        class Game {
+            constructor() {
+                this.players = [
+                    { id: 0, name: '你', avatar: '👤', hand: [], faction: null, subFactions: [] },
+                    { id: 1, name: '烈焰魔王', avatar: '👹', hand: [], faction: null, subFactions: [] },
+                    { id: 2, name: '自然法師', avatar: '🧙‍♂️', hand: [], faction: null, subFactions: [] },
+                    { id: 3, name: '虛空行者', avatar: '🔮', hand: [], faction: null, subFactions: [] }
+                ];
+
+                Object.values(FACTIONS).forEach(f => { f.position = 1; f.megaBlessings = 0; });
+
+                this.battlefield = Array(16).fill(null);
+                this.discardPile = [];
+                this.playOrder = [];
+                this.draftOrder = [];
+                this.currentPlayerIndex = 0;
+                this.round = 1;
+                this.maxRounds = 8;
+                this.selectedCardIndex = null;
+                this.gameOver = false;
+                this.gameStarted = false;
+                this.battleLog = [];
+                this.availableFactions = Object.keys(FACTIONS);
+                this.currentDraftIndex = 0;
+                this.selectedCharacters = [];
+                this.pCardsByFaction = {};
+                this.discardCompensation = null;
+                this.currentSetInfo = null;
+                this.isSelectingTarget = false;
+                this.validTargets = [];
+                this.targetSelectionResolve = null;
+                this.currentSkillContext = null;
+                this.initLuckTower();
+                this.setupControls();
+            }
+
+            moveFaction(factionKey, amount, sourceSlotIndex = null) {
+                const faction = FACTIONS[factionKey];
+                faction.position += amount;
+            
+                if (sourceSlotIndex !== null && amount !== 0) {
+                    const color = amount > 0 ? '#ffd700' : '#ff6b6b';
+                    this.showLuckPopup(sourceSlotIndex, amount, color);
+                }
+                // 🎵 只在運氣增加時播放音效
+                if (amount > 0) {
+                    playLuckSound();
+                }
+    
+    
+                while (faction.position > 60) {
+                    faction.megaBlessings++;
+                    faction.position -= 60;
+                    
+                    const owner = this.players.find(p => p.faction === factionKey);
+                    if (owner) {
+                        this.addBattleLog('system', `🌟 ${faction.icon}${faction.name} 完成循環！獲得大祝福(15分),位置重置為 ${faction.position}。擁有者: ${owner.name}`);
+                    }
+                }
+
+                while (faction.position < 1) {
+                    if (faction.megaBlessings > 0) {
+                        faction.megaBlessings--;
+                        faction.position += 60;
+                        this.addBattleLog('system', `📉 ${faction.icon}${faction.name} 倒退失去了一個大祝福！`);
+                    } else {
+                        faction.position = 1;
+                        break;
+                    }
+                }
+                
+                this.updateLuckTowerDisplay();
+            }
+
+            showLuckPopup(slotIndex, amount, color = '#ffd700') {
+                const battlefield = document.getElementById('battlefield');
+                const slotEl = battlefield.children[slotIndex];
+                if (!slotEl) return;
+                
+                const popup = document.createElement('div');
+                popup.className = 'luck-popup';
+                popup.textContent = amount > 0 ? `+${amount}` : `${amount}`;
+                popup.style.color = color;
+                
+                const rect = slotEl.getBoundingClientRect();
+                popup.style.left = (rect.left + rect.width / 2) + 'px';
+                popup.style.top = (rect.top + rect.height / 2) + 'px';
+                
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 1200);
+            }
+
+            async waitForTargetSelection(candidates, skillName, cardName) {
+                return new Promise(resolve => {
+                    this.isSelectingTarget = true;
+                    this.validTargets = candidates;
+                    this.targetSelectionResolve = resolve;
+                    
+                    this.showSkillInstruction(`請為 ${cardName} 選擇一個高亮目標 (${skillName})`);
+                    this.updateUI();
+                });
+            }
+
+            showSkillInstruction(text) {
+                const instruction = document.getElementById('skill-instruction') || this.createSkillInstruction();
+                instruction.textContent = text;
+                instruction.classList.add('show');
+            }
+
+            hideSkillInstruction() {
+                const instruction = document.getElementById('skill-instruction');
+                if (instruction) {
+                    instruction.classList.remove('show');
+                }
+            }
+
+            createSkillInstruction() {
+                const instruction = document.createElement('div');
+                instruction.id = 'skill-instruction';
+                instruction.className = 'skill-instruction';
+                document.body.appendChild(instruction);
+                return instruction;
+            }
+
+            startWithConfig(humanOrder, setId) {
+                this.playOrder = [];
+                let aiId = 1;
+                for (let i = 1; i <= 4; i++) {
+                    if (i === humanOrder) {
+                        this.playOrder.push(0);
+                    } else {
+                        this.playOrder.push(aiId++);
+                    }
+                }
+                
+                this.draftOrder = [...this.playOrder].reverse();
+                this.currentPlayerIndex = 0;
+
+                this.updateOrderBadges();
+                this.prepareGame(setId);
+            }
+
+            updateOrderBadges() {
+                this.players.forEach((player, index) => {
+                    const orderIndex = this.playOrder.indexOf(player.id) + 1;
+                    const badge = document.querySelector(`#player${index + 1}-card .player-order-badge`);
+                    if (badge) {
+                        badge.textContent = `順位 ${orderIndex}`;
+                    }
+                });
+            }
+
+            calculateBlessings(factionKey) {
+                const faction = FACTIONS[factionKey];
+                return Math.ceil(faction.position / 4) + faction.megaBlessings * 15;
+            }
+
+            prepareGame(setId) {
+                console.log('🎮 prepareGame 開始,setId:', setId);
+                
+                try {
+                    this.currentSetInfo = GAME_SETS.find(s => s.id === setId);
+                    console.log('currentSetInfo:', this.currentSetInfo);
+                    
+                    if (!this.currentSetInfo) {
+                        throw new Error('無法找到對應的 SET！');
+                    }
+
+                    const selectedA = CHAR_TEMPLATES.find(c => c.name === this.currentSetInfo.aCard);
+                    console.log('selectedA:', selectedA);
+                    
+                    if (!selectedA) {
+                        throw new Error(`找不到 A 卡: ${this.currentSetInfo.aCard}`);
+                    }
+
+                    const bCards = CHAR_TEMPLATES.filter(c => c.tier === 'B');
+                    console.log('bCards:', bCards);
+                    
+                    if (bCards.length === 0) {
+                        throw new Error('找不到任何 B 卡！');
+                    }
+
+                    const selectedP = CHAR_TEMPLATES.filter(c => {
+                        return this.currentSetInfo.pCards.some(pCardName => c.name === pCardName);
+                    });
+                    console.log('selectedP:', selectedP);
+                    console.log('selectedP.length:', selectedP.length);
+                    
+                    if (selectedP.length === 0) {
+                        console.warn('⚠️ 警告:未找到任何 P 卡,pCards:', this.currentSetInfo.pCards);
+                    }
+
+                    this.selectedCharacters = [selectedA, ...bCards, ...selectedP];
+                    this.renderSkillsPanel();
+
+                    this.addBattleLog('system', `🎲 本場角色組合 (${this.currentSetInfo.name}):A=${selectedA.name};B=${bCards.map(c=>c.name).join('、')};P=${selectedP.map(c=>c.name).join('、')}`);
+
+                    const abCards = [];
+                    let cardId = 1;
+
+                    Object.keys(FACTIONS).forEach(factionKey => {
+                        abCards.push({
+                            id: cardId++,
+                            name: selectedA.name,
+                            faction: factionKey,
+                            nativeFaction: factionKey,
+                            emoji: selectedA.emoji,
+                            skill: selectedA.skill,
+                            tier: selectedA.tier,
+                            type: selectedA.type,
+                            desc: selectedA.desc,
+                            instanceId: Math.random()
+                        });
+
+                        bCards.forEach(char => {
+                            abCards.push({
+                                id: cardId++,
+                                name: char.name,
+                                faction: factionKey,
+                                nativeFaction: factionKey,
+                                emoji: char.emoji,
+                                skill: char.skill,
+                                tier: char.tier,
+                                type: char.type,
+                                desc: char.desc,
+                                instanceId: Math.random()
+                            });
+                        });
+                    });
+
+                    console.log('abCards total:', abCards.length);
+                    
+                    const shuffledAB = this.shuffleDeck(abCards);
+                    
+                    for (let i = 0; i < 4; i++) {
+                        const playerCards = shuffledAB.slice(i * 6, (i + 1) * 6);
+                        playerCards.sort((a, b) => {
+                            if (a.faction !== b.faction) return a.faction.localeCompare(b.faction);
+                            return a.tier.localeCompare(b.tier);
+                        });
+                        this.players[i].hand = playerCards;
+                        console.log(`Player ${i} hand:`, playerCards.length, 'cards');
+                    }
+
+                    this.discardPile = shuffledAB.slice(24);
+                    this.discardCompensation = null;
+                    
+                    console.log('discardPile:', this.discardPile.length, 'cards');
+                    
+                    if (this.discardPile.length > 0) {
+                        const discardedCard = this.discardPile[0];
+                        this.discardCompensation = {
+                            faction: discardedCard.faction,
+                            amount: 4
+                        };
+                        
+                        this.addBattleLog('system', `📚 A/B卡發牌完成！每人6張,剩餘${this.discardPile.length}張進入棄牌堆`);
+                        this.addBattleLog('system', `🎁 ${FACTIONS[discardedCard.faction].icon}${FACTIONS[discardedCard.faction].name} 將在被選擇時獲得+4運氣補償！`);
+                    } else {
+                        this.addBattleLog('system', `📚 A/B卡發牌完成！每人6張,無剩餘卡牌`);
+                    }
+
+                    Object.keys(FACTIONS).forEach(factionKey => {
+                        this.pCardsByFaction[factionKey] = [];
+                        
+                        selectedP.forEach(char => {
+                            const pCard = {
+                                id: cardId++,
+                                name: char.name,
+                                faction: factionKey,
+                                nativeFaction: factionKey,
+                                emoji: char.emoji,
+                                tier: char.tier,
+                                isDual: char.isDual || false,
+                                currentFace: 1,
+                                instanceId: Math.random()
+                            };
+                            
+                            if (char.isDual) {
+                                pCard.option1 = { ...char.option1 };
+                                pCard.option2 = { ...char.option2 };
+                            } else {
+                                pCard.skill = char.skill;
+                                pCard.desc = char.desc;
+                                pCard.type = char.type;
+                            }
+                            
+                            this.pCardsByFaction[factionKey].push(pCard);
+                        });
+                    });
+
+                    this.addBattleLog('system', `🔄 選擇勢力時將獲得該勢力的${selectedP.length}張P卡！`);
+
+                    console.log('prepareGame 完成！');
+                    this.updateUI();
+                    this.startDraft();
+
+                } catch (error) {
+                    console.error('❌ prepareGame 致命錯誤:', error);
+                    console.error('錯誤堆疊:', error.stack);
+                    
+                    alert(`遊戲初始化失敗:\n${error.message}\n\n請按F12查看控制台詳細錯誤`);
+                    
+                    this.gameOver = true;
+                    this.gameStarted = false;
+                    
+                    document.getElementById('setup-overlay').style.display = 'flex';
+                    document.getElementById('draft-overlay').style.display = 'none';
+                    
+                    return;
+                }
+            }
+
+            renderSkillsPanel() {
+                const container = document.getElementById('skills-grid');
+                const tierColors = { 'A': '#a78bfa', 'B': '#a78bfa', 'P': '#a78bfa' };
+                
+                container.innerHTML = this.selectedCharacters.map(char => {
+                    const tierColor = tierColors[char.tier];
+                    if (char.isDual) {
+                        return `
+                            <div class="skill-item">
+                                <div class="skill-icon-container">
+                                    <div class="skill-emoji">${char.emoji}</div>
+                                    <div class="skill-tier-badge" style="background: ${tierColor}22; border-color: ${tierColor}; color: ${tierColor};">${char.tier}</div>
+                                </div>
+                                <div class="skill-info">
+                                    <div class="skill-name">${char.name} (雙面)</div>
+                                    <div class="skill-description">
+                                        ${SKILL_TYPE[char.option1.type].icon} 正面:${char.option1.emoji} ${char.option1.desc} (${SKILL_TYPE[char.option1.type].desc})<br>
+                                        ${SKILL_TYPE[char.option2.type].icon} 反面:${char.option2.emoji} ${char.option2.desc} (${SKILL_TYPE[char.option2.type].desc})
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+                    return `
+                        <div class="skill-item">
+                            <div class="skill-icon-container">
+                                <div class="skill-emoji">${char.emoji}</div>
+                                <div class="skill-tier-badge" style="background: ${tierColor}22; border-color: ${tierColor}; color: ${tierColor};">${char.tier}</div>
+                            </div>
+                            <div class="skill-info">
+                                <div class="skill-name">${char.name}</div>
+                                <div class="skill-description">${SKILL_TYPE[char.type].icon} ${char.desc} (${SKILL_TYPE[char.type].desc})</div>
+                            </div>
+                        </div>`;
+                }).join('');
+            }
+
+            renderDraftHandPreview() {
+                const container = document.getElementById('draft-hand-cards');
+                const player = this.players[0];
+                
+                if (!container) return;
+                
+                container.innerHTML = player.hand.map(card => {
+                    const factionCount = player.hand.filter(c => c.faction === card.faction).length;
+                    const factionInfo = FACTIONS[card.faction];
+                    const charTemplate = this.selectedCharacters.find(c => c.name === card.name);
+                    const skillDesc = charTemplate ? charTemplate.desc : '未知技能';
+                    const skillType = charTemplate ? SKILL_TYPE[charTemplate.type] : {icon: '?'};
+                    
+                    return `
+                        <div class="card ${card.faction}" 
+                            title="勢力: ${factionInfo.icon}${factionInfo.name} (手牌中共${factionCount}張)&#10;技能: ${skillDesc}">
+                            <div class="card-tier-badge tier-${card.tier}">${card.tier}</div>
+                            <div class="card-type-icon">${skillType.icon}</div>
+                            <div class="card-emoji">${card.emoji}</div>
+                            <div class="card-name">${card.name}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            startDraft() {
+                console.log('🏴 startDraft 開始');
+                
+                try {
+                    const setContainer = document.getElementById('draft-set-info');
+                    if (!setContainer) {
+                        throw new Error('找不到 draft-set-info 元素！');
+                    }
+                    
+                    setContainer.innerHTML = `
+                        <strong style="color: #a78bfa;">🃏 當前使用 SET</strong><br>
+                        ${this.currentSetInfo.name}<br>
+                        <span style="font-size: 0.85em; color: #ccc;">
+                            A卡:${this.currentSetInfo.aCard}<br>
+                            P卡:${this.currentSetInfo.pCards.join('、')}
+                        </span>
+                    `;
+
+                    const discardContainer = document.getElementById('draft-discard-info');
+                    if (this.discardCompensation) {
+                        const f = FACTIONS[this.discardCompensation.faction];
+                        const topDiscard = this.discardPile[0];
+                        
+                        discardContainer.innerHTML = `
+                            <strong style="color: #ff8c00;">⚠️ 本場棄牌資訊</strong><br>
+                            棄牌堆中有 ${f.icon}${f.name} 勢力的<br>
+                            <span style="font-size: 0.9em; color: #ffd43b;">
+                                ${topDiscard.emoji} ${topDiscard.name}
+                            </span><br>
+                            <span style="font-size: 0.85em; color: #51cf66;">
+                                🎁 此勢力將獲得 +4 運氣補償
+                            </span>
+                        `;
+                    } else {
+                        discardContainer.innerHTML = `
+                            <strong style="color: #ff8c00;">⚠️ 本場棄牌資訊</strong><br>
+                            無剩餘卡牌
+                        `;
+                    }
+
+                    this.renderDraftOptions();
+                    this.updateDraftSelectedInfo();
+                    this.renderDraftHandPreview();
+                    
+                    console.log('startDraft 完成,顯示 draft-overlay');
+                    
+                    const draftOverlay = document.getElementById('draft-overlay');
+                    if (draftOverlay) {
+                        draftOverlay.style.display = 'flex';
+                        console.log('draft-overlay display 已設置為 flex');
+                    } else {
+                        throw new Error('找不到 draft-overlay 元素！');
+                    }
+                    
+                    this.processDraftTurn();
+
+                } catch (error) {
+                    console.error('❌ startDraft 錯誤:', error);
+                    alert(`勢力選擇初始化失敗:\n${error.message}`);
+                }
+            }
+
+            renderDraftOptions() {
+                const container = document.getElementById('draft-options');
+                container.innerHTML = Object.keys(FACTIONS).map(key => {
+                    const f = FACTIONS[key];
+                    const isTaken = !this.availableFactions.includes(key);
+                    const owner = this.players.find(p => p.faction === key);
+                    const subNames = f.subs.map(s => FACTIONS[s].icon + FACTIONS[s].name).join(', ');
+                    const hasBonus = this.discardCompensation && this.discardCompensation.faction === key;
+                    
+                    return `
+                        <div class="faction-btn ${isTaken ? 'disabled taken' : ''}" 
+                            onclick="game.handleDraftClick('${key}')"
+                            style="border-color: ${f.color}">
+                            ${isTaken ? `<div class="taken-label">${owner.name}</div>` : ''}
+                            ${hasBonus ? `<div class="bonus-label">+4運氣</div>` : ''}
+                            <div class="draft-icon">${f.icon}</div>
+                            <div class="draft-name">${f.name}</div>
+                            <div class="draft-desc">${f.description}</div>
+                            <div class="draft-subs">副勢力:${subNames}<br>🔄 +2張P卡${hasBonus ? '<br>🎁 +4運氣補償' : ''}</div>
+                        </div>`;
+                }).join('');
+            }
+
+            updateDraftSelectedInfo() {
+                const container = document.getElementById('draft-selected-info');
+                const selectedPlayers = this.players.filter(p => p.faction !== null);
+                const selectedHTML = selectedPlayers.map(p => {
+                    const f = FACTIONS[p.faction];
+                    const subIcons = p.subFactions.map(s => FACTIONS[s].icon).join('');
+                    return `
+                        <div class="selected-faction-item" style="background: ${f.color}22; border-color: ${f.color}">
+                            ${p.avatar} ${p.name}: ${f.icon}${f.name} (${subIcons}+2P)
+                        </div>`;
+                }).join('');
+                
+                container.innerHTML = `
+                    <div style="color: #ffd43b; font-weight: bold; width: 100%; text-align: center; margin-bottom: 10px;">
+                        已選擇的勢力 (${selectedPlayers.length}/4):
+                    </div>
+                    ${selectedHTML || '<div style="color: #888; width: 100%; text-align: center;">尚無玩家選擇勢力</div>'}
+                `;
+            }
+
+            async processDraftTurn() {
+                if (this.currentDraftIndex >= this.draftOrder.length) {
+                    document.getElementById('draft-overlay').style.display = 'none';
+                    this.gameStarted = true;
+                    this.startGame();
+                    return;
+                }
+
+                const pickerId = this.draftOrder[this.currentDraftIndex];
+                const player = this.players[pickerId];
+                document.getElementById('draft-current').textContent = 
+                    pickerId === 0 
+                        ? `輪到你選擇勢力！(將獲得該勢力的2張P卡)` 
+                        : `正在等待 ${player.name} 選擇勢力...`;
+
+                if (pickerId !== 0) {
+                    await new Promise(r => setTimeout(r, 1500));
+                    const factionCounts = {};
+                    this.availableFactions.forEach(f => factionCounts[f] = 0);
+                    player.hand.forEach(card => {
+                        if (this.availableFactions.includes(card.faction)) {
+                            factionCounts[card.faction] += (card.tier === 'B' ? 2 : 1);
+                        }
+                    });
+                    
+                    if (this.discardCompensation && this.availableFactions.includes(this.discardCompensation.faction)) {
+                        factionCounts[this.discardCompensation.faction] += 2;
+                    }
+
+                    const bestFaction = Object.keys(factionCounts).reduce((a, b) => 
+                        factionCounts[a] > factionCounts[b] ? a : b
+                    );
+                    this.confirmDraftPick(pickerId, bestFaction);
+                }
+            }
+
+            handleDraftClick(factionKey) {
+                const currentPicker = this.draftOrder[this.currentDraftIndex];
+                if (currentPicker === 0 && this.availableFactions.includes(factionKey)) {
+                    this.confirmDraftPick(0, factionKey);
+                }
+            }
+
+            confirmDraftPick(playerId, factionKey) {
+                this.players[playerId].faction = factionKey;
+                this.players[playerId].subFactions = FACTIONS[factionKey].subs;
+                
+                const pCards = this.pCardsByFaction[factionKey];
+                this.players[playerId].hand.push(...pCards);
+                this.players[playerId].hand.sort((a, b) => {
+                    if (a.faction !== b.faction) return a.faction.localeCompare(b.faction);
+                    return a.tier.localeCompare(b.tier);
+                });
+                
+                if (this.discardCompensation && this.discardCompensation.faction === factionKey) {
+                    this.moveFaction(factionKey, this.discardCompensation.amount, -1);
+                    this.addBattleLog('system', `🎁 ${FACTIONS[factionKey].icon}${FACTIONS[factionKey].name} 獲得棄牌補償 +${this.discardCompensation.amount} 運氣！`);
+                    this.discardCompensation = null;
+                }
+                
+                this.availableFactions = this.availableFactions.filter(f => f !== factionKey);
+                this.currentDraftIndex++;
+                
+                const subNames = FACTIONS[factionKey].subs.map(s => FACTIONS[s].icon + FACTIONS[s].name).join(', ');
+                this.addBattleLog('system', `${this.players[playerId].name} 選擇了 ${FACTIONS[factionKey].icon}${FACTIONS[factionKey].name} (副勢力: ${subNames}) 並獲得2張P卡！`);
+                
+                this.updateFactionBadges();
+                this.renderDraftOptions();
+                this.updateDraftSelectedInfo();
+                
+                setTimeout(() => this.processDraftTurn(), 500);
+            }
+
+            updateFactionBadges() {
+                this.players.forEach((player, index) => {
+                    const display = document.getElementById(`player${index + 1}-faction-display`);
+                    const playerCard = document.getElementById(`player${index + 1}-card`);
+                    
+                    if (player.faction) {
+                        const mainFaction = FACTIONS[player.faction];
+                        const subHTML = player.subFactions.map(s => {
+                            const sub = FACTIONS[s];
+                            return `<div class="faction-badge ${s}">${sub.icon} ${sub.name}</div>`;
+                        }).join('');
+                        
+                        // 更新勢力徽章顯示
+                        display.innerHTML = `
+                            <div class="faction-badge main ${player.faction}">${mainFaction.icon} ${mainFaction.name}</div>
+                            <div style="display: flex; gap: 2px;">${subHTML}</div>
+                        `;
+
+                        // 🌈 動態同步玩家面板顏色
+                        if (playerCard) {
+                            // 設定主勢力顏色
+                            playerCard.style.setProperty('--faction-color', mainFaction.color);
+                            
+                            // 設定勢力專屬微光效果（透明度較低）
+                            const glowColor = mainFaction.color + '22'; // 添加透明度
+                            playerCard.style.setProperty('--faction-glow', glowColor);
+                            
+                            // 可選：為分數徽章也添加勢力色彩
+                            const scoreBadge = playerCard.querySelector('.score-badge');
+                            if (scoreBadge) {
+                                scoreBadge.style.background = `linear-gradient(135deg, ${mainFaction.color}dd, #fab005)`;
+                                scoreBadge.style.borderColor = mainFaction.color;
+                            }
+                        }
+                    } else {
+                        // 🔄 重置為未選擇狀態
+                        display.innerHTML = '<div class="faction-badge">🎭 未選擇</div>';
+                        
+                        if (playerCard) {
+                            playerCard.style.setProperty('--faction-color', 'rgba(255,255,255,0.25)');
+                            playerCard.style.setProperty('--faction-glow', 'rgba(255,255,255,0.1)');
+                            
+                            // 重置分數徽章
+                            const scoreBadge = playerCard.querySelector('.score-badge');
+                            if (scoreBadge) {
+                                scoreBadge.style.background = 'linear-gradient(135deg, #ffd43b, #fab005)';
+                                scoreBadge.style.borderColor = 'rgba(255, 212, 59, 0.6)';
+                            }
+                        }
+                    }
+                });
+            }
+
+            flipPCard(cardIndex) {
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                if (currentPlayerId !== 0 || this.gameOver || !this.gameStarted) return;
+                const player = this.players[0];
+                const card = player.hand[cardIndex];
+                if (!card || !card.isDual) return;
+                
+                card.currentFace = card.currentFace === 1 ? 2 : 1;
+                
+                const currentOption = card.currentFace === 1 ? card.option1 : card.option2;
+                card.name = currentOption.name;
+                card.emoji = currentOption.emoji;
+                card.skill = currentOption.skill;
+                card.type = currentOption.type;
+                card.desc = currentOption.desc;
+                
+                this.addBattleLog(0, `🔄 你翻轉了P卡,現在顯示:${currentOption.emoji}${currentOption.name}`);
+                this.updateUI();
+            }
+
+            initLuckTower() {
+                const towerGrid = document.getElementById('luck-tower-grid');
+                towerGrid.innerHTML = '';
+
+                for (let i = 1; i <= 60; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'luck-cell';
+                    cell.id = `luck-cell-${i}`;
+
+                    if ((i - 1) % 4 === 0) {
+                        cell.classList.add('clover-spot');
+                        const cloverIcon = document.createElement('div');
+                        cloverIcon.className = 'clover-icon';
+                        cloverIcon.textContent = '☘️';
+                        cell.appendChild(cloverIcon);
+                    }
+
+                    const number = document.createElement('div');
+                    number.className = 'cell-number';
+                    number.textContent = i;
+                    cell.appendChild(number);
+
+                    const tokenContainer = document.createElement('div');
+                    tokenContainer.className = 'faction-tokens';
+                    tokenContainer.id = `tokens-${i}`;
+                    cell.appendChild(tokenContainer);
+
+                    towerGrid.appendChild(cell);
+                }
+                
+                this.updateLuckTowerDisplay();
+            }
+
+            updateLuckTowerDisplay() {
+                for (let i = 1; i <= 60; i++) {
+                    const container = document.getElementById(`tokens-${i}`);
+                    if (container) container.innerHTML = '';
+                    const cell = document.getElementById(`luck-cell-${i}`);
+                    if (cell) cell.classList.remove('crowded');
+                }
+
+                Object.values(FACTIONS).forEach(f => {
+                    if (f.position > 0 && f.position <= 60) {
+                        const container = document.getElementById(`tokens-${f.position}`);
+                        if (container) {
+                            const token = document.createElement('div');
+                            token.className = 'faction-token';
+                            
+                            if (f.megaBlessings > 0) {
+                                token.classList.add('mega-blessing');
+                                token.textContent = '🌟';
+                                token.title = `${f.name} (位置: ${f.position}, 大祝福×${f.megaBlessings}=${f.megaBlessings * 15}點, 總祝福: ${this.calculateBlessings(f.id)})`;
+                            } else {
+                                token.textContent = f.icon;
+                                token.title = `${f.name} (位置: ${f.position}, 總祝福: ${this.calculateBlessings(f.id)})`;
+                            }
+                            
+                            token.style.borderColor = f.color;
+                            container.appendChild(token);
+                        }
+                    }
+                });
+
+                for (let i = 1; i <= 60; i++) {
+                    const container = document.getElementById(`tokens-${i}`);
+                    if (container && container.children.length > 2) {
+                        document.getElementById(`luck-cell-${i}`).classList.add('crowded');
+                    }
+                }
+            }
+
+            getTimelineRange(slotIndex) {
+                const row = Math.floor(slotIndex / 4);
+                const col = slotIndex % 4;
+                const range = [];
+                
+                for (let c = 0; c < 4; c++) {
+                    range.push(row * 4 + c);
+                }
+                
+                for (let r = 0; r < 4; r++) {
+                    const idx = r * 4 + col;
+                    if (!range.includes(idx)) {
+                        range.push(idx);
+                    }
+                }
+                
+                return range;
+            }
+
+            async triggerTimeline(triggerSlotIndex, playerId) {
+                const range = this.getTimelineRange(triggerSlotIndex);
+                let affectedCards = [];
+                
+                range.forEach(idx => {
+                    if (this.battlefield[idx]) {
+                        if (this.battlefield[idx].card.type !== 'ON_PLAY') {
+                            affectedCards.push({ idx, slot: this.battlefield[idx] });
+                        }
+                    }
+                });
+                
+                if (affectedCards.length === 0) return;
+                
+                const skillPriority = ['noble', 'basic', 'defend', 'attack'];
+                
+                affectedCards.sort((a, b) => {
+                    const cardA = a.slot.card;
+                    const cardB = b.slot.card;
+
+                    if (cardA.tier === 'A' && cardB.tier !== 'A') return -1;
+                    if (cardA.tier !== 'A' && cardB.tier === 'A') return 1;
+
+                    if (cardA.tier === 'P' && cardB.tier !== 'P') return 1;
+                    if (cardA.tier !== 'P' && cardB.tier === 'P') return -1;
+
+                    if (cardA.tier === 'B' && cardB.tier === 'B') {
+                        const indexA = skillPriority.indexOf(cardA.skill);
+                        const indexB = skillPriority.indexOf(cardB.skill);
+                        return indexA - indexB;
+                    }
+
+                    return 0;
+                });
+
+                const battleContext = { guardProcessed: false, banditProcessed: false };
+                const cardsToRemove = new Set();
+
+                this.addBattleLog('timeline', `⏳ 事件線觸發！影響範圍:十字7格,觸發${affectedCards.length}張卡牌技能`);
+                
+                range.forEach(idx => {
+                    const slot = document.getElementById('battlefield').children[idx];
+                    if (slot) slot.classList.add('timeline-active');
+                });
+                
+                await new Promise(r => setTimeout(r, 800));
+
+                for (const { idx, slot } of affectedCards) {
+                    if (this.battlefield[idx] && !cardsToRemove.has(idx)) {
+                        await this.executeCardSkill(slot.card, slot.owner, playerId, 'timeline', affectedCards, battleContext, idx);
+                        await new Promise(r => setTimeout(r, getDelay(3000)))
+                        if (slot.card.type === 'ONE_TIME') {
+                            if (slot.card.cancelRemoval) {
+                                delete slot.card.cancelRemoval;
+                                this.addBattleLog('system', `💡 ${slot.card.emoji}${slot.card.name} 未滿足條件,保留在場上！`);
+                            } else {
+                                cardsToRemove.add(idx);
+                                this.addBattleLog('system', `🔑 ${slot.card.emoji}${slot.card.name} 效果發動完畢,自我銷毀！`);
+                            }
+                        }
+                        
+                        await new Promise(r => setTimeout(r, 1200));
+                    }
+                }
+
+                let addedNew = true;
+                while(addedNew) {
+                    addedNew = false;
+                    this.battlefield.forEach((s, i) => {
+                        if (s && !cardsToRemove.has(i)) {
+                            if ((s.card.priestLinkedTo !== undefined && cardsToRemove.has(s.card.priestLinkedTo)) ||
+                                (s.card.royalLinkedTo !== undefined && cardsToRemove.has(s.card.royalLinkedTo))) {
+                                cardsToRemove.add(i);
+                                addedNew = true;
+                                this.addBattleLog('system', `⛓️ 依附目標離場,${s.card.name} 失去連結而一併移除！`);
+                            }
+                        }
+                    });
+                }
+
+                cardsToRemove.forEach(idx => {
+                    if (this.battlefield[idx]) {
+                        const slot = this.battlefield[idx];
+                        this.showDamageEffect(idx, '💥');
+                        this.discardPile.push(this.revertCard(slot.card));
+                        
+                        if (slot.attachedRoyal) {
+                            this.discardPile.push(slot.attachedRoyal);
+                        }
+                        if (slot.attachedPriest) {
+                            this.discardPile.push(this.revertCard(slot.attachedPriest));
+                            this.addBattleLog('system', `⛓️ 依附目標離場，祭司 ${slot.attachedPriest.emoji}${slot.attachedPriest.name} 一併移除！`);
+                        }
+                        this.battlefield[idx] = null;
+                    }
+                });
+
+                range.forEach(idx => {
+                    const slot = document.getElementById('battlefield').children[idx];
+                    if (slot) slot.classList.remove('timeline-active');
+                });
+                
+                this.updateUI();
+            }
+
+            revertCard(card) {
+                if (!card) return card;
+
+                if (card.nativeFaction && card.faction !== card.nativeFaction) {
+                    card.faction = card.nativeFaction;
+                    delete card.isConverted;
+                }
+
+                if (card.isDisguised) {
+                    card.skill = card.originalSkill_fraud;
+                    card.name = card.originalName_fraud;
+                    card.emoji = card.originalEmoji_fraud;
+                    card.type = card.originalType_fraud;
+                    card.desc = card.originalDesc_fraud;
+                    
+                    delete card.isDisguised;
+                    delete card.originalSkill_fraud;
+                    delete card.originalName_fraud;
+                    delete card.originalEmoji_fraud;
+                    delete card.originalType_fraud;
+                    delete card.originalDesc_fraud;
+                    
+                    this.addBattleLog('system', `🎭 ${card.emoji}${card.name} 偽裝解除，恢復詐欺師本體！`);
+                }
+                
+                // ✅ 王族加冕還原機制
+                if (card.isCrowned) {
+                    card.skill = card.originalSkill;
+                    card.name = card.originalName; 
+                    card.emoji = card.originalEmoji;
+                    card.type = card.originalType;
+                    card.desc = card.originalDesc;
+                    
+                    delete card.isCrowned;
+                    delete card.originalSkill;
+                    delete card.originalName;
+                    delete card.originalEmoji;
+                    delete card.originalType;
+                    delete card.originalDesc;
+                }
+                return card;
+            }
+
+            async executeCardSkill(card, cardOwnerId, triggerPlayerId, context, timelineCards = [], battleContext = {}, cardSlotIndex = -1) {
+                const cardOwner = this.players[cardOwnerId];
+                const triggerPlayer = this.players[triggerPlayerId];
+                const logType = context === 'on_play' ? cardOwnerId : 'timeline';
+                const prefix = context === 'on_play' ? '⚡' : '⏳';
+                
+                const countSkillInTimeline = (skillName) => {
+                    return timelineCards.filter(item => 
+                        this.battlefield[item.idx] && 
+                        this.battlefield[item.idx].card.skill === skillName
+                    ).length;
+                };
+
+                switch(card.skill) {
+                    case 'heal': {
+                        const healCandidates = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.owner !== cardOwnerId && 
+                                slot.card.faction !== card.faction && 
+                                !slot.card.isConverted) {
+                                healCandidates.push(idx);
+                            }
+                        });
+
+                        if (healCandidates.length > 0) {
+                            let targetIdx;
+                            if (triggerPlayerId === 0) {
+                                targetIdx = await this.waitForTargetSelection(healCandidates, '感化', `${card.emoji}${card.name}`);
+                            } else {
+                                targetIdx = healCandidates[Math.floor(Math.random() * healCandidates.length)];
+                            }
+                            
+                            const targetSlot = this.battlefield[targetIdx];
+                            const targetCard = targetSlot.card;
+                            const oldFaction = targetSlot.card.faction;
+                            
+                            targetSlot.card.faction = card.faction;
+                            targetSlot.card.isConverted = true;
+                            
+                            const priestIdx = this.battlefield.findIndex(s => s && s.card === card);
+                            if (priestIdx !== -1) {
+                                this.battlefield[priestIdx] = null;
+                            }
+                            
+                            targetSlot.attachedPriest = card;
+                            card.priestLinkedTo = targetIdx;
+                            
+                            this.showDamageEffect(targetIdx, '⛪感化');
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:感化了 ${targetSlot.card.emoji}${targetSlot.card.name}！(${FACTIONS[oldFaction].name} -> ${FACTIONS[card.faction].name})，祭司橫置於其背後`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:沒有可感化的目標，保留在場上`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'magic': {
+                        const magicTargets = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill !== 'magic') {
+                                magicTargets.push(idx);
+                            }
+                        });
+
+                        if (magicTargets.length > 0) {
+                            let targetIdx;
+                            if (triggerPlayerId === 0) {
+                                targetIdx = await this.waitForTargetSelection(magicTargets, '轉移', `${card.emoji}${card.name}`);
+                            } else {
+                                targetIdx = magicTargets[Math.floor(Math.random() * magicTargets.length)];
+                            }
+                            
+                            const targetSlot = this.battlefield[targetIdx];
+                            const targetCard = targetSlot.card;
+                            const targetOwner = targetSlot.owner;
+                            
+                            // ✅ 修復魔術師崩潰錯誤：正確引用 targetSlot
+                            const targetAttachedRoyal = targetSlot.attachedRoyal || null;
+                            const targetAttachedPriest = targetSlot.attachedPriest || null;
+                            
+                            this.battlefield[targetIdx] = null;
+                            this.showDamageEffect(targetIdx, '💨消失');
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:轉移 ${targetCard.emoji}${targetCard.name} 到自己位置`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                            
+                            const magicIdx = this.battlefield.findIndex(slot => slot && slot.card === card);
+                            if (magicIdx !== -1) {
+                                this.battlefield[magicIdx] = { 
+                                    card: targetCard, 
+                                    owner: targetOwner,
+                                    attachedRoyal: targetAttachedRoyal,
+                                    attachedPriest: targetAttachedPriest
+                                };
+                                this.showDamageEffect(magicIdx, '✨傳送');
+                                
+                                await new Promise(r => setTimeout(r, getDelay(800)));
+                                this.updateUI();
+                                
+                                if (targetCard.skill !== 'magic') {
+                                    this.addBattleLog(logType, `${prefix} 轉移的 ${targetCard.emoji}${targetCard.name} 立即執行技能！`);
+                                    await new Promise(r => setTimeout(r, getDelay(500)));
+                                    await this.executeCardSkill(targetCard, targetOwner, triggerPlayerId, 'timeline', timelineCards, battleContext, magicIdx);
+                                }
+                            }
+                            
+                            this.moveFaction(card.faction, 2, cardSlotIndex);
+                            this.addBattleLog(logType, `${prefix} ${FACTIONS[card.faction].icon}${FACTIONS[card.faction].name}勢力 +2運氣,魔術師消失`);
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有其他目標可轉移，保留在場上`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+                    
+                    case 'steal': {
+                        const stealTargets = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill !== 'steal') {
+                                stealTargets.push(idx);
+                            }
+                        });
+
+                        if (stealTargets.length > 0) {
+                            let targetIdx;
+                            if (triggerPlayerId === 0) {
+                                targetIdx = await this.waitForTargetSelection(stealTargets, '偽裝', `${card.emoji}${card.name}`);
+                            } else {
+                                targetIdx = stealTargets[Math.floor(Math.random() * stealTargets.length)];
+                            }
+                            
+                            const targetSlot = this.battlefield[targetIdx];
+                            const targetCard = targetSlot.card;
+                            
+                            card.isDisguised = true;
+                            card.originalSkill_fraud = card.skill;
+                            card.originalName_fraud = card.name;
+                            card.originalEmoji_fraud = card.emoji;
+                            card.originalType_fraud = card.type;
+                            card.originalDesc_fraud = card.desc;
+                            
+                            card.skill = targetCard.skill;
+                            card.name = targetCard.name;
+                            card.emoji = targetCard.emoji;
+                            card.type = targetCard.type;
+                            card.desc = targetCard.desc;
+                            
+                            if (targetCard.isCrowned) {
+                                card.isCrowned = true;
+                                card.originalSkill = targetCard.originalSkill;
+                                card.originalName = targetCard.originalName;
+                                card.originalEmoji = targetCard.originalEmoji;
+                                card.originalType = targetCard.originalType;
+                                card.originalDesc = targetCard.originalDesc;
+                            }
+                            
+                            this.showDamageEffect(cardSlotIndex, '🎭偽裝');
+                            this.addBattleLog(logType, `${prefix} 🃏詐欺師完全偽裝成 ${card.emoji}${card.name}！在場期間將以該身份行動`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                            
+                            if (card.type !== 'ON_PLAY') {
+                                await new Promise(r => setTimeout(r, getDelay(500)));
+                                await this.executeCardSkill(card, cardOwnerId, triggerPlayerId, 'timeline', timelineCards, battleContext, cardSlotIndex);
+                            }
+                            
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有其他目標可偽裝，保留在場上`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'noble': {
+                        const nobleCount = countSkillInTimeline('noble');
+                        const nobleLuck = 5 - nobleCount;
+                        
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}(${FACTIONS[card.faction].icon})【官僚】:事件線上共有 ${nobleCount} 張貴族`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        if (nobleLuck > 0) {
+                            this.moveFaction(card.faction, nobleLuck, cardSlotIndex);
+                            this.addBattleLog(logType, `💎 徵稅！${FACTIONS[card.faction].icon}${FACTIONS[card.faction].name}勢力 +${nobleLuck}運氣`);
+                        } else {
+                            this.addBattleLog(logType, `😰 貴族過多，無法徵稅`);
+                        }
+                        break;
+                    }
+
+                    case 'basic': {
+                        const commonerCount = countSkillInTimeline('basic');
+                        const commonerLuck = 1 + commonerCount;
+                        
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}(${FACTIONS[card.faction].icon})【共享】:事件線上共有 ${commonerCount} 張平民`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        this.moveFaction(card.faction, commonerLuck, cardSlotIndex);
+                        this.addBattleLog(logType, `👥 人海戰術！${FACTIONS[card.faction].icon}${FACTIONS[card.faction].name}勢力 +${commonerLuck}運氣`);
+                        break;
+                    }
+
+                    case 'defend': {
+                        const guardCount = countSkillInTimeline('defend');
+                        const banditCount = countSkillInTimeline('attack');
+                        
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}(${FACTIONS[card.faction].icon})：守衛 ${guardCount} vs 強盜 ${banditCount}`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        if (guardCount >= banditCount && banditCount > 0) {
+                            if (!battleContext.guardProcessed) {
+                                battleContext.guardProcessed = true;
+                                
+                                this.addBattleLog(logType, `🛡️ 守衛數量優勢！開始群體結算...`);
+                                await new Promise(r => setTimeout(r, getDelay(600)));
+                                
+                                const banditsToRemove = [];
+                                timelineCards.forEach(item => {
+                                    if (this.battlefield[item.idx] && this.battlefield[item.idx].card.skill === 'attack') {
+                                        banditsToRemove.push(item.idx);
+                                    }
+                                });
+                                
+                                const removedCount = banditsToRemove.length;
+                                const luckPerGuard = removedCount * 3;
+                                
+                                const allGuards = [];
+                                timelineCards.forEach(item => {
+                                    if (this.battlefield[item.idx] && this.battlefield[item.idx].card.skill === 'defend') {
+                                        allGuards.push({ card: this.battlefield[item.idx].card, idx: item.idx });
+                                    }
+                                });
+                                
+                                allGuards.forEach(guardInfo => {
+                                    this.moveFaction(guardInfo.card.faction, luckPerGuard, guardInfo.idx);
+                                    this.addBattleLog(logType, `✅ 守衛 ${guardInfo.card.emoji}${guardInfo.card.name} 所屬勢力 ${FACTIONS[guardInfo.card.faction].icon}${FACTIONS[guardInfo.card.faction].name} +${luckPerGuard}運氣`);
+                                });
+                                
+                                for (const idx of banditsToRemove) {
+                                    if (this.battlefield[idx]) {
+                                        const banditCard = this.battlefield[idx].card;
+                                        this.showDamageEffect(idx, '👮逮捕');
+                                        this.addBattleLog(logType, `👮‍♂️ 逮捕了 ${banditCard.emoji}${banditCard.name}`);
+                                        this.discardPile.push(this.revertCard(banditCard));
+                                        this.battlefield[idx] = null;
+                                        await new Promise(r => setTimeout(r, getDelay(400)));
+                                        this.updateUI();
+                                    }
+                                }
+                            }
+                        } else {
+                            this.addBattleLog(logType, `🚶 守衛繼續巡邏中...`);
+                        }
+                        break;
+                    }
+
+                    case 'attack': {
+                        const bCount = countSkillInTimeline('attack');
+                        const gCount = countSkillInTimeline('defend');
+                        
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}(${FACTIONS[card.faction].icon})：強盜 ${bCount} vs 守衛 ${gCount}`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        if (bCount > gCount) {
+                            if (!battleContext.banditProcessed) {
+                                battleContext.banditProcessed = true;
+                                
+                                this.addBattleLog(logType, `🗡️ 強盜數量優勢！開始群體結算...`);
+                                await new Promise(r => setTimeout(r, getDelay(600)));
+                                
+                                const targets = ['defend', 'noble', 'basic'];
+                                const targetsToRemove = [];
+                                
+                                timelineCards.forEach(item => {
+                                    if (this.battlefield[item.idx] && targets.includes(this.battlefield[item.idx].card.skill)) {
+                                        targetsToRemove.push(item.idx);
+                                    }
+                                });
+                                
+                                const removedCount = targetsToRemove.length;
+                                const luckPerBandit = removedCount * 2;
+                                
+                                const allBandits = [];
+                                timelineCards.forEach(item => {
+                                    if (this.battlefield[item.idx] && this.battlefield[item.idx].card.skill === 'attack') {
+                                        allBandits.push({ card: this.battlefield[item.idx].card, idx: item.idx });
+                                    }
+                                });
+                                
+                                allBandits.forEach(banditInfo => {
+                                    this.moveFaction(banditInfo.card.faction, luckPerBandit, banditInfo.idx);
+                                    this.addBattleLog(logType, `✅ 強盜 ${banditInfo.card.emoji}${banditInfo.card.name} 所屬勢力 ${FACTIONS[banditInfo.card.faction].icon}${FACTIONS[banditInfo.card.faction].name} +${luckPerBandit}運氣`);
+                                });
+                                
+                                for (const idx of targetsToRemove) {
+                                    if (this.battlefield[idx]) {
+                                        const targetCard = this.battlefield[idx].card;
+                                        this.showDamageEffect(idx, '💰搶劫');
+                                        this.addBattleLog(logType, `💰 掠奪了 ${targetCard.emoji}${targetCard.name}`);
+                                        this.discardPile.push(this.revertCard(targetCard));
+                                        this.battlefield[idx] = null;
+                                        await new Promise(r => setTimeout(r, getDelay(400)));
+                                        this.updateUI();
+                                    }
+                                }
+                            }
+                        } else {
+                            this.addBattleLog(logType, `😨 強盜被守衛威懾，不敢妄動`);
+                        }
+                        break;
+                    }
+                    
+                    case 'royal': {
+                        const royalCandidates = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill !== 'noble' && !slot.card.isCrowned && slot.card !== card) {
+                                royalCandidates.push(idx);
+                            }
+                        });
+
+                        if (royalCandidates.length > 0) {
+                            let targetIdx;
+                            if (triggerPlayerId === 0 && context === 'on_play') {
+                                targetIdx = await this.waitForTargetSelection(royalCandidates, '加冕', `${card.emoji}${card.name}`);
+                            } else {
+                                targetIdx = royalCandidates[Math.floor(Math.random() * royalCandidates.length)];
+                            }
+                            
+                            const targetSlot = this.battlefield[targetIdx];
+                            const targetCard = targetSlot.card;
+                            
+                            targetCard.originalSkill = targetCard.skill;
+                            targetCard.originalName = targetCard.name;
+                            targetCard.originalEmoji = targetCard.emoji;
+                            targetCard.originalType = targetCard.type;
+                            targetCard.originalDesc = targetCard.desc;
+                            
+                            targetCard.skill = 'noble';
+                            targetCard.type = 'RECURRING';
+                            targetCard.isCrowned = true;
+                            targetSlot.attachedRoyal = card;
+                            card.royalLinkedTo = targetIdx;
+                            
+                            this.showDamageEffect(targetIdx, '👑加冕');
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:加冕了 ${targetCard.originalEmoji || targetCard.emoji}${targetCard.originalName || targetCard.name} 成為貴族！`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有可加冕的目標`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+                    
+                    case 'control': {
+                        const controlCandidates = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill !== 'control' && slot.card !== card) {
+                                controlCandidates.push({idx, slot});
+                            }
+                        });
+
+                        if (controlCandidates.length > 0) {
+                            let target;
+                            if (triggerPlayerId === 0 && context === 'on_play') {
+                                const targetIndices = controlCandidates.map(c => c.idx);
+                                const selectedIdx = await this.waitForTargetSelection(targetIndices, '替換', `${card.emoji}${card.name}`);
+                                target = controlCandidates.find(c => c.idx === selectedIdx);
+                            } else {
+                                target = controlCandidates[Math.floor(Math.random() * controlCandidates.length)];
+                            }
+                            
+                            const targetCard = target.slot.card;
+
+                            // ✅ 修復：傀儡師替換時正確處理附屬卡牌
+                            if (target.slot.attachedRoyal) {
+                                this.discardPile.push(this.revertCard(target.slot.attachedRoyal));
+                                this.addBattleLog('system', `⛓️ 替換目標離場，王族隨之移除！`);
+                            }
+                            if (target.slot.attachedPriest) {
+                                this.discardPile.push(this.revertCard(target.slot.attachedPriest));
+                                this.addBattleLog('system', `⛓️ 替換目標離場，祭司隨之移除！`);
+                            }
+                            
+                            cardOwner.hand.push(this.revertCard(targetCard));
+                            
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:替換了 ${targetCard.emoji}${targetCard.name},收入自己手牌`);
+                            
+                            const currentIdx = this.battlefield.findIndex(slot => slot && slot.card === card);
+                            if (currentIdx !== -1) {
+                                this.battlefield[currentIdx] = null;
+                            }
+                            this.battlefield[target.idx] = { card, owner: cardOwnerId };
+                            
+                            this.moveFaction(cardOwner.faction, 2, cardSlotIndex);
+                            this.addBattleLog(logType, `🎭 ${cardOwner.name} 的主勢力 ${FACTIONS[cardOwner.faction].icon}${FACTIONS[cardOwner.faction].name} +2運氣`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有可替換的目標`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'tech': {
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 開始掃描同色角色數據...`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        const sameColorCount = this.battlefield.filter(s => s && s.card.faction === card.faction).length;
+                        
+                        if (sameColorCount === 0) {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有同色角色，技能未執行且不移除`);
+                            card.cancelRemoval = true;
+                        } else {
+                            const totalGain = 2 * sameColorCount;
+                            this.moveFaction(cardOwner.faction, totalGain, cardSlotIndex);
+                            this.addBattleLog(logType, `🤖 掃描完成！場上共 ${sameColorCount} 個同色角色，每個提供2點運氣`);
+                            this.addBattleLog(logType, `💡 ${cardOwner.name} 主勢力${FACTIONS[cardOwner.faction].icon}${FACTIONS[cardOwner.faction].name} 獲得 2×${sameColorCount} = +${totalGain}運氣，AI機器人將被移除`);
+                        }
+                        break;
+                    }
+
+                    case 'chaos': {
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 開始計算全場角色數量...`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        const totalCards = this.battlefield.filter(s => s).length;
+                        
+                        if (totalCards === 0) {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有任何角色，技能未執行且不移除`);
+                            card.cancelRemoval = true;
+                        } else {
+                            const totalGain = totalCards;
+                            this.moveFaction(cardOwner.faction, totalGain, cardSlotIndex);
+                            this.addBattleLog(logType, `🤡 計算完成！場上共 ${totalCards} 個角色，每個提供1點運氣`);
+                            this.addBattleLog(logType, `💡 ${cardOwner.name} 主勢力${FACTIONS[cardOwner.faction].icon}${FACTIONS[cardOwner.faction].name} 獲得 +${totalGain}運氣，小丑將被移除`);
+                        }
+                        break;
+                    }
+
+                    case 'love_m': {
+                        const femalePartners = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card !== card) {
+                                const gender = getCharGender(slot.card.name);
+                                if (gender === 'female') {
+                                    femalePartners.push({ idx, slot });
+                                }
+                            }
+                        });
+
+                        if (femalePartners.length > 0) {
+                            let partnerData;
+                            
+                            if (triggerPlayerId === 0) {
+                                const indices = femalePartners.map(p => p.idx);
+                                const selectedIdx = await this.waitForTargetSelection(indices, '配對', `${card.emoji}${card.name}`);
+                                partnerData = femalePartners.find(p => p.idx === selectedIdx);
+                            } else {
+                                const sameFaction = femalePartners.filter(p => p.slot.card.faction === card.faction);
+                                partnerData = (sameFaction.length ? sameFaction : femalePartners)[Math.floor(Math.random() * (sameFaction.length ? sameFaction : femalePartners).length)];
+                            }
+                            
+                            const partnerSlot = partnerData.slot;
+                            const partnerFaction = partnerSlot.card.faction;
+                            
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 與 ${partnerSlot.card.emoji}${partnerSlot.card.name} 配對成功！💕`);
+                            
+                            this.moveFaction(card.faction, 5, cardSlotIndex);
+                            this.addBattleLog('system', `💖 ${FACTIONS[card.faction].icon}${FACTIONS[card.faction].name}勢力 +5運氣`);
+                            
+                            this.moveFaction(partnerFaction, 5, partnerData.idx);
+                            this.addBattleLog('system', `💖 ${FACTIONS[partnerFaction].icon}${FACTIONS[partnerFaction].name}勢力 +5運氣`);
+                            
+                            if (this.discardPile.length > 0) {
+                                const drawn = this.discardPile.pop();
+                                cardOwner.hand.push(drawn);
+                                this.addBattleLog('system', `📥 觸發者 ${cardOwner.name} 從棄牌堆抽回一張牌`);
+                            } else {
+                                this.addBattleLog('system', `📭 棄牌堆已空，無法抽牌`);
+                            }
+                            
+                            const myIdx = this.battlefield.findIndex(s => s && s.card === card);
+                            if (myIdx !== -1) {
+                                this.showDamageEffect(myIdx, '💕');
+                                this.discardPile.push(this.revertCard(this.battlefield[myIdx].card));
+                                this.battlefield[myIdx] = null;
+                            }
+                            
+                            this.showDamageEffect(partnerData.idx, '💕');
+                            this.discardPile.push(this.revertCard(partnerSlot.card));
+                            
+                            if (partnerSlot.attachedRoyal) {
+                                this.discardPile.push(this.revertCard(partnerSlot.attachedRoyal));
+                                this.addBattleLog('system', `⛓️ 配偶離場，王族 ${partnerSlot.attachedRoyal.emoji}${partnerSlot.attachedRoyal.name} 也隨之移除！`);
+                            }
+                            if (partnerSlot.attachedPriest) {
+                                this.discardPile.push(this.revertCard(partnerSlot.attachedPriest));
+                                this.addBattleLog('system', `⛓️ 配偶離場，祭司 ${partnerSlot.attachedPriest.emoji}${partnerSlot.attachedPriest.name} 也隨之離場！`);
+                            }
+                          
+                            this.battlefield[partnerData.idx] = null;
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有女性角色可配對，繼續等待真愛...`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'love_f': {
+                        const malePartners = [];
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card !== card) {
+                                const gender = getCharGender(slot.card.name);
+                                if (gender === 'male') {
+                                    malePartners.push({ idx, slot });
+                                }
+                            }
+                        });
+
+                        if (malePartners.length > 0) {
+                            let partnerData;
+                            
+                            if (triggerPlayerId === 0) {
+                                const indices = malePartners.map(p => p.idx);
+                                const selectedIdx = await this.waitForTargetSelection(indices, '配對', `${card.emoji}${card.name}`);
+                                partnerData = malePartners.find(p => p.idx === selectedIdx);
+                            } else {
+                                const sameFaction = malePartners.filter(p => p.slot.card.faction === card.faction);
+                                partnerData = (sameFaction.length ? sameFaction : malePartners)[Math.floor(Math.random() * (sameFaction.length ? sameFaction : malePartners).length)];
+                            }
+                            
+                            const partnerSlot = partnerData.slot;
+                            const partnerFaction = partnerSlot.card.faction;
+                            
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 與 ${partnerSlot.card.emoji}${partnerSlot.card.name} 配對成功！💕`);
+                            
+                            this.moveFaction(card.faction, 5, cardSlotIndex);
+                            this.addBattleLog('system', `💖 ${FACTIONS[card.faction].icon}${FACTIONS[card.faction].name}勢力 +5運氣`);
+                            
+                            this.moveFaction(partnerFaction, 5, partnerData.idx);
+                            this.addBattleLog('system', `💖 ${FACTIONS[partnerFaction].icon}${FACTIONS[partnerFaction].name}勢力 +5運氣`);
+                            
+                            if (this.discardPile.length > 0) {
+                                const drawn = this.discardPile.pop();
+                                cardOwner.hand.push(drawn);
+                                this.addBattleLog('system', `📥 觸發者 ${cardOwner.name} 從棄牌堆抽回一張牌`);
+                            } else {
+                                this.addBattleLog('system', `📭 棄牌堆已空，無法抽牌`);
+                            }
+                            
+                            const myIdx = this.battlefield.findIndex(s => s && s.card === card);
+                            if (myIdx !== -1) {
+                                this.showDamageEffect(myIdx, '💕');
+                                this.discardPile.push(this.revertCard(this.battlefield[myIdx].card));
+                                this.battlefield[myIdx] = null;
+                            }
+                            
+                            this.showDamageEffect(partnerData.idx, '💕');
+                            this.discardPile.push(this.revertCard(partnerSlot.card));
+                            
+                            if (partnerSlot.attachedRoyal) {
+                                this.discardPile.push(this.revertCard(partnerSlot.attachedRoyal));
+                                this.addBattleLog('system', `⛓️ 配偶離場，王族 ${partnerSlot.attachedRoyal.emoji}${partnerSlot.attachedRoyal.name} 也隨之移除！`);
+                            }
+                            if (partnerSlot.attachedPriest) {
+                                this.discardPile.push(this.revertCard(partnerSlot.attachedPriest));
+                                this.addBattleLog('system', `⛓️ 配偶離場，祭司 ${partnerSlot.attachedPriest.emoji}${partnerSlot.attachedPriest.name} 也隨之離場！`);
+                            }
+
+                            this.battlefield[partnerData.idx] = null;
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有男性角色可配對，繼續等待真愛...`);
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'nature': {
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 開始施放自然之力...`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        let demonIdx = -1;
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill === 'demon' && demonIdx === -1) {
+                                demonIdx = idx;
+                            }
+                        });
+
+                        if (demonIdx !== -1) {
+                            const demonCard = this.battlefield[demonIdx].card;
+                            this.showDamageEffect(demonIdx, '🌿淨化');
+                            this.discardPile.push(this.revertCard(demonCard));
+                            this.battlefield[demonIdx] = null;
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:淨化了 ${demonCard.emoji}${demonCard.name}！`);
+                            
+                            this.moveFaction(cardOwner.faction, 3, cardSlotIndex);
+                            this.addBattleLog(logType, `✨ ${cardOwner.name} 主勢力 ${FACTIONS[cardOwner.faction].icon}${FACTIONS[cardOwner.faction].name} +3運氣`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有惡魔可淨化`);
+                        }
+                        
+                        if (context === 'timeline' && timelineCards && timelineCards.length > 0) {
+                            this.addBattleLog('timeline', `🌿 精靈祝福開始作用於事件線...`);
+                            await new Promise(r => setTimeout(r, getDelay(600)));
+                            
+                            let blessedCount = 0;
+                            timelineCards.forEach(item => {
+                                if (this.battlefield[item.idx]) {
+                                    const targetCard = this.battlefield[item.idx].card;
+                                    this.moveFaction(targetCard.faction, 2, item.idx);
+                                    this.showDamageEffect(item.idx, '🌿+2');
+                                    blessedCount++;
+                                }
+                            });
+                            
+                            this.addBattleLog('timeline', `🌿 精靈祝福完成！事件線中 ${blessedCount} 張角色各自勢力 +2運氣`);
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        }
+                        
+                        if (demonIdx === -1 && context !== 'timeline') {
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+
+                    case 'demon': {
+                        this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name} 開始施放黑暗之力...`);
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                        
+                        let elfIdx = -1;
+                        this.battlefield.forEach((slot, idx) => {
+                            if (slot && slot.card.skill === 'nature' && elfIdx === -1) {
+                                elfIdx = idx;
+                            }
+                        });
+
+                        if (elfIdx !== -1) {
+                            const elfCard = this.battlefield[elfIdx].card;
+                            this.showDamageEffect(elfIdx, '💀吞噬');
+                            this.discardPile.push(this.revertCard(elfCard));
+                            this.battlefield[elfIdx] = null;
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:吞噬了 ${elfCard.emoji}${elfCard.name}！`);
+                            
+                            this.moveFaction(cardOwner.faction, 3, cardSlotIndex);
+                            this.addBattleLog(logType, `👿 ${cardOwner.name} 主勢力 ${FACTIONS[cardOwner.faction].icon}${FACTIONS[cardOwner.faction].name} +3運氣`);
+                            
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        } else {
+                            this.addBattleLog(logType, `${prefix} ${card.emoji}${card.name}:場上沒有精靈可吞噬`);
+                        }
+                        
+                        if (context === 'timeline' && timelineCards && timelineCards.length > 0) {
+                            this.addBattleLog('timeline', `💀 惡魔詛咒開始作用於事件線...`);
+                            await new Promise(r => setTimeout(r, getDelay(600)));
+                            
+                            let cursedCount = 0;
+                            timelineCards.forEach(item => {
+                                if (this.battlefield[item.idx]) {
+                                    const targetCard = this.battlefield[item.idx].card;
+                                    this.moveFaction(targetCard.faction, -1, item.idx);
+                                    this.showDamageEffect(item.idx, '💀-1');
+                                    cursedCount++;
+                                }
+                            });
+                            
+                            this.addBattleLog('timeline', `💀 惡魔詛咒完成！事件線中 ${cursedCount} 張角色各自勢力 -1運氣`);
+                            await new Promise(r => setTimeout(r, getDelay(800)));
+                            this.updateUI();
+                        }
+                        
+                        if (elfIdx === -1 && context !== 'timeline') {
+                            card.cancelRemoval = true;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            calculateFinalScore(playerId) {
+                const player = this.players[playerId];
+                if (!player.faction) return 0;
+                
+                const mainBlessings = this.calculateBlessings(player.faction);
+                const sub1Blessings = this.calculateBlessings(player.subFactions[0]);
+                const sub2Blessings = this.calculateBlessings(player.subFactions[1]);
+                
+                return (mainBlessings * 2) + sub1Blessings + sub2Blessings;
+            }
+
+            getScoreBreakdown(playerId) {
+                const player = this.players[playerId];
+                if (!player.faction) return '等待選擇...';
+                
+                const mainBlessings = this.calculateBlessings(player.faction);
+                const sub1Blessings = this.calculateBlessings(player.subFactions[0]);
+                const sub2Blessings = this.calculateBlessings(player.subFactions[1]);
+                
+                return `主${mainBlessings}×2 + 副${sub1Blessings} + 副${sub2Blessings}`;
+            }
+
+            shuffleDeck(deck) {
+                const shuffled = [...deck];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            }
+
+            startGame() {
+                this.addBattleLog('system', `🎮 五勢力混戰開始！共 ${this.maxRounds} 回合,每人8張手牌`);
+                this.addBattleLog('system', `⚡ 打出技能:王族、傀儡師（打出即發動）`); 
+                this.addBattleLog('system', `🔑 一次性技能:祭司、魔術師、詐欺師、AI、小丑、戀人（觸發後移除,未執行則保留）`);
+                this.addBattleLog('system', `⏳ 多次性技能:貴族、平民、守衛、強盜、精靈、惡魔（觸發後保留）`);
+                this.addBattleLog('system', `☘️ 祝福系統:四葉幸運草格子提供祝福,超過60格獲得大祝福(15分)並重新爬軌`);
+                this.addBattleLog('system', `⚠️ 每回合必須打出一張牌,結算完自動換下一位玩家！戰場滿則遊戲立即結束！`);
+                this.startTurn();
+            }
+
+            startTurn() {
+                const isBattlefieldFull = this.battlefield.every(slot => slot !== null);
+                if (isBattlefieldFull) {
+                    this.addBattleLog('system', '🏁 戰場已滿！遊戲提早結束！');
+                    this.endGame();
+                    return;
+                }
+
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                const player = this.players[currentPlayerId];
+                
+                document.getElementById('round-display').textContent = `回合 ${this.round} / ${this.maxRounds}`;
+
+                this.selectedCardIndex = null;
+                this.updateUI();
+                this.showTurnIndicator(`${player.name}的回合`);
+
+                if (currentPlayerId !== 0) {
+                    setTimeout(() => this.aiTurn(currentPlayerId), getDelay(1500));
+                } else {
+                    if (player.hand.length === 0) {
+                        this.addBattleLog(0, '手牌已空,自動跳過回合');
+                        setTimeout(() => this.nextTurn(), getDelay(1000));
+                    }
+                }
+            }
+
+            async playCardToSlot(playerId, cardIndex, slotIndex) {
+                const player = this.players[playerId];
+                const card = player.hand[cardIndex];
+                if (!card) return false;
+
+                let finalCard = { ...card };
+                if (card.isDual) {
+                    const option = card.currentFace === 1 ? card.option1 : card.option2;
+                    finalCard.name = option.name;
+                    finalCard.emoji = option.emoji;
+                    finalCard.skill = option.skill;
+                    finalCard.desc = option.desc;
+                    finalCard.type = option.type;
+                }
+
+                const targetSlot = this.battlefield[slotIndex];
+                const row = Math.floor(slotIndex / 4) + 1;
+                const col = (slotIndex % 4) + 1;
+
+                player.hand.splice(cardIndex, 1);
+
+                if (finalCard.skill === 'royal') {
+                    const targetCard = targetSlot.card;
+                    
+                    targetCard.originalSkill = targetCard.skill;
+                    targetCard.originalName = targetCard.name;
+                    targetCard.originalEmoji = targetCard.emoji;
+                    targetCard.originalType = targetCard.type;
+                    targetCard.originalDesc = targetCard.desc;
+                    
+                    targetCard.skill = 'noble';
+                    targetCard.type = 'RECURRING';
+                    targetCard.isCrowned = true;
+                    
+                    targetSlot.attachedRoyal = finalCard;
+                    
+                    this.showDamageEffect(slotIndex, '👑加冕');
+                    this.addBattleLog(playerId, `⚡ ${player.name} 使用 ${finalCard.emoji}${finalCard.name} 加冕了 [${row},${col}] 的 ${targetCard.originalEmoji}${targetCard.originalName}，該牌暫時視為貴族！`);
+                    
+                    await new Promise(r => setTimeout(r, getDelay(800)));
+                } else if (finalCard.skill === 'control') {
+                    const targetCard = targetSlot.card;
+                    
+                    // ✅ 修復：傀儡師替換時正確處理附屬卡牌
+                    if (targetSlot.attachedRoyal) {
+                        this.discardPile.push(this.revertCard(targetSlot.attachedRoyal));
+                        this.addBattleLog('system', `⛓️ 替換目標離場，王族隨之移除！`);
+                    }
+                    if (targetSlot.attachedPriest) {
+                        this.discardPile.push(this.revertCard(targetSlot.attachedPriest));
+                        this.addBattleLog('system', `⛓️ 替換目標離場，祭司隨之移除！`);
+                    }
+                    
+                    player.hand.push(this.revertCard(targetCard));
+                    
+                    this.battlefield[slotIndex] = { card: finalCard, owner: playerId };
+                    
+                    this.showDamageEffect(slotIndex, '🧶替換');
+                    this.addBattleLog(playerId, `⚡ ${player.name} 使用 ${finalCard.emoji}${finalCard.name} 替換了 [${row},${col}] 的 ${targetCard.emoji}${targetCard.name}，並將其收入自己手牌！`);
+                    
+                    if (player.faction) {
+                        this.moveFaction(player.faction, 2, slotIndex);
+                        this.addBattleLog(playerId, `🎭 ${player.name} 的主勢力 ${FACTIONS[player.faction].icon}${FACTIONS[player.faction].name} +2運氣`);
+                    }
+                    
+                    await new Promise(r => setTimeout(r, getDelay(800)));
+                } else {
+                    if (targetSlot !== null) return false;
+                    this.battlefield[slotIndex] = { card: finalCard, owner: playerId };
+                    this.addBattleLog(playerId, `🃏 ${player.name}在[${row},${col}]放置了 ${finalCard.emoji}${finalCard.name}(${FACTIONS[finalCard.faction].icon})`);
+                    
+                    if (finalCard.type === 'ON_PLAY') {
+                        await new Promise(r => setTimeout(r, getDelay(800)));
+                        await this.executeCardSkill(finalCard, playerId, playerId, 'on_play');
+                        await new Promise(r => setTimeout(r, getDelay(600)));
+                    }
+                }
+                
+                this.selectedCardIndex = null;
+                this.updateUI();
+                
+                await this.triggerTimeline(slotIndex, playerId);
+                
+                setTimeout(() => {
+                    if (!this.gameOver) {
+                        this.nextTurn();
+                    }
+                }, getDelay(800));
+                
+                return true;
+            }
+
+            async aiTurn(playerId) {
+                const player = this.players[playerId];
+                if (player.hand.length > 0) {
+                    player.hand.forEach(card => {
+                        if (card.isDual) {
+                            card.currentFace = Math.random() < 0.5 ? 1 : 2;
+                        }
+                    });
+                    
+                    const playableCards = player.hand
+                        .map((card, index) => ({card, index}))
+                        .sort((a, b) => {
+                            let scoreA = (a.card.tier === 'P' ? 3 : a.card.tier === 'B' ? 2 : 1);
+                            let scoreB = (b.card.tier === 'P' ? 3 : b.card.tier === 'B' ? 2 : 1);
+                            
+                            if (a.card.faction === player.faction) scoreA += 5;
+                            if (b.card.faction === player.faction) scoreB += 5;
+                            
+                            return scoreB - scoreA;
+                        });
+
+                    const getValidSlots = (card) => {
+                        let activeSkill = card.skill;
+                        if (card.isDual) {
+                            const option = card.currentFace === 1 ? card.option1 : card.option2;
+                            activeSkill = option.skill;
+                        }
+                        
+                        const validSlots = [];
+                        for (let i = 0; i < 16; i++) {
+                            const slot = this.battlefield[i];
+                            if (activeSkill === 'royal') {
+                                if (slot && slot.card.skill !== 'noble' && !slot.card.isCrowned) validSlots.push(i);
+                            } else if (activeSkill === 'control') {
+                                if (slot && slot.card.skill !== 'control') validSlots.push(i);
+                            } else {
+                                if (!slot) validSlots.push(i);
+                            }
+                        }
+                        return validSlots;
+                    };
+
+                    if (playableCards.length > 0) {
+                        for (const cardItem of playableCards) {
+                            const validSlots = getValidSlots(cardItem.card);
+                            if (validSlots.length > 0) {
+                                const slotIndex = validSlots[Math.floor(Math.random() * validSlots.length)];
+                                await this.playCardToSlot(playerId, cardItem.index, slotIndex);
+                                return;
+                            }
+                        }
+                    }
+                }
+                
+                setTimeout(() => {
+                    this.addBattleLog(playerId, `⏭️ ${this.players[playerId].name}無法出牌,跳過回合`);
+                    this.nextTurn();
+                }, getDelay(500));
+            }
+
+            nextTurn() {
+                if (this.gameOver) return;
+                this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 4;
+                
+                if (this.currentPlayerIndex === 0) {
+                    this.round++;
+                    if (this.round > this.maxRounds) {
+                        this.endGame();
+                        return;
+                    }
+                }
+                this.startTurn();
+            }
+
+            endGame() {
+                this.gameOver = true;
+                this.addBattleLog('system', '🏁 遊戲結束！進行最終結算...');
+                
+                const finalResults = this.players.map(p => {
+                    const finalScore = this.calculateFinalScore(p.id);
+                    const mainBlessings = p.faction ? this.calculateBlessings(p.faction) : 0;
+                    return { ...p, finalScore, mainBlessings };
+                });
+
+                finalResults.sort((a, b) => {
+                    if (b.finalScore !== a.finalScore) {
+                        return b.finalScore - a.finalScore;
+                    }
+                    return b.mainBlessings - a.mainBlessings;
+                });
+
+                const topScore = finalResults[0].finalScore;
+                const topMainBlessings = finalResults[0].mainBlessings;
+                const winners = finalResults.filter(p => 
+                    p.finalScore === topScore && p.mainBlessings === topMainBlessings
+                );
+
+                let winText;
+                if (winners.length > 1) {
+                    const winnerNames = winners.map(w => w.name).join('、');
+                    winText = `🤝 共同冠軍：${winnerNames}！`;
+                } else {
+                    winText = `🎉 冠軍：${winners[0].name}！`;
+                }
+
+                this.showGameOver(winText, finalResults);
+            }
+
+            addBattleLog(playerId, message) {
+                const timestamp = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const logClass = playerId === 'system' ? 'log-system' : 
+                                playerId === 'timeline' ? 'log-timeline' :
+                                `log-player${playerId + 1}`;
+                this.battleLog.push({ timestamp, playerId, message, class: logClass });
+                this.renderBattleLog();
+            }
+
+            renderBattleLog() {
+                const logContent = document.getElementById('battle-log-content');
+                const recentLogs = this.battleLog.slice(-80);
+                logContent.innerHTML = recentLogs.map(log => `
+                    <div class="log-entry ${log.class}">
+                        <div class="log-time">${log.timestamp}</div>
+                        ${log.message}
+                    </div>
+                `).join('');
+                logContent.scrollTop = logContent.scrollHeight;
+            }
+
+            showDamageEffect(slotIndex, text) {
+                const battlefield = document.getElementById('battlefield');
+                const slots = battlefield.children;
+                if (slots[slotIndex]) this.showDamageEffectOnElement(slots[slotIndex], text);
+            }
+
+            showDamageEffectOnElement(element, text) {
+                const damageEl = document.createElement('div');
+                damageEl.className = 'damage-text';
+                damageEl.textContent = text;
+                damageEl.style.color = '#ff6b6b';
+                const rect = element.getBoundingClientRect();
+                damageEl.style.left = (rect.left + rect.width / 2 - 15) + 'px';
+                damageEl.style.top = (rect.top + rect.height / 2) + 'px';
+                damageEl.style.position = 'fixed';
+                document.body.appendChild(damageEl);
+                setTimeout(() => damageEl.remove(), 1000);
+            }
+
+            showTurnIndicator(text) {
+                const indicator = document.getElementById('turn-indicator');
+                indicator.textContent = text;
+                indicator.classList.remove('show');
+                void indicator.offsetWidth;
+                indicator.classList.add('show');
+            }
+
+            showGameOver(text, sortedPlayers = null) {
+                const gameOverEl = document.getElementById('game-over');
+                
+                const finalResults = sortedPlayers || this.players.map(p => {
+                    const finalScore = this.calculateFinalScore(p.id);
+                    const mainBlessings = p.faction ? this.calculateBlessings(p.faction) : 0;
+                    return { ...p, finalScore, mainBlessings };
+                }).sort((a, b) => {
+                    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+                    return b.mainBlessings - a.mainBlessings;
+                });
+                
+                const displayResults = finalResults.map(p => {
+                    if (!p.faction) return { ...p };
+                    
+                    const mainFaction = FACTIONS[p.faction];
+                    const sub1Faction = FACTIONS[p.subFactions[0]];
+                    const sub2Faction = FACTIONS[p.subFactions[1]];
+                    const sub1Blessings = this.calculateBlessings(p.subFactions[0]);
+                    const sub2Blessings = this.calculateBlessings(p.subFactions[1]);
+                    
+                    return { 
+                        ...p, 
+                        mainFaction, sub1Faction, sub2Faction,
+                        sub1Blessings, sub2Blessings
+                    };
+                });
+                
+                let currentRank = 1;
+                const ranking = displayResults.map((p, i) => {
+                    if (i > 0) {
+                        const prev = displayResults[i - 1];
+                        if (p.finalScore !== prev.finalScore || p.mainBlessings !== prev.mainBlessings) {
+                            currentRank = i + 1;
+                        }
+                    }
+
+                    if (!p.faction) {
+                        return `${currentRank}. ${p.name}: ${p.finalScore}點祝福 (未選擇勢力)`;
+                    }
+                    
+                    return `${currentRank}. ${p.name} (${p.mainFaction.icon}${p.mainFaction.name}): <strong style="color:#51cf66;">${p.finalScore}點祝福</strong><br>
+                    <span style="font-size:0.8em; color:#ccc;">(主${p.mainFaction.icon}祝福${p.mainBlessings}×2=${p.mainBlessings * 2} + 副${p.sub1Faction.icon}祝福${p.sub1Blessings} + 副${p.sub2Faction.icon}祝福${p.sub2Blessings})</span>`;
+                }).join('<br><br>');
+                
+                gameOverEl.innerHTML = `
+                    ${text}
+                    <div style="font-size: 0.6em; margin-top: 20px; line-height: 1.4;">
+                        <strong>🏆 最終排名：</strong><br><br>${ranking}
+                    </div>
+                    <div style="font-size: 0.5em; margin-top: 15px; opacity: 0.8; color: #a78bfa;">
+                        💡 同分規則：總分相同時主勢力高者獲勝，完全相同則共享勝利
+                    </div>
+                    <div style="font-size: 0.5em; margin-top: 15px; opacity: 0.6;">
+                        點擊棄牌區下方「重新開始 🔄」按鈕開始新遊戲
+                    </div>
+                `;
+                gameOverEl.classList.add('show');
+            }
+
+            setupControls() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Escape') { 
+                        this.selectedCardIndex = null; 
+                        this.updateUI(); 
+                    }
+                });
+            }
+
+            handleCardClick(cardIndex) {
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                if (currentPlayerId !== 0 || this.gameOver || !this.gameStarted) return;
+                const player = this.players[0];
+                const card = player.hand[cardIndex];
+                if (!card) return;
+                
+                let activeSkill = card.skill;
+                if (card.isDual) {
+                    const currentOption = card.currentFace === 1 ? card.option1 : card.option2;
+                    activeSkill = currentOption.skill;
+                }
+                
+                let canPlay = false;
+                if (activeSkill === 'royal') {
+                    canPlay = this.battlefield.some(slot => slot && slot.card.skill !== 'noble' && !slot.card.isCrowned);
+                    if (!canPlay) {
+                        this.addBattleLog(0, '👑 王族需要場上有非貴族角色才能使用！');
+                        return;
+                    }
+                } else if (activeSkill === 'control') {
+                    canPlay = this.battlefield.some(slot => slot && slot.card.skill !== 'control');
+                    if (!canPlay) {
+                        this.addBattleLog(0, '🧶 傀儡師需要場上有非傀儡師角色才能使用！');
+                        return;
+                    }
+                } else {
+                    canPlay = this.battlefield.some(slot => slot === null);
+                    if (!canPlay) {
+                        this.addBattleLog(0, '戰場已滿，無法再出牌！');
+                        return;
+                    }
+                }
+
+                this.selectedCardIndex = cardIndex;
+                this.updateUI();
+            }
+
+            handleSlotClick(slotIndex) {
+                if (this.isSelectingTarget) {
+                    if (this.validTargets.includes(slotIndex)) {
+                        this.isSelectingTarget = false;
+                        this.validTargets = [];
+                        this.hideSkillInstruction();
+                        
+                        const resolve = this.targetSelectionResolve;
+                        this.targetSelectionResolve = null;
+                        this.updateUI();
+                        
+                        resolve(slotIndex);
+                    } else {
+                        this.addBattleLog('system', '❌ 請選擇青藍色高亮的有效目標！');
+                    }
+                    return;
+                }
+
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                if (currentPlayerId !== 0 || this.gameOver || !this.gameStarted) return;
+                const slot = this.battlefield[slotIndex];
+
+                if (this.selectedCardIndex === null) {
+                    this.addBattleLog(0, '請先點擊一張手牌，再選擇要放置的位置');
+                    return;
+                }
+
+                const player = this.players[0];
+                const card = player.hand[this.selectedCardIndex];
+                
+                let activeSkill = card.skill;
+                if (card.isDual) {
+                    const currentOption = card.currentFace === 1 ? card.option1 : card.option2;
+                    activeSkill = currentOption.skill;
+                }
+
+                if (activeSkill === 'royal') {
+                    if (!slot) {
+                        this.addBattleLog(0, '👑 王族必須加冕場上已有的角色！請點擊高亮的卡牌');
+                        return;
+                    }
+                    if (slot.card.skill === 'noble' || slot.card.isCrowned) {
+                        this.addBattleLog(0, '👑 不能對貴族或已被加冕的角色使用！');
+                        return;
+                    }
+                } else if (activeSkill === 'control') {
+                    if (!slot) {
+                        this.addBattleLog(0, '🧶 傀儡師必須替換場上已有的角色！請點擊高亮的卡牌');
+                        return;
+                    }
+                    if (slot.card.skill === 'control') {
+                        this.addBattleLog(0, '🧶 不能對傀儡師使用替換！');
+                        return;
+                    }
+                } else {
+                    if (slot !== null) {
+                        this.addBattleLog(0, '該位置已有卡牌！請選擇空格子');
+                        return;
+                    }
+                }
+
+                this.playCardToSlot(0, this.selectedCardIndex, slotIndex);
+            }
+
+            renderDiscardPile() {
+                const discardEl = document.getElementById('discard-pile');
+                const countEl = document.getElementById('discard-count');
+                
+                countEl.textContent = `${this.discardPile.length} 張`;
+                
+                if (this.discardPile.length > 0) {
+                    const topCard = this.discardPile[this.discardPile.length - 1];
+                    const visualFaction = topCard.nativeFaction || topCard.faction;
+                    const skillType = topCard.type && SKILL_TYPE[topCard.type] ? SKILL_TYPE[topCard.type] : {icon: '?'};
+                    
+                    discardEl.innerHTML = `
+                        <div class="card discard-card ${visualFaction}">
+                            <div class="card-tier-badge tier-${topCard.tier}">${topCard.tier}</div>
+                            <div class="card-type-icon">${skillType.icon}</div>
+                            <div class="card-emoji">${topCard.emoji}</div>
+                            <div class="card-name">${topCard.name}</div>
+                        </div>
+                    `;
+                    discardEl.classList.remove('empty');
+                } else {
+                    discardEl.innerHTML = '';
+                    discardEl.classList.add('empty');
+                }
+            }
+
+            updateUI() {
+                this.players.forEach((player, index) => {
+                    document.getElementById(`player${index + 1}-deck`).textContent = player.hand.length;
+                    document.getElementById(`player${index + 1}-score`).textContent = this.calculateFinalScore(index);
+                    document.getElementById(`player${index + 1}-breakdown`).textContent = this.getScoreBreakdown(index);
+
+                    const playerCard = document.getElementById(`player${index + 1}-card`);
+                    const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                    if (player.id === currentPlayerId && this.gameStarted) {
+                        playerCard.classList.add('active-turn');
+                    } else {
+                        playerCard.classList.remove('active-turn');
+                    }
+                });
+
+                this.updateFactionBadges();
+                this.updateLuckTowerDisplay();
+                this.renderPlayerHand();
+                this.renderAIHands();
+                this.renderBattlefield();
+                this.renderDiscardPile();
+            }
+
+            // ✅ 修復：完整恢復玩家手牌渲染功能
+            renderPlayerHand() {
+                const handContainer = document.getElementById('player1-hand');
+                const player = this.players[0];
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                
+                handContainer.innerHTML = player.hand.map((card, index) => {
+                    const visualFaction = card.nativeFaction || card.faction;
+                    let activeSkill = card.skill;
+                    if (card.isDual) {
+                        const currentOption = card.currentFace === 1 ? card.option1 : card.option2;
+                        activeSkill = currentOption.skill;
+                    }
+
+                    let canPlay = false;
+                    if (currentPlayerId === 0 && this.gameStarted && !this.gameOver) {
+                        if (activeSkill === 'royal') {
+                            canPlay = this.battlefield.some(slot => slot && slot.card.skill !== 'noble' && !slot.card.isCrowned);
+                        } else if (activeSkill === 'control') {
+                            canPlay = this.battlefield.some(slot => slot && slot.card.skill !== 'control');
+                        } else {
+                            canPlay = this.battlefield.some(slot => slot === null);
+                        }
+                    }
+
+                    const isSelected = this.selectedCardIndex === index;
+                    
+                    let displayEmoji = card.emoji;
+                    let displayName = card.name;
+                    let skillDesc = '未知技能';
+                    let skillType = {icon: '?', name: '未知類型'};
+                    
+                    if (card.isDual) {
+                        const currentOption = card.currentFace === 1 ? card.option1 : card.option2;
+                        displayEmoji = currentOption.emoji;
+                        displayName = currentOption.name;
+                        skillDesc = `🔄 雙面卡 (當前:${currentOption.desc})`;
+                        skillType = SKILL_TYPE[currentOption.type];
+                    } else {
+                        const charTemplate = this.selectedCharacters.find(c => c.name === card.name);
+                        if (charTemplate) {
+                            skillDesc = charTemplate.desc;
+                            skillType = SKILL_TYPE[charTemplate.type];
+                        }
+                    }
+                    
+                    return `
+                        <div class="card ${visualFaction} ${canPlay ? 'playable' : ''} ${isSelected ? 'selected' : ''}" 
+                            onclick="game.handleCardClick(${index})"
+                            title="${skillDesc}">
+                            <div class="card-tier-badge tier-${card.tier}">${card.tier}</div>
+                            <div class="card-type-icon">${skillType.icon}</div>
+                            <div class="card-emoji">${displayEmoji}</div>
+                            <div class="card-name">${displayName}</div>
+                            ${card.isDual ? `<div class="card-flip-btn" onclick="event.stopPropagation(); game.flipPCard(${index})">🔄</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderAIHands() {
+                for (let i = 1; i < 4; i++) {
+                    const handContainer = document.getElementById(`player${i + 1}-hand`);
+                    const player = this.players[i];
+                    handContainer.innerHTML = player.hand.map(() => `<div class="ai-card-back">🎴</div>`).join('');
+                }
+            }
+
+            renderBattlefield() {
+                const battlefield = document.getElementById('battlefield');
+                battlefield.innerHTML = '';
+                
+                const currentPlayerId = this.playOrder[this.currentPlayerIndex];
+                const isPlayerTurn = currentPlayerId === 0 && this.gameStarted && !this.gameOver;
+                let selectedSkill = null;
+                
+                if (isPlayerTurn && this.selectedCardIndex !== null && !this.isSelectingTarget) {
+                    const selectedCard = this.players[0].hand[this.selectedCardIndex];
+                    if (selectedCard) {
+                        selectedSkill = selectedCard.skill;
+                        if (selectedCard.isDual) {
+                            const option = selectedCard.currentFace === 1 ? selectedCard.option1 : selectedCard.option2;
+                            selectedSkill = option.skill;
+                        }
+                    }
+                }
+
+                for (let i = 0; i < 16; i++) {
+                    const slot = this.battlefield[i];
+                    const slotEl = document.createElement('div');
+                    let className = 'grid-slot';
+                    
+                    if (this.isSelectingTarget) {
+                        if (this.validTargets.includes(i)) {
+                            className += ' skill-target';
+                        } else {
+                            className += ' invalid-target';
+                        }
+                    } else {
+                        let isValidTarget = false;
+                        if (isPlayerTurn && selectedSkill) {
+                            if (selectedSkill === 'royal') {
+                                isValidTarget = slot && slot.card.skill !== 'noble' && !slot.card.isCrowned;
+                            } else if (selectedSkill === 'control') {
+                                isValidTarget = slot && slot.card.skill !== 'control';
+                            } else {
+                                isValidTarget = !slot;
+                            }
+                        }
+
+                        if (slot) {
+                            const visualFaction = slot.card.nativeFaction || slot.card.faction; 
+                            className += ` slot-${slot.card.faction}`;
+                            
+                            if (slot.attachedRoyal) {
+                                className += ' has-royal-attached';
+                            }
+                            if (slot.attachedPriest) {
+                                className += ' has-priest-attached';
+                            }
+                            if (isPlayerTurn && selectedSkill) {
+                                if (selectedSkill === 'royal' && isValidTarget) {
+                                    className += ' royal-target';
+                                } else if (selectedSkill === 'control' && isValidTarget) {
+                                    className += ' control-target';
+                                } else if ((selectedSkill === 'royal' || selectedSkill === 'control') && !isValidTarget) {
+                                    className += ' invalid-target';
+                                }
+                            }
+                        } else {
+                            if (isPlayerTurn && selectedSkill) {
+                                if (selectedSkill !== 'royal' && selectedSkill !== 'control' && isValidTarget) {
+                                    className += ' highlighted empty';
+                                } else if (selectedSkill === 'royal' || selectedSkill === 'control') {
+                                    className += ' invalid-target empty';
+                                } else {
+                                    className += ' empty';
+                                }
+                            } else {
+                                className += ' empty';
+                            }
+                        }
+                    }
+
+                    if (slot) {
+                        let skillDesc = '未知技能';
+                        let skillType = { icon: '?', name: '未知類型' };
+                        
+                        if (slot.card.isCrowned || slot.card.skill === 'noble') {
+                            skillType = SKILL_TYPE['RECURRING'];
+                            skillDesc = '【官僚】為卡牌勢力+(5-N)運氣,N=當前事件線貴族數';
+                        } else if (slot.card.type && SKILL_TYPE[slot.card.type]) {
+                            skillType = SKILL_TYPE[slot.card.type];
+                            skillDesc = slot.card.desc || '技能效果';
+                        } else {
+                            const charTemplate = this.selectedCharacters.find(c => {
+                                if (c.isDual) {
+                                    return c.option1.name === slot.card.name || c.option2.name === slot.card.name;
+                                }
+                                return c.name === slot.card.name;
+                            });
+
+                            if (charTemplate) {
+                                if (charTemplate.isDual) {
+                                    const opt = charTemplate.option1.name === slot.card.name ? charTemplate.option1 : charTemplate.option2;
+                                    skillDesc = opt.desc;
+                                    skillType = SKILL_TYPE[opt.type];
+                                } else {
+                                    skillDesc = charTemplate.desc;
+                                    skillType = SKILL_TYPE[charTemplate.type];
+                                }
+                            }
+                        }
+
+                        let cardHTML = '';
+                        if (slot.attachedPriest) {
+                            const priest = slot.attachedPriest;
+                            const priestSkillType = SKILL_TYPE['ONE_TIME'] || {icon: '🔑'};
+                            cardHTML += `
+                                <div class="card ${priest.nativeFaction || priest.faction} priest-card-behind" title="祭司感化: ${priest.name}">
+                                    <div class="card-tier-badge tier-${priest.tier}">${priest.tier}</div>
+                                    <div class="card-type-icon" title="一次性技能">${priestSkillType.icon}</div>
+                                    <div class="card-emoji">${priest.emoji}</div>
+                                    <div class="card-name">${priest.name}</div>
+                                </div>
+                            `;
+                        }                        
+                        if (slot.attachedRoyal) {
+                            const royal = slot.attachedRoyal;
+                            const royalSkillType = SKILL_TYPE['ON_PLAY'] || {icon: '⚡'};
+                            cardHTML += `
+                                <div class="card ${royal.faction} royal-card-behind" title="王族: ${royal.name}">
+                                    <div class="card-tier-badge tier-${royal.tier}">${royal.tier}</div>
+                                    <div class="card-type-icon" title="打出技能">${royalSkillType.icon}</div>
+                                    <div class="card-emoji">${royal.emoji}</div>
+                                    <div class="card-name">${royal.name}</div>
+                                </div>
+                            `;
+                        }
+                        
+                        const visualFaction = slot.card.nativeFaction || slot.card.faction;
+                        cardHTML += `
+                            <div class="card ${visualFaction} main-card-front" title="${skillType.icon} ${skillDesc}" style="cursor: default;">
+                                <div class="card-tier-badge tier-${slot.card.tier}">${slot.card.tier}</div>
+                                <div class="card-type-icon" title="${skillType.name}">${skillType.icon}</div>
+                                <div class="card-emoji">${slot.card.emoji}</div>
+                                <div class="card-name">${slot.card.name}</div>
+                            </div>
+                        `;
+                        
+                        slotEl.innerHTML = cardHTML;
+                    }
+                    
+                    slotEl.className = className;
+                    slotEl.onclick = () => this.handleSlotClick(i);
+                    battlefield.appendChild(slotEl);
+                }
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('game-over').classList.remove('show');
+            document.getElementById('draft-overlay').style.display = 'none';
+            document.getElementById('setup-overlay').style.display = 'flex';
+            
+            Object.values(FACTIONS).forEach(f => { 
+                f.position = 1; 
+                f.megaBlessings = 0; 
+            });
+            
+            selectedOrder = 1;
+            selectedSet = null;
+            renderSetOptions();
+            
+            const btns = document.querySelectorAll('.order-btn');
+            btns.forEach((btn, i) => {
+                if (i === 0) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+            
+            updateConfirmButton();
+            game = new Game();
+        }
+
+    </script>
+</body>
+</html>
