@@ -1383,8 +1383,8 @@
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
-            width: 90%;
-            max-width: 1000px;
+            width: min(90%, 1000px);
+            max-width: 90vw;
         }
 
         .setup-subtitle {
@@ -1668,7 +1668,10 @@
             display: none; 
             border: 3px solid #ffd43b; 
             box-shadow: 0 0 40px rgba(255, 212, 59, 0.5); 
-            min-width: 400px;
+            min-width: min(400px, 90vw);
+            width: min(600px, 90vw);
+            left: 50%;
+            transform: translateX(-50%);
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -2060,32 +2063,64 @@
             }
         }
         /* ====================================================
-           📱 手機縮放與響應式修復
-           ==================================================== */
-        
+        📱 手機縮放與響應式修復
+        ==================================================== */
+
         /* 🔧 允許觸控縮放手勢 */
         html {
             -webkit-text-size-adjust: 100%;
             touch-action: pan-x pan-y pinch-zoom;
         }
-        
+
         /* 🔧 防止水平溢出導致縮放鎖定 */
         body {
             overflow-x: hidden;
             overflow-y: auto;
         }
-        
+
         /* 📱 手機響應式佈局 */
         @media (max-width: 768px) {
             
-            /* 🎯 關鍵修復：移除固定寬度限制 */
+            /* ✅ 將固定寬度改為彈性寬度 */
             .player-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                max-width: 100% !important;
-                flex-shrink: 0 !important;
+                width: 100%;           /* 改為彈性寬度 */
+                min-width: 280px;      /* 設定合理最小寬度 */
+                max-width: 482px;      /* 保持原始最大寬度 */
             }
-            
+            /* 針對手機電腦模式 (980px-1024px) 的專用設計 */
+            @media (max-width: 1024px) and (min-width: 769px) {
+                .main-container {
+                    grid-template-columns: 280px 1fr 280px;  /* 縮小側欄 */
+                    gap: 10px;                               /* 減少間距 */
+                }
+                
+                .player-card {
+                    min-width: 200px;  /* 進一步縮小最小寬度 */
+                }
+                
+                .battlefield {
+                    grid-template-columns: repeat(4, minmax(70px, 90px));
+                    grid-template-rows: repeat(4, minmax(70px, 90px));
+                    gap: 6px;
+                }
+            }
+
+            /* 極窄螢幕（980px以下）改為單欄佈局 */
+            @media (max-width: 980px) {
+                .main-container {
+                    grid-template-columns: 1fr;  /* 改為單欄 */
+                }
+                
+                .top-players, .bottom-players {
+                    grid-template-columns: 1fr;  /* 玩家卡片上下堆疊 */
+                }
+                
+                .luck-tower-container, .right-panel {
+                    position: static;      /* 取消固定定位 */
+                    max-height: 300px;     /* 限制高度 */
+                }
+            }
+           
             /* 整體佈局改為單欄 */
             .main-container {
                 grid-template-columns: 1fr !important;
@@ -2145,7 +2180,7 @@
                 margin-bottom: 8px !important;
             }
         }
-        
+
         /* 📱 超小螢幕優化（iPhone SE 等） */
         @media (max-width: 375px) {
             .battlefield {
@@ -2162,7 +2197,16 @@
                 font-size: 0.5em !important;
             }
         }
+        /* 針對偵測到的手機電腦模式進行特殊優化 */
+        .mobile-desktop-mode .main-container {
+            grid-template-columns: 1fr;
+            max-width: 95vw;
+        }
 
+        .mobile-desktop-mode .player-card {
+            min-width: 250px;
+            font-size: 0.9em;
+}
     </style>
 </head>
 <body>
@@ -6243,6 +6287,28 @@ const GAME_SETS = [
             initTutorialState(); 
             initBGM();   // ← 新增這行
         });
+
+        // 偵測手機電腦模式並自動調整
+        function detectMobileDesktopMode() {
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const viewportWidth = window.innerWidth;
+            const screenWidth = screen.width;
+            
+            // 如果是行動裝置但viewport寬度異常大，判定為電腦模式
+            if (isMobile && viewportWidth > 768 && viewportWidth > screenWidth * 2) {
+                document.body.classList.add('mobile-desktop-mode');
+                
+                // 自動顯示提示
+                if (game) {
+                    game.addBattleLog('system', '🔍 偵測到手機電腦模式，已自動調整佈局以獲得最佳體驗');
+                }
+            }
+        }
+
+        // 頁面載入時執行偵測
+        window.addEventListener('load', detectMobileDesktopMode);
+        window.addEventListener('resize', detectMobileDesktopMode);
+
     </script>
     <audio id="bgm-audio" preload="auto" loop>
     <source src="audio/六十階榮耀.mp3" type="audio/mpeg">
