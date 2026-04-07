@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=1400, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">
     <title>KINTURE勤能改運 - 單機試玩版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2197,16 +2197,7 @@
                 font-size: 0.5em !important;
             }
         }
-        /* 針對偵測到的手機電腦模式進行特殊優化 */
-        .mobile-desktop-mode .main-container {
-            grid-template-columns: 1fr;
-            max-width: 95vw;
-        }
 
-        .mobile-desktop-mode .player-card {
-            min-width: 250px;
-            font-size: 0.9em;
-}
     </style>
 </head>
 <body>
@@ -6292,18 +6283,26 @@ const GAME_SETS = [
         function detectMobileDesktopMode() {
             const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const viewportWidth = window.innerWidth;
-            const screenWidth = screen.width;
             
-            // 如果是行動裝置但viewport寬度異常大，判定為電腦模式
-            if (isMobile && viewportWidth > 768 && viewportWidth > screenWidth * 2) {
+            // 偵測手機電腦模式，但不再套用破壞比例的 CSS
+            if (isMobile && viewportWidth > 768) {
+                // 🎯 只添加 class 用於識別，不再有對應的 CSS 樣式
                 document.body.classList.add('mobile-desktop-mode');
                 
-                // 自動顯示提示
-                if (game) {
-                    game.addBattleLog('system', '🔍 偵測到手機電腦模式，已自動調整佈局以獲得最佳體驗');
+                // 🔧 可選：動態調整 viewport 讓整體畫面適合螢幕
+                const viewportMeta = document.querySelector('meta[name="viewport"]');
+                if (viewportMeta) {
+                    // 設定固定寬度，讓瀏覽器自動縮放至適合大小
+                    viewportMeta.setAttribute('content', 'width=1400, initial-scale=0.3, user-scalable=yes');
+                }
+                
+                // 提供友善提示
+                if (game && !window.desktopModeNotified) {
+                    game.addBattleLog('system', '🖥️ 偵測到電腦版模式，已保持原始比例，可雙指縮放調整大小');
+                    window.desktopModeNotified = true;
                 }
             }
-        }
+}
 
         // 頁面載入時執行偵測
         window.addEventListener('load', detectMobileDesktopMode);
