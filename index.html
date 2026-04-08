@@ -2,27 +2,27 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1400, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=1400, initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
     <title>KINTURE勤能改運 - 單機試玩版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            /* 背景設定：半透明遮罩 + 圖片 */
-            background: 
-                /* linear-gradient(rgba(0, 0, 0, 0.), rgba(0, 0, 0, 0.7)), 漸層遮罩 */
-                url(icons/chars/tablea.png);                                    /* 你的圖片檔案 */
-            
-            background-size: cover;          /* 圖片填滿整個螢幕 */
-            background-position: center;     /* 圖片置中對齊 */
-            background-repeat: no-repeat;    /* 不重複顯示 */
-            background-attachment: fixed;    /* 視差效果：滾動時背景固定 */
-            background-color: #1a1a1a;      /* 備用底色（圖片載入失敗時顯示）*/
+            background: url(icons/chars/tablea.png);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #1a1a1a;
             min-height: 90vh;
             overflow-y: auto;
             color: white;
             padding-bottom: 50px;
+            
+            /* 🔒 新增：鎖定最小寬度，防止佈局壓縮 */
+            min-width: 1400px;
+            overflow-x: auto;  /* 允許橫向滾動 */
         }
 
         ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -37,12 +37,15 @@
 
         .main-container {
             display: grid;
-            grid-template-columns: 340px 1fr 340px; /* 左右對稱，確保中間區域居中 */
+            grid-template-columns: 340px 1fr 340px;
             gap: 15px;
             padding: 15px;
             max-width: 1800px;
             margin: 0 auto;
             min-height: 90vh;
+            
+            /* 🔒 新增：確保主容器不會被壓縮 */
+            min-width: 1400px;
         }
 
         .luck-tower-container {
@@ -2560,33 +2563,38 @@
 
         // 🎨 應用縮放效果（精準目標縮放，避免彈出視窗跑位）
         function applyZoom() {
+            // 🛡️ 手機設備跳過 JavaScript 縮放，避免與瀏覽器縮放衝突
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // 只更新顯示數值，不執行實際縮放
+                const display = document.getElementById('zoom-level-display');
+                if (display) {
+                    display.textContent = '手機版';
+                }
+                return;
+            }
+
             // 📊 更新顯示數值
             const display = document.getElementById('zoom-level-display');
             if (display) {
                 display.textContent = Math.round(currentZoom * 100) + '%';
             }
             
-            // 🎯 關鍵改進：只縮放主容器，不影響 fixed 定位的彈出視窗
+            // 🎯 桌面版正常縮放邏輯
             const mainContainer = document.querySelector('.main-container');
             if (mainContainer) {
                 try {
-                    // 優先使用 zoom 屬性（現代瀏覽器）
                     mainContainer.style.zoom = currentZoom;
-                    
-                    // 🛡️ 備用方案：transform scale（相容性保障）
                     if (!mainContainer.style.zoom || mainContainer.style.zoom === '') {
                         mainContainer.style.transformOrigin = 'top center';
                         mainContainer.style.transform = `scale(${currentZoom})`;
                     }
                 } catch (error) {
-                    console.warn('縮放應用失敗:', error);
-                    // 最終備用：使用 transform
                     mainContainer.style.transformOrigin = 'top center';
                     mainContainer.style.transform = `scale(${currentZoom})`;
                 }
             }
             
-            // 💾 儲存設定到 localStorage
+            // 💾 儲存設定
             try {
                 localStorage.setItem('luckGameZoomLevel', currentZoom.toString());
             } catch (error) {
