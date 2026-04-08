@@ -452,6 +452,118 @@
             padding: 20px;
             width: 100%;
         }
+        /* 🔍 頁面縮放控制面板（完美貼合 Grid 佈局） */
+        .zoom-controls-container {
+            /* 🎯 關鍵：不使用 grid-column，讓 Grid 自然分配到左側 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            
+            /* 🎨 視覺設計 */
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 16px 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            
+            /* 📐 尺寸控制 */
+            min-width: 110px;
+            max-width: 130px;
+            height: fit-content;
+        }
+
+        .zoom-title {
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #a78bfa;
+            text-align: center;
+            margin-bottom: 4px;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+            padding-bottom: 4px;
+            width: 100%;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #a78bfa;
+            color: white;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(167, 139, 250, 0.4);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+        }
+
+        .zoom-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* 🎨 按鈕特殊配色 */
+        .zoom-btn.zoom-in {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.2), rgba(56, 178, 172, 0.3));
+            border-color: #51cf66;
+        }
+
+        .zoom-btn.zoom-in:hover {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.4), rgba(56, 178, 172, 0.5));
+            box-shadow: 0 4px 12px rgba(81, 207, 102, 0.4);
+        }
+
+        .zoom-btn.zoom-out {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(231, 76, 60, 0.3));
+            border-color: #ff6b6b;
+        }
+
+        .zoom-btn.zoom-out:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.4), rgba(231, 76, 60, 0.5));
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .zoom-btn.zoom-reset {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.2), rgba(250, 176, 5, 0.3));
+            border-color: #ffd43b;
+            margin-top: 4px;
+        }
+
+        .zoom-btn.zoom-reset:hover {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.4), rgba(250, 176, 5, 0.5));
+            box-shadow: 0 4px 12px rgba(255, 212, 59, 0.4);
+        }
+
+        .zoom-level {
+            font-weight: bold;
+            color: #ffd43b;
+            font-size: 1.1em;
+            padding: 6px 0;
+            text-shadow: 0 0 8px rgba(255, 212, 59, 0.6);
+        }
+
+        .zoom-hint {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        /* 📱 響應式設計：手機版隱藏縮放控制 */
+        @media (max-width: 980px) {
+            .zoom-controls-container {
+                display: none !important;
+            }
+        }
+
         .bottom-players { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .round-display {
@@ -2438,9 +2550,24 @@
                 </div>
             </div>
             <div class="middle-area">
+                <div class="zoom-controls-container">
+                    <div class="zoom-title">🔍 畫面縮放</div>
+                    <button class="zoom-btn zoom-in" onclick="changeZoom(0.1)">
+                        ➕ 放大
+                    </button>
+                    <div class="zoom-level" id="zoom-level-display">100%</div>
+                    <button class="zoom-btn zoom-out" onclick="changeZoom(-0.1)">
+                        ➖ 縮小
+                    </button>
+                    <button class="zoom-btn zoom-reset" onclick="resetZoom()">
+                        🔄 重置
+                    </button>
+                    <div class="zoom-hint">50% - 150%</div>
+                </div>
+
+                <!-- 原有的戰場和棄牌區保持不變 -->
                 <div class="battlefield" id="battlefield"></div>
                 <div class="discard-pile-container">
-                    <!-- 回合數看板移到棄牌區最上方 -->
                     <div class="round-display" id="round-display">回合 1 / 8</div>
                     <div class="discard-title">🗑️ 棄牌堆</div>
                     <div class="discard-pile" id="discard-pile"></div>
@@ -2448,7 +2575,6 @@
                     <button class="btn-reset" onclick="resetGame()">重新開始 🔄</button>
                     <button id="sound-toggle-btn" class="btn-sound active" onclick="toggleSound()">🔊 音效開</button>
                     <button id="bgm-toggle-btn" class="btn-bgm stopped" onclick="toggleBGM()">🎵 BGM關</button>
-
                     <div class="speed-controls">
                         <button class="speed-btn active" onclick="setGameSpeed(1)">×1</button>
                         <button class="speed-btn" onclick="setGameSpeed(2)">×2</button>
@@ -2456,6 +2582,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="bottom-players">
                 <div class="player-card player1-theme" id="player1-card">
                     <div class="player-header">
@@ -2564,6 +2691,107 @@
     <div class="game-over" id="game-over"></div>
 
     <script>
+        // ====== 🔍 頁面縮放系統 ======
+        let currentZoom = 1.0;
+        const MIN_ZOOM = 0.5;
+        const MAX_ZOOM = 1.5;
+        const ZOOM_STEP = 0.1;
+
+        // 🎯 主要縮放函數
+        function changeZoom(delta) {
+            const newZoom = currentZoom + delta;
+            currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+            applyZoom();
+            
+            // 🎮 遊戲日誌記錄
+            if (game) {
+                const percentage = Math.round(currentZoom * 100);
+                game.addBattleLog('system', `🔍 頁面縮放調整為 ${percentage}%`);
+            }
+        }
+
+        // 🔄 重置縮放
+        function resetZoom() {
+            currentZoom = 1.0;
+            applyZoom();
+            
+            if (game) {
+                game.addBattleLog('system', '🔍 頁面縮放已重置為 100%');
+            }
+        }
+
+        // 🎨 應用縮放效果（精準目標縮放，避免彈出視窗跑位）
+        function applyZoom() {
+            // 📊 更新顯示數值
+            const display = document.getElementById('zoom-level-display');
+            if (display) {
+                display.textContent = Math.round(currentZoom * 100) + '%';
+            }
+            
+            // 🎯 關鍵改進：只縮放主容器，不影響 fixed 定位的彈出視窗
+            const mainContainer = document.querySelector('.main-container');
+            if (mainContainer) {
+                try {
+                    // 優先使用 zoom 屬性（現代瀏覽器）
+                    mainContainer.style.zoom = currentZoom;
+                    
+                    // 🛡️ 備用方案：transform scale（相容性保障）
+                    if (!mainContainer.style.zoom || mainContainer.style.zoom === '') {
+                        mainContainer.style.transformOrigin = 'top center';
+                        mainContainer.style.transform = `scale(${currentZoom})`;
+                    }
+                } catch (error) {
+                    console.warn('縮放應用失敗:', error);
+                    // 最終備用：使用 transform
+                    mainContainer.style.transformOrigin = 'top center';
+                    mainContainer.style.transform = `scale(${currentZoom})`;
+                }
+            }
+            
+            // 💾 儲存設定到 localStorage
+            try {
+                localStorage.setItem('luckGameZoomLevel', currentZoom.toString());
+            } catch (error) {
+                console.warn('無法儲存縮放設定:', error);
+            }
+        }
+
+        // 🔄 載入儲存的縮放設定
+        function loadZoomSettings() {
+            try {
+                const savedZoom = localStorage.getItem('luckGameZoomLevel');
+                if (savedZoom !== null) {
+                    const parsedZoom = parseFloat(savedZoom);
+                    if (!isNaN(parsedZoom) && parsedZoom >= MIN_ZOOM && parsedZoom <= MAX_ZOOM) {
+                        currentZoom = parsedZoom;
+                    }
+                }
+            } catch (error) {
+                console.warn('無法讀取縮放設定:', error);
+            }
+            applyZoom();
+        }
+
+        // 🎮 鍵盤快捷鍵支援
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Plus：放大
+            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+                e.preventDefault();
+                changeZoom(ZOOM_STEP);
+            }
+            // Ctrl/Cmd + Minus：縮小
+            else if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+                e.preventDefault();
+                changeZoom(-ZOOM_STEP);
+            }
+            // Ctrl/Cmd + 0：重置
+            else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+                e.preventDefault();
+                resetZoom();
+            }
+        });
+        // ====== 🔍 頁面縮放系統結束 ======
+
         let game;
 
         let gameSpeedMultiplier = 1;
@@ -6277,6 +6505,7 @@ const GAME_SETS = [
             initCardBackImages();
             initTutorialState(); 
             initBGM();   // ← 新增這行
+            loadZoomSettings();          // 🔍 新增：載入縮放設定
         });
 
         // 偵測手機電腦模式並自動調整
