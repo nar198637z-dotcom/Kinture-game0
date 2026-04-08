@@ -10,6 +10,8 @@
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             background-color: #1a1a1a;
+            min-height: 90vh;
+            max-height: 90vh;
             max-height: 1000px;            
             overflow-y: auto;
             color: white;
@@ -58,9 +60,9 @@
             grid-template-columns: 340px 1fr 340px;
             gap: 15px;
             padding: 15px;
-            max-width: 1400px;
-            max-height: 1000px;
+            max-width: 1800px;
             margin: 0 auto;
+            min-height: 90vh;
             
             /* 🔒 新增：確保主容器不會被壓縮 */
             min-width: 1400px;
@@ -73,7 +75,7 @@
             border: 2px solid rgba(167, 139, 250, 0.3);
             height: fit-content;
             max-height: 90vh;
-            max-height: 90vh;
+            max-height: 870px;
             display: flex;
             flex-direction: column;
             position: sticky;
@@ -1385,6 +1387,8 @@
             flex-direction: column; 
             border: 2px solid rgba(255, 255, 255, 0.2); 
             min-height: 0;
+            max-height: 90vh;
+            max-height: 870px;
         }
         /* 🎮 戰鬥紀錄滾動控制按鈕 */
         .battle-log-scroll-controls {
@@ -1523,7 +1527,9 @@
 
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            max-height: 40vh;
+            max-height: 400px;
             gap: 15px;
         }
 
