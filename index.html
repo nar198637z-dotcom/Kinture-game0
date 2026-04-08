@@ -61,6 +61,85 @@
             position: sticky;
             top: 15px;
         }
+        /* 🎮 運氣軌道滾動控制按鈕 */
+        .luck-scroll-controls {
+            display: flex;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 0 0 13px 13px;
+            flex-shrink: 0;
+        }
+
+        .luck-scroll-btn {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(124, 58, 237, 0.3));
+            border: 2px solid #a78bfa;
+            color: #ffffff;
+            font-size: 0.85em;
+            font-weight: bold;
+            padding: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .luck-scroll-btn:hover {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.4), rgba(124, 58, 237, 0.5));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.5);
+        }
+
+        .luck-scroll-btn:active {
+            transform: translateY(0) scale(0.95);
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: #000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        }
+
+        /* 🎨 按鈕特殊配色 */
+        .luck-scroll-btn.scroll-up {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.2), rgba(56, 178, 172, 0.3));
+            border-color: #51cf66;
+        }
+
+        .luck-scroll-btn.scroll-up:hover {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.4), rgba(56, 178, 172, 0.5));
+            box-shadow: 0 4px 12px rgba(81, 207, 102, 0.5);
+        }
+
+        .luck-scroll-btn.scroll-down {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.2), rgba(250, 176, 5, 0.3));
+            border-color: #ffd43b;
+        }
+
+        .luck-scroll-btn.scroll-down:hover {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.4), rgba(250, 176, 5, 0.5));
+            box-shadow: 0 4px 12px rgba(255, 212, 59, 0.5);
+        }
+
+        /* 📱 手機版優化：隱藏原生滾動軸，讓畫面更乾淨 */
+        @media (max-width: 1024px) {
+            .luck-tower-wrapper::-webkit-scrollbar {
+                display: none;
+            }
+            .luck-tower-wrapper {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            
+            /* 手機版按鈕稍微放大 */
+            .luck-scroll-btn {
+                padding: 10px 0;
+                font-size: 0.9em;
+            }
+        }
 
         .luck-tower-title {
             text-align: center;
@@ -1305,6 +1384,96 @@
             border: 2px solid rgba(255, 255, 255, 0.2); 
             min-height: 0;
         }
+        /* 🎮 戰鬥紀錄滾動控制按鈕 */
+        .battle-log-scroll-controls {
+            display: flex;
+            gap: 6px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(255, 212, 59, 0.3);
+            border-radius: 0 0 10px 10px;
+            flex-shrink: 0;
+        }
+
+        .battle-log-scroll-btn {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.2), rgba(250, 176, 5, 0.3));
+            border: 2px solid #ffd43b;
+            color: #ffffff;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .battle-log-scroll-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.4), rgba(250, 176, 5, 0.5));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 212, 59, 0.5);
+        }
+
+        .battle-log-scroll-btn:active {
+            transform: translateY(0) scale(0.95);
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: #000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        }
+
+        /* 🎨 按鈕特殊配色 */
+        .battle-log-scroll-btn.scroll-up {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.2), rgba(56, 178, 172, 0.3));
+            border-color: #51cf66;
+        }
+
+        .battle-log-scroll-btn.scroll-up:hover {
+            background: linear-gradient(135deg, rgba(81, 207, 102, 0.4), rgba(56, 178, 172, 0.5));
+            box-shadow: 0 4px 12px rgba(81, 207, 102, 0.5);
+        }
+
+        .battle-log-scroll-btn.scroll-down {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(124, 58, 237, 0.3));
+            border-color: #a78bfa;
+        }
+
+        .battle-log-scroll-btn.scroll-down:hover {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.4), rgba(124, 58, 237, 0.5));
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.5);
+        }
+
+        .battle-log-scroll-btn.scroll-bottom {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.25), rgba(250, 176, 5, 0.35));
+            border-color: #ffd43b;
+        }
+
+        .battle-log-scroll-btn.scroll-bottom:hover {
+            background: linear-gradient(135deg, rgba(255, 212, 59, 0.45), rgba(250, 176, 5, 0.55));
+            box-shadow: 0 4px 12px rgba(255, 212, 59, 0.6);
+        }
+
+        /* 📱 手機版優化：隱藏原生滾動軸 */
+        @media (max-width: 1024px) {
+            .log-content::-webkit-scrollbar {
+                display: none;
+            }
+            .log-content {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            
+            /* 手機版按鈕稍微放大 */
+            .battle-log-scroll-btn {
+                padding: 10px 0;
+                font-size: 0.85em;
+            }
+        }
+
         .log-header { 
             text-align: center; 
             font-weight: bold; 
@@ -1325,6 +1494,7 @@
             font-size: 0.8em; 
             min-height: 0; 
         }
+
         .log-entry { 
             padding: 6px 8px; 
             border-radius: 5px; 
@@ -2321,15 +2491,40 @@
     </div>
     <div class="main-container">
         <div class="luck-tower-container">
-        <div class="luck-tower-title">
-        <img src="icons/chars/clover.png" class="clover-img icon-md" alt="四葉草" 
-            onerror="this.outerHTML='<span class=\'clover-fallback icon-md\'>☘️</span>';">
-            運氣軌道 (60格)
-        </div>
-            <div class="luck-tower-wrapper">
+            <div class="luck-tower-title">
+                <img src="icons/chars/clover.png" class="clover-img icon-md" alt="四葉草" 
+                    onerror="this.outerHTML='<span class=\'clover-fallback icon-md\'>☘️</span>';">
+                運氣軌道 (60格)
+            </div>
+            
+            <!-- 🆕 為 wrapper 添加 id，方便 JavaScript 控制 -->
+            <div class="luck-tower-wrapper" id="luck-tower-wrapper">
                 <div class="luck-tower-grid" id="luck-tower-grid"></div>
             </div>
+            
+            <!-- 🆕 新增：滾動控制按鈕區 -->
+            <div class="luck-scroll-controls">
+                <button class="luck-scroll-btn scroll-up" 
+                        onmousedown="startContinuousScroll('luck-tower', 'up')" 
+                        onmouseup="stopContinuousScroll()" 
+                        onmouseleave="stopContinuousScroll()"
+                        ontouchstart="startContinuousScroll('luck-tower', 'up')" 
+                        ontouchend="stopContinuousScroll()"
+                        title="向上滾動（可長按）">
+                    ⬆️ 向上
+                </button>
+                <button class="luck-scroll-btn scroll-down" 
+                        onmousedown="startContinuousScroll('luck-tower', 'down')" 
+                        onmouseup="stopContinuousScroll()" 
+                        onmouseleave="stopContinuousScroll()"
+                        ontouchstart="startContinuousScroll('luck-tower', 'down')" 
+                        ontouchend="stopContinuousScroll()"
+                        title="向下滾動（可長按）">
+                    ⬇️ 向下
+                </button>
+            </div>
         </div>
+
 
         <div class="game-area">
             <div class="top-players">
@@ -2488,6 +2683,34 @@
             <div class="battle-log-panel">
                 <div class="log-header">📜 戰鬥記錄</div>
                 <div class="log-content" id="battle-log-content"></div>
+                
+                <!-- 🆕 新增：戰鬥紀錄滾動控制按鈕區 -->
+                <div class="battle-log-scroll-controls">
+                    <button class="battle-log-scroll-btn scroll-up" 
+                            onmousedown="startContinuousScroll('battle-log', 'up')" 
+                            onmouseup="stopContinuousScroll()" 
+                            onmouseleave="stopContinuousScroll()"
+                            ontouchstart="startContinuousScroll('battle-log', 'up')" 
+                            ontouchend="stopContinuousScroll()"
+                            title="向上滾動（可長按）">
+                        ⬆️ 向上
+                    </button>
+                    <button class="battle-log-scroll-btn scroll-down" 
+                            onmousedown="startContinuousScroll('battle-log', 'down')" 
+                            onmouseup="stopContinuousScroll()" 
+                            onmouseleave="stopContinuousScroll()"
+                            ontouchstart="startContinuousScroll('battle-log', 'down')" 
+                            ontouchend="stopContinuousScroll()"
+                            title="向下滾動（可長按）">
+                        ⬇️ 向下
+                    </button>
+                    <button class="battle-log-scroll-btn scroll-bottom" 
+                            onclick="scrollToLatestLog()"
+                            title="跳到最新記錄">
+                        ⏬ 最新
+                    </button>
+                </div>
+            </div>
             </div>
         </div>
 
@@ -2601,7 +2824,203 @@
                 console.warn('無法儲存縮放設定:', error);
             }
         }
+        // ====== 🎮 統一滾動控制系統（運氣軌道 + 戰鬥紀錄） ======
 
+        // 🔄 長按連續滾動狀態管理
+        let scrollIntervals = {
+            'luck-tower': null,
+            'battle-log': null
+        };
+
+        /**
+         * 通用滾動控制函數
+         * @param {string} targetId - 目標容器 ID ('luck-tower' 或 'battle-log')
+         * @param {string} direction - 滾動方向 ('up' 或 'down')
+         */
+        function scrollContainer(targetId, direction) {
+            let wrapper, scrollAmount;
+            
+            // 🎯 根據不同容器設定對應參數
+            if (targetId === 'luck-tower') {
+                wrapper = document.getElementById('luck-tower-wrapper');
+                scrollAmount = 120; // 運氣軌道：約 3 個格子
+            } else if (targetId === 'battle-log') {
+                wrapper = document.getElementById('battle-log-content');
+                scrollAmount = 100; // 戰鬥紀錄：約 3-4 條記錄
+            }
+            
+            if (!wrapper) return;
+            
+            const duration = 300; // 動畫持續時間
+            
+            // 計算目標位置
+            const currentScroll = wrapper.scrollTop;
+            const targetScroll = direction === 'up' 
+                ? Math.max(0, currentScroll - scrollAmount)
+                : Math.min(wrapper.scrollHeight - wrapper.clientHeight, currentScroll + scrollAmount);
+            
+            // 🎨 平滑滾動動畫
+            smoothScrollTo(wrapper, targetScroll, duration);
+            
+            // 🎮 遊戲日誌記錄（避免洗版：只在真正移動時才記錄）
+            if (game && Math.abs(targetScroll - currentScroll) > 10) {
+                const emoji = direction === 'up' ? '⬆️' : '⬇️';
+                const containerName = targetId === 'luck-tower' ? '運氣軌道' : '戰鬥紀錄';
+                game.addBattleLog('system', `${emoji} ${containerName}已滾動`);
+            }
+        }
+
+        /**
+         * 戰鬥紀錄跳到最新記錄
+         */
+        function scrollToLatestLog() {
+            const wrapper = document.getElementById('battle-log-content');
+            if (!wrapper) return;
+            
+            smoothScrollTo(wrapper, wrapper.scrollHeight, 400);
+            
+            if (game) {
+                game.addBattleLog('system', '⏬ 已跳轉到最新戰鬥記錄');
+            }
+        }
+
+        /**
+         * 運氣軌道滾動（保留向後相容性）
+         */
+        function scrollLuckTower(direction) {
+            scrollContainer('luck-tower', direction);
+        }
+
+        /**
+         * 開始連續滾動（支援長按）
+         * @param {string} targetId - 目標容器 ID
+         * @param {string} direction - 滾動方向
+         */
+        function startContinuousScroll(targetId, direction) {
+            stopContinuousScroll(); // 清除之前的定時器
+            
+            // 立即執行一次
+            scrollContainer(targetId, direction);
+            
+            // 設定連續滾動
+            scrollIntervals[targetId] = setInterval(() => {
+                scrollContainer(targetId, direction);
+            }, 350); // 每 350ms 滾動一次
+        }
+
+        /**
+         * 停止連續滾動
+         */
+        function stopContinuousScroll() {
+            Object.keys(scrollIntervals).forEach(key => {
+                if (scrollIntervals[key]) {
+                    clearInterval(scrollIntervals[key]);
+                    scrollIntervals[key] = null;
+                }
+            });
+        }
+
+        /**
+         * 平滑滾動實現函數（通用）- 如果已存在則跳過
+         */
+        if (typeof smoothScrollTo !== 'function') {
+            function smoothScrollTo(element, target, duration) {
+                const start = element.scrollTop;
+                const distance = target - start;
+                const startTime = performance.now();
+                
+                function animation(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // 🎨 緩動函數：easeInOutCubic
+                    const easeProgress = progress < 0.5
+                        ? 4 * progress * progress * progress
+                        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    
+                    element.scrollTop = start + distance * easeProgress;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animation);
+                    }
+                }
+                
+                requestAnimationFrame(animation);
+            }
+        }
+        // ====== 🎮 統一滾動控制系統結束 ======
+
+
+        /**
+         * 平滑滾動實現函數
+         * @param {HTMLElement} element - 要滾動的元素
+         * @param {number} target - 目標滾動位置
+         * @param {number} duration - 動畫持續時間
+         */
+        function smoothScrollTo(element, target, duration) {
+            const start = element.scrollTop;
+            const distance = target - start;
+            const startTime = performance.now();
+            
+            function animation(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // 🎨 緩動函數：easeInOutCubic
+                const easeProgress = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                element.scrollTop = start + distance * easeProgress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
+            }
+            
+            requestAnimationFrame(animation);
+        }
+
+        // 🎮 擴展鍵盤快捷鍵支援
+            document.addEventListener('keydown', (e) => {
+                // 運氣軌道滾動
+                if (e.key === 'PageUp' || (e.key === 'ArrowUp' && e.shiftKey)) {
+                    e.preventDefault();
+                    scrollContainer('luck-tower', 'up');
+                }
+                else if (e.key === 'PageDown' || (e.key === 'ArrowDown' && e.shiftKey)) {
+                    e.preventDefault();
+                    scrollContainer('luck-tower', 'down');
+                }
+                // 戰鬥紀錄滾動
+                else if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    scrollContainer('battle-log', 'up');
+                }
+                else if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    scrollContainer('battle-log', 'down');
+                }
+                // 跳到最新戰鬥記錄
+                else if ((e.ctrlKey || e.metaKey) && e.key === 'End') {
+                    e.preventDefault();
+                    scrollToLatestLog();
+                }
+                // 頁面縮放控制（保持原有功能）
+                else if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+                    e.preventDefault();
+                    changeZoom(ZOOM_STEP);
+                }
+                else if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+                    e.preventDefault();
+                    changeZoom(-ZOOM_STEP);
+                }
+                else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+                    e.preventDefault();
+                    resetZoom();
+                }
+            });
+        // ====== 🎮 運氣軌道滾動控制系統結束 ======
         // 🔄 載入儲存的縮放設定
         function loadZoomSettings() {
             try {
