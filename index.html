@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1300,height=1300px initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=1300,height=1600px initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
     <title>KINTURE勤能改運 - 單機試玩版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,13 +12,13 @@
             background-color: #1a1a1a;
             min-height: 90vh;
             max-height: 100vh;
-            max-height: 1300px;            
+            max-height: 1600px;            
             overflow-y: auto;
             color: white;
             padding-bottom: 50px;
             
             /* 🔒 新增：鎖定最小寬度，防止佈局壓縮 */
-            min-width: 1300px;
+            min-width: 1000px;
             overflow-x: auto;  /* 允許橫向滾動 */
         }
         /* 🖼️ 獨立背景層：完美適配螢幕寬度 */
@@ -31,7 +31,7 @@
             /* 🔑 關鍵：強制使用視窗尺寸，不受內容寬度影響 */
             width: 100vw;   /* 視窗寬度 */
             height: 100vh;  /* 視窗高度 */
-            max-height: 1300px;
+            max-height: 1600px;
             /* 🎨 背景圖片設定 */
             background-image: url(icons/chars/tablea.png);
             background-position: center center;
@@ -63,7 +63,7 @@
             max-width: 1800px;
             margin: 0 auto;
             max-height: 90vh;
-            max-height: 1300px;
+            max-height: 1600px;
         }
 
         .luck-tower-container {
@@ -1513,7 +1513,7 @@
             padding: 20px;
             margin-top: 20px;
             border: 2px solid rgba(167, 139, 250, 0.3);
-            max-height: 1300px;
+            max-height: 1600px;
         }
 
         .skills-title {
@@ -1952,7 +1952,7 @@
             to { transform: translate(-50%, -50%); opacity: 1; } 
         }
 
-        @media (max-width: 1300px) {
+        @media (max-width: 1000px) {
             .main-container { grid-template-columns: 300px 1fr 300px; /* 響應式調整時保持對稱 */
             }
         }
