@@ -2359,6 +2359,7 @@
                     <li><strong>基本計分：</strong>運氣軌道位置 ÷ 4 = 小祝福分數（無條件進位）</li>
                     <li><strong>大祝福：</strong>超過60格自動獲得<span class="highlight-score">🌟大祝福(15分)</span>並重置到起點</li>
                     <li><strong>巨祝福：</strong>2個大祝福自動合成<span class="highlight-score">💎巨祝福(30分)</span></li>
+                    <li><strong>極祝福：</strong>巨祝福 + 大祝福自動合成<span class="highlight-score">💫極祝福(45分)</span></li>
                     <li><strong>最終得分：</strong><span class="highlight-formula">主勢力總分 × 2 + 副勢力1 + 副勢力2</span></li>
                     <li><strong>棄牌補償：</strong>開局棄牌勢力無條件獲得+4運氣起跑優勢</li>
                 </ul>
@@ -3408,8 +3409,9 @@
                 iconImg: 'icons/chars/heart.png', // UI 顯示用圖片
                 color: '#e74c3c', 
                 position: 1, 
-                megaBlessings: 0, 
-                gigaBlessings: 0,
+                megaBlessings: 0,      // 🌟 大祝福 
+                gigaBlessings: 0,      // 💎 巨祝福
+                ultraBlessings: 0,     // 💫 極祝福（新增）
                 description: '社交影響力', 
                 subs: ['capital', 'wisdom'] 
             },
@@ -3420,8 +3422,9 @@
                 iconImg: 'icons/chars/star.png', 
                 color: '#e67e22', 
                 position: 1, 
-                megaBlessings: 0, 
-                gigaBlessings: 0,
+                megaBlessings: 0,      // 🌟 大祝福 
+                gigaBlessings: 0,      // 💎 巨祝福
+                ultraBlessings: 0,     // 💫 極祝福（新增）
                 description: '經濟掌控', 
                 subs: ['wisdom', 'harmony'] 
             },
@@ -3432,8 +3435,9 @@
                 iconImg: 'icons/chars/diamond.png', 
                 color: '#f1c40f', 
                 position: 1, 
-                megaBlessings: 0,
-                gigaBlessings: 0, 
+                megaBlessings: 0,      // 🌟 大祝福 
+                gigaBlessings: 0,      // 💎 巨祝福
+                ultraBlessings: 0,     // 💫 極祝福（新增） 
                 description: '知識力量', 
                 subs: ['harmony', 'power'] 
             },
@@ -3444,8 +3448,9 @@
                 iconImg: 'icons/chars/club.png', 
                 color: '#27ae60', 
                 position: 1, 
-                megaBlessings: 0,
-                gigaBlessings: 0, 
+                megaBlessings: 0,      // 🌟 大祝福 
+                gigaBlessings: 0,      // 💎 巨祝福
+                ultraBlessings: 0,     // 💫 極祝福（新增） 
                 description: '和平共處', 
                 subs: ['power', 'charm'] 
             },
@@ -3456,8 +3461,9 @@
                 iconImg: 'icons/chars/spade.png', 
                 color: '#3498db', 
                 position: 1, 
-                megaBlessings: 0,
-                gigaBlessings: 0, 
+                megaBlessings: 0,      // 🌟 大祝福 
+                gigaBlessings: 0,      // 💎 巨祝福
+                ultraBlessings: 0,     // 💫 極祝福（新增） 
                 description: '武力征服', 
                 subs: ['charm', 'capital'] 
             }
@@ -3730,31 +3736,56 @@ const GAME_SETS = [
                     if (owner) {
                         this.addBattleLog('system', 
                             `💎 史詩時刻！${this.getFactionIconHTML(factionKey)}${faction.name} 的2個大祝福融合成了【巨祝福】(30分)！擁有者: ${owner.name}`
-                        )
+                        );
                     }
                 }
 
-                // ⬇️ 退位處理：低於1格時的借位邏輯
+                // 💫 進位處理：1個巨祝福 + 1個大祝福 → 1個極祝福（修正版）
+                while (faction.gigaBlessings >= 1 && faction.megaBlessings >= 1) {
+                    faction.ultraBlessings++;
+                    faction.gigaBlessings -= 1;  // 消耗1個巨祝福
+                    faction.megaBlessings -= 1;  // 消耗1個大祝福
+                    
+                    const owner = this.players.find(p => p.faction === factionKey);
+                    if (owner) {
+                        this.addBattleLog('system', 
+                            `💫✨ 傳說降臨！${this.getFactionIconHTML(factionKey)}${faction.name} 消耗【💎巨祝福+🌟大祝福】昇華為【極祝福】(45分)！擁有者: ${owner.name}`                        
+                        );
+                    }
+                }
+
+                // ⬇️ 退位處理：低於1格時的借位邏輯（數學平衡版）
                 while (faction.position < 1) {
                     if (faction.megaBlessings > 0) {
-                        // 優先消耗大祝福
+                        // 優先消耗大祝福：15分 = 60格運氣
                         faction.megaBlessings--;
                         faction.position += 60;
                         this.addBattleLog('system', 
-                            `📉 ${this.getFactionIconHTML(factionKey)}${faction.name} 倒退失去了一個大祝福！`
+                            `📉 ${this.getFactionIconHTML(factionKey)}${faction.name} 倒退，消耗1個大祝福補償運氣！`
                         );
                     } else if (faction.gigaBlessings > 0) {
-                        // 🔧 關鍵修正：1個巨祝福正確拆解為2個大祝福
+                        // 消耗巨祝福：30分 = 60格運氣(15分) + 1個大祝福(15分)
                         faction.gigaBlessings--;
-                        faction.megaBlessings += 2;  // 修正：應該是+2，不是+3
-                        faction.position += 60;
-                        this.addBattleLog('system', `💔 ${faction.icon}${faction.name} 倒退，【巨祝福】碎裂成2個大祝福！`);
+                        faction.megaBlessings += 1;  // 剩餘15分轉為大祝福
+                        faction.position += 60;      // 借到60格運氣
+                        this.addBattleLog('system', 
+                            `💔 ${this.getFactionIconHTML(factionKey)}${faction.name} 倒退，【巨祝福】分解為1個大祝福！`
+                        );
+                    } else if (faction.ultraBlessings > 0) {
+                        // 💫 消耗極祝福：45分 = 60格運氣(15分) + 1個巨祝福(30分)
+                        faction.ultraBlessings--;
+                        faction.gigaBlessings += 1;  // 剩餘30分轉為巨祝福
+                        faction.position += 60;      // 借到60格運氣
+                        this.addBattleLog('system', 
+                            `💔💫 ${this.getFactionIconHTML(factionKey)}${faction.name} 倒退，【極祝福】降級為1個巨祝福！`
+                        );
                     } else {
                         // 絕對底線
                         faction.position = 1;
                         break;
                     }
                 }
+
                 
                 // 🛡️ 終極防護
                 if (faction.position < 1 || Number.isNaN(faction.position)) {
@@ -3866,12 +3897,35 @@ const GAME_SETS = [
 
             calculateBlessings(factionKey) {
                 const faction = FACTIONS[factionKey];
-                const baseScore = Math.ceil(faction.position / 4);      // 小祝福：每4格1分
-                const megaScore = faction.megaBlessings * 15;           // 大祝福：每個15分
-                const gigaScore = faction.gigaBlessings * 30;           // 巨祝福：每個30分
                 
-                return baseScore + megaScore + gigaScore;
+                // 🛡️ 防禦性檢查
+                if (!faction) {
+                    console.error(`calculateBlessings: 找不到勢力 ${factionKey}`);
+                    return 0;
+                }
+                
+                // 🛡️ 確保數值合法
+                const position = Number(faction.position) || 1;
+                const megaBlessings = Number(faction.megaBlessings) || 0;
+                const gigaBlessings = Number(faction.gigaBlessings) || 0;
+                const ultraBlessings = Number(faction.ultraBlessings) || 0;  // 💫 新增
+                
+                // 💡 核心計算
+                const baseScore = Math.ceil(position / 4);      // 小祝福：每4格1分
+                const megaScore = megaBlessings * 15;           // 🌟 大祝福：每個15分
+                const gigaScore = gigaBlessings * 30;           // 💎 巨祝福：每個30分
+                const ultraScore = ultraBlessings * 45;         // 💫 極祝福：每個45分（新增）
+                
+                const total = baseScore + megaScore + gigaScore + ultraScore;
+                
+                // 🐛 除錯日誌（可選）
+                if (ultraBlessings > 0 || gigaBlessings > 0 || megaBlessings > 0) {
+                    console.log(`[計分] ${factionKey}: 位置=${position}(${baseScore}分) + 大祝福×${megaBlessings}(${megaScore}分) + 巨祝福×${gigaBlessings}(${gigaScore}分) + 極祝福×${ultraBlessings}(${ultraScore}分) = ${total}分`);
+                }
+                
+                return total;
             }
+
 
             prepareGame(setId) {
                 console.log('🎮 prepareGame 開始,setId:', setId);
