@@ -9,11 +9,6 @@
 
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            background: url(icons/chars/tablea.png);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             background-color: #1a1a1a;
             min-height: 90vh;
             overflow-y: auto;
@@ -23,6 +18,29 @@
             /* 🔒 新增：鎖定最小寬度，防止佈局壓縮 */
             min-width: 1400px;
             overflow-x: auto;  /* 允許橫向滾動 */
+        }
+        /* 🖼️ 獨立背景層：完美適配螢幕寬度 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            
+            /* 🔑 關鍵：強制使用視窗尺寸，不受內容寬度影響 */
+            width: 100vw;   /* 視窗寬度 */
+            height: 100vh;  /* 視窗高度 */
+            
+            /* 🎨 背景圖片設定 */
+            background-image: url(icons/chars/tablea.png);
+            background-position: center center;
+            background-repeat: no-repeat;
+            
+            /* 📐 背景縮放模式（見下方詳細說明） */
+            background-size: cover;
+            
+            /* 🛡️ 確保背景在最底層且不干擾操作 */
+            z-index: -100;
+            pointer-events: none;
         }
 
         ::-webkit-scrollbar { width: 10px; height: 10px; }
