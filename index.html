@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1800,height=1500px initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
     <title>KINTURE勤能改運 - 單機試玩版</title>
+    <link rel="icon" href="data:,">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -459,6 +460,263 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* ====================================================
+        💫 極祝福視覺系統 - 完整升級版
+        ==================================================== */
+
+        /* 💫 極祝福主體 Token */
+        .faction-token.ultra-blessing {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            
+            /* 🌌 宇宙星雲漸層背景 */
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(255,0,255,0.6), transparent 60%),
+                radial-gradient(circle, rgba(138,43,226,0.4), rgba(0,0,0,0.9));
+            
+            /* 🌈 動態彩虹邊框 */
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            
+            /* 💡 多層光暈系統 */
+            box-shadow: 
+                0 0 15px rgba(255, 255, 255, 0.8),
+                0 0 25px rgba(255, 0, 255, 0.7),
+                0 0 35px rgba(0, 255, 255, 0.6),
+                0 0 45px rgba(255, 255, 0, 0.5),
+                inset 0 0 12px rgba(255, 255, 255, 0.3);
+            
+            /* 🎬 核心動畫 */
+            animation: 
+                ultraHeartbeat 2.2s ease-in-out infinite,
+                ultraBorderShift 4s linear infinite;
+            
+            /* 📐 佈局設定 */
+            z-index: 25;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 🌟 動態邊框效果（偽元素） */
+        .faction-token.ultra-blessing::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            background: linear-gradient(
+                45deg, 
+                #ff00ff, #00ffff, #ffff00, #ff00ff, 
+                #00ffff, #ffff00, #ff00ff, #00ffff
+            );
+            z-index: -1;
+            animation: ultraBorderRotate 3s linear infinite;
+        }
+
+        /* ✨ 外層光環（偽元素） */
+        .faction-token.ultra-blessing::after {
+            content: '';
+            position: absolute;
+            width: 130%;
+            height: 130%;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                transparent 70%,
+                rgba(255, 0, 255, 0.3) 80%,
+                rgba(0, 255, 255, 0.2) 90%,
+                transparent 100%
+            );
+            animation: ultraRingPulse 2.8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        /* 🎯 Token 內部勢力圖示 */
+        .faction-token.ultra-blessing .token-faction-img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            filter: 
+                drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+                drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))
+                brightness(1.4)
+                contrast(1.2);
+            z-index: 2;
+            animation: ultraIconFloat 2.2s ease-in-out infinite;
+        }
+
+        /* 💫 極祝福徽章 */
+        .ultra-blessing-badge {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            font-size: 20px;
+            z-index: 15;
+            pointer-events: none;
+            filter: 
+                drop-shadow(0 0 8px rgba(255, 0, 255, 1))
+                drop-shadow(0 0 12px rgba(0, 255, 255, 0.8))
+                drop-shadow(0 0 16px rgba(255, 255, 0, 0.6));
+            animation: ultraBadgeFloat 3.5s ease-in-out infinite;
+        }
+
+        /* 🖱️ 懸停超級效果 */
+        .faction-token.ultra-blessing:hover {
+            transform: scale(1.35) !important;
+            z-index: 50;
+            box-shadow: 
+                0 0 25px rgba(255, 255, 255, 1),
+                0 0 40px rgba(255, 0, 255, 0.9),
+                0 0 55px rgba(0, 255, 255, 0.8),
+                0 0 70px rgba(255, 255, 0, 0.7),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* ====================================================
+        🎬 極祝福動畫定義
+        ==================================================== */
+
+        /* 💓 心跳呼吸燈動畫 */
+        @keyframes ultraHeartbeat {
+            0%, 100% { 
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 15px rgba(255, 255, 255, 0.8),
+                    0 0 25px rgba(255, 0, 255, 0.7),
+                    0 0 35px rgba(0, 255, 255, 0.6),
+                    0 0 45px rgba(255, 255, 0, 0.5),
+                    inset 0 0 12px rgba(255, 255, 255, 0.3);
+            }
+            20% { 
+                transform: scale(1.12);
+                box-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.9),
+                    0 0 35px rgba(255, 0, 255, 0.8),
+                    0 0 50px rgba(0, 255, 255, 0.7),
+                    0 0 65px rgba(255, 255, 0, 0.6),
+                    inset 0 0 18px rgba(255, 255, 255, 0.4);
+            }
+            50% { 
+                transform: scale(1.18);
+                box-shadow: 
+                    0 0 25px rgba(255, 255, 255, 1),
+                    0 0 45px rgba(255, 0, 255, 0.9),
+                    0 0 65px rgba(0, 255, 255, 0.8),
+                    0 0 85px rgba(255, 255, 0, 0.7),
+                    inset 0 0 25px rgba(255, 255, 255, 0.5);
+            }
+            80% { 
+                transform: scale(1.12);
+                box-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.9),
+                    0 0 35px rgba(255, 0, 255, 0.8),
+                    0 0 50px rgba(0, 255, 255, 0.7),
+                    0 0 65px rgba(255, 255, 0, 0.6),
+                    inset 0 0 18px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        /* 🌈 邊框色彩流動動畫 */
+        @keyframes ultraBorderShift {
+            0% { 
+                background: linear-gradient(0deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            }
+            25% { 
+                background: linear-gradient(90deg, #00ffff, #ffff00, #ff00ff, #00ffff);
+            }
+            50% { 
+                background: linear-gradient(180deg, #ffff00, #ff00ff, #00ffff, #ffff00);
+            }
+            75% { 
+                background: linear-gradient(270deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            }
+            100% { 
+                background: linear-gradient(360deg, #00ffff, #ffff00, #ff00ff, #00ffff);
+            }
+        }
+
+        /* 🔄 邊框旋轉動畫 */
+        @keyframes ultraBorderRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 💫 外環脈衝動畫 */
+        @keyframes ultraRingPulse {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.2) rotate(180deg);
+                opacity: 0.9;
+            }
+        }
+
+        /* 🎯 圖示漂浮動畫 */
+        @keyframes ultraIconFloat {
+            0%, 100% { 
+                transform: translateY(0) scale(1);
+            }
+            50% { 
+                transform: translateY(-4px) scale(1.1);
+            }
+        }
+
+        /* 💫 徽章懸浮動畫 */
+        @keyframes ultraBadgeFloat {
+            0%, 100% { 
+                transform: translateY(0) scale(1) rotate(-5deg);
+                filter: 
+                    drop-shadow(0 0 8px rgba(255, 0, 255, 1))
+                    drop-shadow(0 0 12px rgba(0, 255, 255, 0.8));
+            }
+            33% { 
+                transform: translateY(-6px) scale(1.15) rotate(10deg);
+                filter: 
+                    drop-shadow(0 0 10px rgba(0, 255, 255, 1))
+                    drop-shadow(0 0 16px rgba(255, 255, 0, 0.9));
+            }
+            66% { 
+                transform: translateY(-3px) scale(1.05) rotate(-8deg);
+                filter: 
+                    drop-shadow(0 0 12px rgba(255, 255, 0, 1))
+                    drop-shadow(0 0 18px rgba(255, 0, 255, 0.9));
+            }
+        }
+
+        /* ====================================================
+        📱 響應式適配
+        ==================================================== */
+
+        /* 擁擠格子的縮放適配 */
+        .luck-cell.crowded .faction-token.ultra-blessing {
+            width: 45px;
+            height: 45px;
+        }
+
+        .luck-cell.crowded .faction-token.ultra-blessing .token-faction-img {
+            width: 22px;
+            height: 22px;
+        }
+
+        .luck-cell.crowded .ultra-blessing-badge {
+            font-size: 16px;
+            bottom: -8px;
+            right: -8px;
+        }
+
         /* 🍀 四葉草圖片通用樣式基礎類 */
         .clover-img {
             display: inline-block;
@@ -4644,7 +4902,60 @@ const GAME_SETS = [
                             } else {
                                 token.title = `${f.name} (位置: ${f.position}, 總祝福: ${this.calculateBlessings(f.id)}分)`;
                             }
-                            
+                    if (f.ultraBlessings > 0) {
+                        // 💫 極祝福：最高等級榮耀
+                        token.classList.add('ultra-blessing');
+                        
+                        // 🏷️ 智能徽章顯示
+                        const badge = document.createElement('div');
+                        badge.className = 'ultra-blessing-badge';
+                        badge.textContent = f.ultraBlessings > 1 ? `💫×${f.ultraBlessings}` : '💫';
+                        token.appendChild(badge);
+                        
+                        // 🛠️ 增強型 Tooltip
+                        const totalScore = this.calculateBlessings(f.id);
+                        const blessingDetails = [];
+                        
+                        if (f.ultraBlessings > 0) blessingDetails.push(`💫 極祝福 ×${f.ultraBlessings} (${f.ultraBlessings * 45}分)`);
+                        if (f.gigaBlessings > 0) blessingDetails.push(`💎 巨祝福 ×${f.gigaBlessings} (${f.gigaBlessings * 30}分)`);
+                        if (f.megaBlessings > 0) blessingDetails.push(`🌟 大祝福 ×${f.megaBlessings} (${f.megaBlessings * 15}分)`);
+                        
+                        const baseScore = Math.ceil(f.position / 4);
+                        if (baseScore > 0) blessingDetails.push(`✨ 小祝福 ${baseScore}分 (位置 ${f.position})`);
+                        
+                        token.title = [
+                            `${f.name} - 傳說級勢力`,
+                            `📊 總祝福分數: ${totalScore}分`,
+                            '',
+                            ...blessingDetails,
+                            '',
+                            '💫 極祝福：遊戲中的最高榮耀！'
+                        ].join('\n');
+
+                    } else if (f.gigaBlessings > 0) {
+                        // 💎 巨祝福（保持原有邏輯）
+                        token.classList.add('giga-blessing');
+                        const badge = document.createElement('div');
+                        badge.className = 'giga-blessing-badge';
+                        badge.textContent = f.gigaBlessings > 1 ? `💎×${f.gigaBlessings}` : '💎';
+                        token.appendChild(badge);
+                        
+                        token.title = `${f.name} (位置: ${f.position})\n💎巨祝福×${f.gigaBlessings} (${f.gigaBlessings * 30}分)\n🌟大祝福×${f.megaBlessings} (${f.megaBlessings * 15}分)\n總祝福: ${this.calculateBlessings(f.id)}分`;
+                        
+                    } else if (f.megaBlessings > 0) {
+                        // 🌟 大祝福（保持原有邏輯）
+                        token.classList.add('mega-blessing');
+                        const badge = document.createElement('div');
+                        badge.className = 'mega-blessing-badge';
+                        badge.textContent = f.megaBlessings > 1 ? `🌟×${f.megaBlessings}` : '🌟';
+                        token.appendChild(badge);
+                        
+                        token.title = `${f.name} (位置: ${f.position})\n🌟大祝福×${f.megaBlessings} (${f.megaBlessings * 15}分)\n總祝福: ${this.calculateBlessings(f.id)}分`;
+                        
+                    } else {
+                        token.title = `${f.name} (位置: ${f.position}, 總祝福: ${this.calculateBlessings(f.id)}分)`;
+                    }
+        
                             container.appendChild(token);
                         }
                     }
