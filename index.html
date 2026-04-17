@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1800,height=1500px initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=1800,height=1600, initial-scale=0.4, minimum-scale=0.2, maximum-scale=1.0, user-scalable=yes">
     <title>KINTURE勤能改運 - 單機試玩版</title>
     <link rel="icon" href="data:,">
     <style>
@@ -13,7 +13,7 @@
             background-color: #1a1a1a;
             min-height: 90vh;
             max-height: 100vh;
-            max-height: 1500px;            
+            max-height: 1600px;            
             overflow-y: auto;
             color: white;
             padding-bottom: 50px;
@@ -32,7 +32,7 @@
             /* 🔑 關鍵：強制使用視窗尺寸，不受內容寬度影響 */
             width: 100vw;   /* 視窗寬度 */
             height: 100vh;  /* 視窗高度 */
-            max-height: 1500px;
+            max-height: 1600px;
             /* 🎨 背景圖片設定 */
             background-image: url(icons/chars/tablea.png);
             background-position: center center;
@@ -64,7 +64,7 @@
             max-width: 1800px;
             margin: 0 auto;
             max-height: 90vh;
-            max-height: 1500px;
+            max-height: 1600px;
         }
 
         .luck-tower-container {
@@ -388,6 +388,19 @@
             z-index: 10;
             pointer-events: none;
         }
+
+        .faction-token.mega-blessing .token-faction-img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            filter: 
+                drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+                drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))
+                brightness(1.4)
+                contrast(1.2);
+            z-index: 2;
+            animation: ultraIconFloat 2.2s ease-in-out infinite;
+        }
         @keyframes megaPulse {
             0%, 100% { 
                 box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
@@ -431,6 +444,19 @@
             pointer-events: none;
             animation: diamondSpin 3s linear infinite;
         }
+
+        .faction-token.giga-blessing .token-faction-img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            filter: 
+                drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+                drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))
+                brightness(1.4)
+                contrast(1.2);
+            z-index: 2;
+            animation: ultraIconFloat 2.2s ease-in-out infinite;
+        }
         /* 巨祝福呼吸燈動畫 */
         @keyframes gigaBlessing {
             0%, 100% { 
@@ -448,7 +474,7 @@
             position: absolute;
             bottom: -6px;
             right: -6px;
-            font-size: 16px;
+            font-size: 20px;
             color: #fff;
             text-shadow: 0 0 8px #ff00ff, 0 0 12px #00ffff;
             z-index: 10;
@@ -544,8 +570,8 @@
 
         /* 🎯 Token 內部勢力圖示 */
         .faction-token.ultra-blessing .token-faction-img {
-            width: 28px;
-            height: 28px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             filter: 
                 drop-shadow(0 0 6px rgba(255, 255, 255, 1))
@@ -656,11 +682,11 @@
         @keyframes ultraRingPulse {
             0%, 100% { 
                 transform: scale(1) rotate(0deg);
-                opacity: 0.6;
+                opacity: 0.8;
             }
             50% { 
                 transform: scale(1.2) rotate(180deg);
-                opacity: 0.9;
+                opacity: 1;
             }
         }
 
@@ -905,19 +931,18 @@
         .bottom-players { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .round-display {
-            position: absolute;
-            top: 5px;
-            left: 88.7%;
-            transform: translateX(-25%);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             border: 2px solid #ffd43b;
-            padding: 4px 10px;
-            border-radius: 0px;
+            padding: 6px 10px;
+            border-radius: 8px;           /* 與按鈕保持一致的圓角 */
             font-weight: bold;
             color: #ffd43b;
-            z-index: 10;
-            font-size: 1.2em;
+            font-size: 1.1em;
+            text-align: center;
+            width: 100%;                  /* 填滿容器寬度 */
             box-shadow: 0 4px 15px rgba(255, 212, 59, 0.4);
+            margin-bottom: 8px;           /* 與下方元素保持適當距離 */
+            box-sizing: border-box;
         }
 
         .discard-pile-container {
@@ -989,7 +1014,7 @@
         .btn-reset:hover { transform: translateY(-2px) scale(1.05); }
         /* 🔊 音效開關按鈕樣式 */
         .btn-sound {
-            background: rgba(255, 255, 255, 1);
+            background: rgba(0, 0, 0, 0.6);  /* 深色背景 */
             border: 2px solid #a78bfa;
             color: white;
             padding: 4px 10px;
@@ -1014,8 +1039,6 @@
 
         /* 🟢 音效開啟狀態 */
         .btn-sound.active {
-            border-color: #51cf66;
-            color: #51cf66;
             box-shadow: 0 4px 15px rgba(81, 207, 102, 0.4);
         }
 
@@ -1067,10 +1090,8 @@
 
         /* 🟡 BGM播放狀態 */
         .btn-bgm.playing {
-            background: linear-gradient(135deg, rgba(255, 212, 59, 0.25), rgba(250, 176, 5, 0.35));
             border-color: #ffd43b;
             color: #ffd43b;
-            box-shadow: 0 4px 15px rgba(255, 212, 59, 0.4);
             animation: bgmPulse 2s ease-in-out infinite;
         }
 
@@ -1080,10 +1101,9 @@
 
         /* 🔴 BGM停止狀態 */
         .btn-bgm.stopped {
-            background: linear-gradient(135deg, rgba(134, 142, 150, 0.2), rgba(108, 117, 125, 0.3));
+            background: linear-gradient(135deg, rgb(52, 52, 52, 0.6), rgb(65, 65, 65, 0.6));
             border-color: #868e96;
-            color: #adb5bd;
-            box-shadow: 0 4px 15px rgba(134, 142, 150, 0.3);
+            color: #ffffff;
         }
 
         /* BGM呼吸燈動畫 */
@@ -1185,8 +1205,9 @@
             font-size: 0.75em;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
+            padding: 3px 3px;
+            border-radius: 3px;
+            min-width: 25px;
             font-weight: bold;
             border: 1px solid rgba(255,255,255,0.3);
         }
@@ -1208,7 +1229,7 @@
         .faction-badge.capital { background: linear-gradient(135deg, #e67e22, #d35400); border-color: #e67e22; }
         .faction-badge.wisdom { background: linear-gradient(135deg, #f1c40f, #f39c12); border-color: #f1c40f; color: #000; }
         .faction-badge.harmony { background: linear-gradient(135deg, #27ae60, #229954); border-color: #27ae60; }
-        .faction-badge.power { background: linear-gradient(135deg, #3498db, #2980b9); border-color: #3498db; }
+        .faction-badge.Strength { background: linear-gradient(135deg, #3498db, #2980b9); border-color: #3498db; }
 
         .player-name { font-weight: bold; font-size: 1.1em; line-height: 1; }
 
@@ -1226,13 +1247,13 @@
             gap: 2px;
             background: linear-gradient(135deg, #ffd43b, #fab005);
             color: #000;
-            padding: 6px 12px;
-            border-radius: 12px;
+            padding: 6px 6px;
+            border-radius: 5px;
             font-weight: bold;
             font-size: 1em;
             box-shadow: 0 3px 10px rgba(255, 212, 59, 0.4);
             border: 2px solid rgba(255, 212, 59, 0.6);
-            min-width: 140px;
+            min-width: 100px;
         }
 
         .score-main {
@@ -1372,7 +1393,7 @@
         .slot-capital { border: 2px solid #e67e22; background: rgba(230, 126, 34, 0.25); }
         .slot-wisdom { border: 2px solid #f1c40f; background: rgba(241, 196, 15, 0.25); }
         .slot-harmony { border: 2px solid #27ae60; background: rgba(39, 174, 96, 0.25); }
-        .slot-power { border: 2px solid #3498db; background: rgba(52, 152, 219, 0.25); }
+        .slot-Strength { border: 2px solid #3498db; background: rgba(52, 152, 219, 0.25); }
 
 
         .card { 
@@ -1410,7 +1431,7 @@
         .card.capital { border-color: #e67e22; }
         .card.wisdom { border-color: #f1c40f; }
         .card.harmony { border-color: #27ae60; }
-        .card.power { border-color: #3498db; }
+        .card.Strength { border-color: #3498db; }
 
         /* 🎯 卡牌狀態樣式調整 */
         .card:hover { 
@@ -1439,10 +1460,21 @@
             text-align: center; 
             margin-top: auto;
             line-height: 1.1; 
-            white-space: normal; 
-            overflow: visible; 
-            max-width: 100%; 
-            word-break: break-word;
+            white-space: nowrap;        /* 絕對不換行 */ 
+            /* 🎯 移除寬度限制，允許超出 */
+            overflow: visible;          /* 允許內容超出邊界 */
+            max-width: none;           /* 移除最大寬度限制 */
+            width: max-content;        /* 寬度跟隨文字內容 */
+            word-break: normal;        /* 不強制斷字 */
+            
+            /* 🎯 精確置中對齊 */
+            position: relative;
+            
+            /* 🎯 視覺優化：確保超出文字清晰可讀 */
+            text-shadow: 
+                0 1px 2px rgba(0,0,0,0.8),     /* 底部陰影 */
+                0 0 4px rgba(0,0,0,0.6);       /* 外發光 */
+            z-index: 5;                        /* 確保文字在最上層 */
             padding: 0 2px;
             letter-spacing: -0.3px;
         }
@@ -1771,7 +1803,7 @@
             padding: 20px;
             margin-top: 20px;
             border: 2px solid rgba(167, 139, 250, 0.3);
-            max-height: 1500px;
+            max-height: 1600px;
         }
 
         .skills-title {
@@ -1787,8 +1819,8 @@
         .skills-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            max-height: 40vh;
-            max-height: 450px;
+            max-height: 50vh;
+            max-height: 500px;
             gap: 15px;
         }
 
@@ -1807,7 +1839,7 @@
             background: rgba(255, 255, 255, 0.12);
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            border-color: #a78bfa(255, 255, 255, 0.2);
+            border-color: rgba(167, 139, 250, 0.6);
         }
 
         .skill-icon-container {
@@ -1899,8 +1931,8 @@
         }
 
         .setup-title { 
-            font-size: 2.5em; 
-            margin: 20px 0 30px 0; 
+            font-size: 2em; 
+            margin: 0px 0 10px 0; 
             color: #ffd43b; 
             text-shadow: 0 0 20px #ffd43b; 
             font-weight: bold; 
@@ -1923,7 +1955,7 @@
             font-weight: bold;
             text-align: center;
             border-bottom: 1px solid rgba(167, 139, 250, 0.3);
-            padding-bottom: 10px;
+            padding-bottom: 1px;
         }
 
         .order-selection {
@@ -2036,7 +2068,7 @@
             overflow: hidden;
         }
         
-        .draft-title { font-size: 2em; margin: 20px 0 15px 0; color: #ffd43b; text-shadow: 0 0 20px #ffd43b; font-weight: bold; }
+        .draft-title { font-size: 2em; margin: 0px 0 10px 0; color: #ffd43b; text-shadow: 0 0 20px #ffd43b; font-weight: bold; }
         .draft-subtitle { font-size: 1.2em; margin-bottom: 20px; color: #51cf66; text-align: center; line-height: 1.5; }
         
         .draft-info-panel {
@@ -2065,8 +2097,8 @@
             background: rgba(0, 0, 0, 0.6);
             border: 2px solid rgba(167, 139, 250, 0.3);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
+            padding: 5px;
+            margin-bottom: 10px;
             width: 90%;
             max-width: 900px;
         }
@@ -2184,7 +2216,7 @@
 
         .game-over { 
             position: fixed; 
-            top: 50%; 
+            top: 500px; 
             left: 50%; 
             transform: translate(-50%, -50%); 
             background: rgba(0,0,0,0.95); 
@@ -2200,7 +2232,6 @@
             min-width: min(400px, 90vw);
             width: min(600px, 90vw);
             left: 50%;
-            transform: translateX(-50%);
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -2571,10 +2602,61 @@
         .skill-one-time { color: #51cf66; font-weight: bold; }
         .skill-recurring { color: #a78bfa; font-weight: bold; }
 
+        /* ====================================================
+        🌐 語言切換器樣式
+        ==================================================== */
+        .lang-switcher {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 2px solid rgba(167, 139, 250, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 6px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-btn:hover {
+            background: rgba(167, 139, 250, 0.3);
+            color: #fff;
+            border-color: #a78bfa;
+            transform: translateY(-1px);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: #fff;
+            border-color: #a78bfa;
+            box-shadow: 0 2px 8px rgba(167, 139, 250, 0.5);
+        }
 
     </style>
 </head>
 <body>
+    <!-- 🌐 多語言切換器 -->
+    <div id="language-switcher" class="lang-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('zh-TW')" data-lang="zh-TW">繁中</button>
+        <button class="lang-btn" onclick="switchLanguage('en')" data-lang="en">EN</button>
+        <button class="lang-btn" onclick="switchLanguage('ja')" data-lang="ja">日本語</button>
+    </div>
+
     <!-- SET與順位選擇介面 -->
     <div class="setup-overlay" id="setup-overlay">
         <div class="setup-title">⚙️ 遊戲設定(手機請選用電腦版配置)</div>
@@ -2608,139 +2690,13 @@
             
             <div class="tutorial-body" id="tutorial-body">
                 <div class="tutorial-content">
+                    <div class="tutorial-grid" id="tutorial-grid">
+                        <!-- 保留現有的所有內容不動，或者清空讓JS填入 -->
+                    </div>
+                </div>
+            </div>
+        </div>       
         
-        <div class="tutorial-grid">
-            <!-- 卡片1：計分系統 -->
-            <div class="tutorial-card">
-                <h4>🏆 計分與祝福系統</h4>
-                <ul>
-                    <li><strong>基本計分：</strong>運氣軌道位置 ÷ 4 = 小祝福分數（無條件進位）</li>
-                    <li><strong>大祝福：</strong>超過60格自動獲得<span class="highlight-score">🌟大祝福(15分)</span>並重置到起點</li>
-                    <li><strong>巨祝福：</strong>2個大祝福自動合成<span class="highlight-score">💎巨祝福(30分)</span></li>
-                    <li><strong>極祝福：</strong>巨祝福 + 大祝福自動合成<span class="highlight-score">💫極祝福(45分)</span></li>
-                    <li><strong>最終得分：</strong><span class="highlight-formula">主勢力總分 × 2 + 副勢力1 + 副勢力2</span></li>
-                    <li><strong>棄牌補償：</strong>開局棄牌勢力無條件獲得+4運氣起跑優勢</li>
-                </ul>
-            </div>
-
-            <!-- 卡片2：事件線機制 -->
-            <div class="tutorial-card">
-                <h4>⏳ 事件線觸發機制</h4>
-                <ul>
-                    <li><strong>觸發範圍：</strong>出牌位置的<span class="highlight-key">同行+同列(十字7格)</span></li>
-                    <li><strong>事件線技能執行順序：</strong>身份變換(魔術師→詐欺師→祭司) → 數值計算(貴族→平民) → 戰鬥判定(守衛vs強盜) → 特殊效果</li>
-                    <li><strong>群體技能：</strong>守衛≥強盜時守衛勝，移除所有強盜並+3N運氣；強盜>守衛時強盜勝，移除守衛/貴族/平民並+2N運氣</li>
-                    <li><strong>數量加成：</strong>貴族(5-N運氣，越多越少)、平民(1+N運氣，越多越多)</li>
-                </ul>
-            </div>
-
-            <!-- 卡片3：技能類型 -->
-            <div class="tutorial-card">
-                <h4>⚡ 技能類型與時機</h4>
-                <ul>
-                    <li><span class="skill-on-play">⚡ 打出技能：</span>放置瞬間立即發動，不等事件線(王族加冕、傀儡師替換)</li>
-                    <li><span class="skill-one-time">🔑 一次性：</span>事件線觸發後執行並移除，條件不符則保留(祭司、魔術師、詐欺師、戀人、AI、小丑)</li>
-                    <li><span class="skill-recurring">⏳ 多次性：</span>每次事件線都觸發，執行後保留在場(貴族、平民、守衛、強盜、精靈、惡魔)</li>
-                    <li><strong>有限制性：</strong>[祭司;非同色非祭司未感化][魔術師;非魔術師][詐欺師;非詐欺師][傀儡師;非傀儡師][王族;非貴族][戀人;非同性]</li>
-                    <li><strong>未執行不移除：</strong>祭司、魔術師、詐欺師、戀人</li>
-                </ul>
-            </div>
-
-            <!-- 卡片4：關鍵角色互動 -->
-            <div class="tutorial-card">
-                <h4>🃏 重要角色互動</h4>
-                <ul>
-                    <li>
-                        <strong>
-                            <img src="icons/chars/crown-40.png" 
-                                alt="王族" 
-                                style="width: 1.2em; 
-                                        height: 1.2em; 
-                                        vertical-align: -0.15em; 
-                                        object-fit: contain; 
-                                        margin-right: 3px;
-                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
-                                onerror="this.outerHTML='👑';">
-                            王族：
-                        </strong>
-                        加冕後目標暫時變貴族，王族橫置於其後。目標離場時王族一併移除
-                    </li>
-                    <li>
-                        <strong>
-                            <img src="icons/chars/potion-40.png" 
-                                alt="祭司" 
-                                style="width: 1.2em; 
-                                        height: 1.2em; 
-                                        vertical-align: -0.15em; 
-                                        object-fit: contain; 
-                                        margin-right: 3px;
-                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
-                                onerror="this.outerHTML='🙇';">
-                            祭司：
-                        </strong>
-                        感化異色角色變同色，橫置於其後。目標離場時祭司一併移除
-                    </li>
-                                        <li>
-                        <strong>
-                            <img src="icons/chars/magic-wand-40.png" 
-                                alt="魔術師" 
-                                style="width: 1.2em; 
-                                        height: 1.2em; 
-                                        vertical-align: -0.15em; 
-                                        object-fit: contain; 
-                                        margin-right: 3px;
-                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
-                                onerror="this.outerHTML='🧙';">
-                            魔術師：
-                        </strong>
-                        傳送1張角色到自己位置後消失，被傳送的角色依事件線規則執行技能
-                    </li>
-                                        <li>
-                        <strong>
-                            <img src="icons/chars/fan-40.png" 
-                                alt="詐欺師" 
-                                style="width: 1.2em; 
-                                        height: 1.2em; 
-                                        vertical-align: -0.15em; 
-                                        object-fit: contain; 
-                                        margin-right: 3px;
-                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
-                                onerror="this.outerHTML='🤥';">
-                            詐欺師：
-                        </strong>
-                        完全偽裝成目標角色，依事件線順序執行所有角色技能後移除
-                    </li>
-                                        <li>
-                        <strong>
-                            <img src="icons/chars/MF-40.png" 
-                                alt="戀人" 
-                                style="width: 1.2em; 
-                                        height: 1.2em; 
-                                        vertical-align: -0.15em; 
-                                        object-fit: contain; 
-                                        margin-right: 3px;
-                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
-                                onerror="this.outerHTML='💕';">
-                            恋人配對：
-                        </strong>
-                        男女配對成功雙方勢力各+5運氣，觸發技能者配對一次抽1張牌，配對後移除
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 卡片5：實用操作與策略 -->
-            <div class="tutorial-card">
-                <h4>🎮 操作技巧與策略</h4>
-                <ul>
-                    <li><strong>雙面P卡：</strong>手牌中點擊<span class="highlight-key">🔄按鈕</span>可隨時切換正反面</li>
-                    <li><strong>目標選擇：</strong>需要選目標時點擊<span class="highlight-key">青色/紫色高亮</span>的合法格子</li>
-                    <li><strong>勢力選擇：</strong>優先選手牌中同色最多的勢力，副勢力也會計分不可忽視</li>
-                    <li><strong>位置策略：</strong>角落觸發易於防守，中央靈活搭配。戰場滿16格遊戲立即結束</li>
-                    <li><strong>速度調節：</strong>新手建議用×1速度，配合右側戰鬥紀錄理解技能結算過程</li>
-                </ul>
-            </div>
-        </div>
-    </div>
     <div class="main-container">
         <div class="luck-tower-container">
             <div class="luck-tower-title">
@@ -2753,7 +2709,7 @@
             <div class="luck-tower-wrapper" id="luck-tower-wrapper">
                 <div class="luck-tower-grid" id="luck-tower-grid"></div>
             </div>
-            
+           
             <!-- 🆕 新增：滾動控制按鈕區 -->
             <div class="luck-scroll-controls">
                 <button class="luck-scroll-btn scroll-up" 
@@ -2963,7 +2919,6 @@
                     </button>
                 </div>
             </div>
-            </div>
         </div>
 
         <div class="skills-section">
@@ -3019,22 +2974,20 @@
             currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
             applyZoom();
             
-            // 🎮 遊戲日誌記錄
             if (game) {
-                const percentage = Math.round(currentZoom * 100);
-                game.addBattleLog('system', `🔍 頁面縮放調整為 ${percentage}%`);
+                game.addBattleLog('system', '🔍 頁面縮放已重置為 100%');
             }
         }
 
-        // 🔄 重置縮放
         function resetZoom() {
             currentZoom = 1.0;
             applyZoom();
             
             if (game) {
-                game.addBattleLog('system', '🔍 頁面縮放已重置為 100%');
+                game.addBattleLog('system', t('gameMessages.zoomReset'));
             }
         }
+
 
         // 🎨 應用縮放效果（精準目標縮放，避免彈出視窗跑位）
         function applyZoom() {
@@ -3200,38 +3153,7 @@
                 requestAnimationFrame(animation);
             }
         }
-        // ====== 🎮 統一滾動控制系統結束 ======
-
-
-        /**
-         * 平滑滾動實現函數
-         * @param {HTMLElement} element - 要滾動的元素
-         * @param {number} target - 目標滾動位置
-         * @param {number} duration - 動畫持續時間
-         */
-        function smoothScrollTo(element, target, duration) {
-            const start = element.scrollTop;
-            const distance = target - start;
-            const startTime = performance.now();
             
-            function animation(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // 🎨 緩動函數：easeInOutCubic
-                const easeProgress = progress < 0.5
-                    ? 4 * progress * progress * progress
-                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                
-                element.scrollTop = start + distance * easeProgress;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animation);
-                }
-            }
-            
-            requestAnimationFrame(animation);
-        }
 
         // 🎮 擴展鍵盤快捷鍵支援
             document.addEventListener('keydown', (e) => {
@@ -3271,6 +3193,7 @@
                     e.preventDefault();
                     resetZoom();
                 }
+                
             });
         // ====== 🎮 運氣軌道滾動控制系統結束 ======
         // 🔄 載入儲存的縮放設定
@@ -3289,25 +3212,1805 @@
             applyZoom();
         }
 
-        // 🎮 鍵盤快捷鍵支援
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + Plus：放大
-            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
-                e.preventDefault();
-                changeZoom(ZOOM_STEP);
-            }
-            // Ctrl/Cmd + Minus：縮小
-            else if ((e.ctrlKey || e.metaKey) && e.key === '-') {
-                e.preventDefault();
-                changeZoom(-ZOOM_STEP);
-            }
-            // Ctrl/Cmd + 0：重置
-            else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
-                e.preventDefault();
-                resetZoom();
-            }
-        });
         // ====== 🔍 頁面縮放系統結束 ======
+        // ====================================================
+        // 🌐 多語言國際化系統 (i18n)
+        // ====================================================
+
+        let currentLanguage = 'zh-TW';
+
+        const I18N_DICT = {
+            'zh-TW': {
+                // ═══ 基礎UI元素 ═══
+                pageTitle: 'KINTURE勤能改運 - 單機試玩版',
+                
+                // ═══ 設定介面 ═══
+                setupTitle: '⚙️ 遊戲設定(手機請選用電腦版配置)',
+                setupStep1: '1. 選擇你的出牌順位 (勢力選擇將為逆序輪抽)',
+                setupStep2: '2. 選擇本場使用的角色卡 SET',
+                orderLabels: [
+                    '順位 1 (最後選勢力)',
+                    '順位 2', 
+                    '順位 3',
+                    '順位 4 (最先選勢力)'
+                ],
+                confirmBtn: '確認並進入勢力選擇 ➔',
+
+                // ═══ 勢力選擇介面 ═══
+                draftTitle: '🏴 勢力選擇階段',
+                draftSubtitle1: '最終分數 = 主勢力祝福×2 + 副勢力祝福 + 副勢力祝福',
+                draftSubtitle2: '⚡ 打出技能:打出時立即發動效果 | 🔑 一次性:觸發後執行並移除 | ⏳ 多次性:觸發後保留',
+                draftSubtitle3: '祝福循環:勢力到達60格運氣後獲得大祝福(15分)並回到起點',
+                draftHandTitle: '你的初始手牌 (6張A/B卡,供選擇勢力參考)',
+                draftCurrentWaiting: '正在等待選擇勢力...',
+                
+                // ═══ 主遊戲介面 ═══
+                luckTowerTitle: '運氣軌道 (60格)',
+                scrollUp: '⬆️ 向上',
+                scrollDown: '⬇️ 向下',
+                roundDisplay: '回合',
+                discardTitle: '🗑️ 棄牌堆',
+                discardEmpty: '空',
+                discardCount: '張',
+                resetBtn: '重新開始 🔄',
+                soundOn: '🔊 音效開',
+                soundOff: '🔇 音效關',
+                bgmOn: '♪♫ BGM開',
+                bgmOff: '🎵 BGM關',
+                
+                // ═══ 縮放控制 ═══
+                zoomTitle: '🔍 畫面縮放',
+                zoomIn: '➕ 放大',
+                zoomOut: '➖ 縮小', 
+                zoomReset: '🔄 重置',
+                zoomHint: '50% - 150%',
+                zoomMobile: '手機版',
+                
+                // ═══ 玩家資訊 ═══
+                playerNames: ['你', '烈焰魔王', '自然法師', '虛空行者'],
+                orderBadge: '順位',
+                notSelected: '🎭 未選擇',
+                waitingSelection: '等待選擇...',
+                deckCount: '📚',
+                
+                // ═══ 戰鬥紀錄 ═══
+                battleLogTitle: '📜 戰鬥記錄',
+                logScrollUp: '⬆️ 向上',
+                logScrollDown: '⬇️ 向下',
+                logScrollBottom: '⏬ 最新',
+                
+                // ═══ 技能一覽 ═══
+                skillsTitle: '⚡ 本局角色技能一覽',
+                
+                // ═══ 新手指南 ═══
+                tutorialTitle: '💡 新手快速指南',
+                tutorialSubtitle: '第一次玩建議先看這裡',
+
+                // ✅ 新增：完整格式的新手指南內容
+                tutorialCards: [
+                    {
+                        title: '🏆 計分與祝福系統',
+                        items: [
+                            '<strong>基本計分：</strong>運氣軌道位置 ÷ 4 = 小祝福分數（無條件進位）',
+                            '<strong>大祝福：</strong>超過60格自動獲得<span class="highlight-score">🌟大祝福(15分)</span>並重置到起點',
+                            '<strong>巨祝福：</strong>2個大祝福自動合成<span class="highlight-score">💎巨祝福(30分)</span>',
+                            '<strong>極祝福：</strong>巨祝福 + 大祝福自動合成<span class="highlight-score">💫極祝福(45分)</span>',
+                            '<strong>最終得分：</strong><span class="highlight-formula">主勢力總分 × 2 + 副勢力1 + 副勢力2</span>',
+                            '<strong>棄牌補償：</strong>開局棄牌勢力無條件獲得+4運氣起跑優勢'
+                        ]
+                    },
+
+
+                    {
+                        title: '⏳ 事件線觸發機制',
+                        items: [
+                            '<strong>觸發範圍：</strong>出牌位置的<span class="highlight-key">同行+同列(十字7格)</span>',
+                            '<strong>執行順序：</strong>身份變換(魔術師→詐欺師→祭司) → 數值計算(貴族→平民) → 戰鬥判定(守衛vs強盜) → 特殊效果',
+                            '<strong>群體技能：</strong>守衛≥強盜時守衛勝，移除所有強盜並+3N運氣；強盜>守衛時強盜勝，移除守衛/貴族/平民並+2N運氣',
+                            '<strong>數量加成：</strong>貴族(5-N運氣，越多越少)、平民(1+N運氣，越多越多)'
+                        ]
+                    },
+                    {
+                        title: '⚡ 技能類型與時機',
+                        items: [
+                            '<span class="skill-on-play">⚡ 打出技能：</span>放置瞬間立即發動，不等事件線(王族加冕、傀儡師替換)',
+                            '<span class="skill-one-time">🔑 一次性：</span>事件線觸發後執行並移除，條件不符則保留(祭司、魔術師、詐欺師、戀人、AI、小丑)',
+                            '<span class="skill-recurring">⏳ 多次性：</span>每次事件線都觸發，執行後保留在場(貴族、平民、守衛、強盜、精靈、惡魔)',
+                            '<strong>有限制性：</strong>[祭司;非同色非祭司未感化][魔術師;非魔術師][詐欺師;非詐欺師][傀儡師;非傀儡師][王族;非貴族][戀人;非同性]',
+                            '<strong>未執行不移除：</strong>祭司、魔術師、詐欺師、戀人'
+                        ]
+                    },
+                    {
+                        title: '🃏 重要角色互動',
+                        items: [
+                            '<strong>👑 王族：</strong>加冕後目標暫時變貴族，王族橫置於其後。目標離場時王族一併移除',
+                            '<strong>🙏 祭司：</strong>感化異色角色變同色，橫置於其後。目標離場時祭司一併移除', 
+                            '<strong>🎩 魔術師：</strong>傳送1張角色到自己位置後消失，被傳送的角色依事件線規則執行技能',
+                            '<strong>🎭 詐欺師：</strong>完全偽裝成目標角色，依事件線順序執行所有角色技能後移除',
+                            '<strong>💕 戀人配對：</strong>男女配對成功雙方勢力各+5運氣，觸發技能者配對一次抽1張牌，配對後移除'
+                        ]
+                    },
+                    {
+                        title: '🎮 操作技巧與策略',
+                        items: [
+                            '<strong>雙面P卡：</strong>手牌中點擊<span class="highlight-key">🔄按鈕</span>可隨時切換正反面',
+                            '<strong>目標選擇：</strong>需要選目標時點擊<span class="highlight-key">青色/紫色高亮</span>的合法格子',
+                            '<strong>勢力選擇：</strong>優先選手牌中同色最多的勢力，副勢力也會計分不可忽視',
+                            '<strong>位置策略：</strong>角落觸發易於防守，中央靈活搭配。戰場滿16格遊戲立即結束',
+                            '<strong>速度調節：</strong>新手建議用×1速度，配合右側戰鬥紀錄理解技能結算過程'
+                        ]
+                    }
+                ],
+                // ═══ 技能面板翻譯 ═══
+                skillTypes: {
+                    ON_PLAY: { icon: '⚡', name: '打出技能', desc: '打出時立即發動' },
+                    ONE_TIME: { icon: '🔑', name: '事件線(一次性)', desc: '觸發後移除' },
+                    RECURRING: { icon: '⏳', name: '事件線(多次性)', desc: '觸發後保留' }
+                },
+                charDescs: {
+                    '祭司': '感化場上1張未感化異色角色為同色;祭司橫置於其背,該牌離場時祭司移除',
+                    '魔術師': '轉移場上1張牌至魔術師位置執行技能,魔術師移除並+2運氣',
+                    '詐欺師': '偽裝成場上任意角色,結算該角色技能後移除',
+                    '貴族': '【官僚】為卡牌勢力+(5-N)運氣,N=當前事件線貴族數',
+                    '平民': '【共享】為卡牌勢力+(1+N)運氣,N=當前事件線平民數',
+                    '守衛': '守衛≥強盜時移除所有強盜;為卡牌勢力+3N運氣(N=移除數)',
+                    '強盜': '強盜>守衛時移除所有守衛/貴族/平民;為卡牌勢力+2N運氣(N=移除數)',
+                    '王族': '出牌時加冕場上1張非貴族卡成為貴族並建立依附關係',
+                    '傀儡師': '出牌時替換場上1張非傀儡師卡回手牌並+2運氣;事件線觸發時自身發呆1秒,不影響其他角色',
+                    'AI機器人': '【同色掃描】獲得NxN運氣後移除(N=場上同色角色數),若N=0則不執行不移除',
+                    '小丑': '【全場掃描】獲得N運氣後移除(N=場上角色總數),若N=0則不執行不移除',
+                    '戀人男': '與場上任意女性角色配對，雙方勢力各+5運氣,觸發者抽1張牌後雙方移除',
+                    '戀人女': '與場上任意男性角色配對，雙方勢力各+5運氣,觸發者抽1張牌後雙方移除',
+                    '惡魔': '【打出時】移除1張精靈並+3運氣;【事件線】範圍內角色勢力-1運氣',
+                    '精靈': '【打出時】移除1張惡魔並+3運氣;【事件線】範圍內角色勢力+2運氣'
+                },
+                skillLabels: {
+                    dualCard: '雙面', frontFace: '正面', backFace: '反面'
+                },
+                genderTooltips: {
+                    male: '男性角色', female: '女性角色', neutral: '中性角色'
+                },
+
+                
+                // ═══ 勢力名稱 ═══
+                factionNames: {
+                    charm: '魅力', capital: '資本', wisdom: '智慧', 
+                    harmony: '協調', Strength: '力量'
+                },
+
+                draftLabels: {
+                    yourTurn: '輪到你選擇勢力！(將獲得該勢力的2張P卡)',
+                    waiting: '正在等待 {name} 選擇勢力...',
+                    selectedTitle: '已選擇的勢力 ({count}/4):',
+                    noSelected: '尚無玩家選擇勢力',
+                    subFaction: '副勢力',
+                    getPCards: '🔄 +2張P卡',
+                    luckBonus: '🎁 +4運氣補償',
+                    bonusLabel: '+4運氣',
+                    picked: '{name} 選擇了 {faction} (副勢力: {subs}) 並獲得2張P卡！',
+                    discardInfo: '⚠️ 本場棄牌資訊',
+                    discardFaction: '棄牌堆中有 {faction} 勢力的',
+                    luckCompensation: '🎁 此勢力將獲得 +4 運氣補償',
+                    noDiscard: '無剩餘卡牌',
+                    handPreviewTitle: '你的初始手牌 (6張A/B卡,供選擇勢力參考)'
+                },
+
+                factionDescs: {
+                    charm: '社交影響力', capital: '經濟掌控', wisdom: '知識力量', 
+                    harmony: '和平共處', Strength: '武力征服'
+                },                
+                // ═══ 角色名稱 ═══
+                charNames: {
+                    '祭司': '祭司', '魔術師': '魔術師', '詐欺師': '詐欺師',
+                    '貴族': '貴族', '平民': '平民', '守衛': '守衛', '強盜': '強盜',
+                    '王族': '王族', '傀儡師': '傀儡師', 'AI機器人': 'AI機器人', 
+                    '小丑': '小丑', '戀人男': '戀人男', '戀人女': '戀人女', 
+                    '惡魔': '惡魔', '精靈': '精靈'
+                },
+                // ═══ SET 內容翻譯 ═══
+                setNames: {
+                    1: 'SET 1 - ★★★★神聖王權', 2: 'SET 2 - ★★★★魔法愛情', 3: 'SET 3 - ★★★★全面控制',
+                    4: 'SET 4 - ★★★★★神聖奇緣', 5: 'SET 5 - ★★★★★自然魔法', 6: 'SET 6 - ★★混沌詐術',
+                    7: 'SET 7 - ★★★★★★完全神聖', 8: 'SET 8 - ★★★魔法科技', 9: 'SET 9 - ★★★詐術組合'
+                },
+                setLabels: {
+                    aCard: 'A卡', bCard: 'B卡', pCard: 'P卡',
+                    allChars: '全部 (貴族、平民、守衛、強盜)',
+                    currentSet: '🃏 當前使用 SET'
+                },
+
+
+                // ═══ 遊戲訊息 ═══
+                gameMessages: {
+                    battleStart: '🎮 五勢力混戰開始！共 {rounds} 回合,每人8張手牌',
+                    gameOver: '🏁 遊戲結束！進行最終結算...',
+                    champion: '🎉 冠軍：{name}！',
+                    tieChampion: '🤝 共同冠軍：{names}！',
+                    battlefieldFull: '🏁 戰場已滿！遊戲提早結束！',
+                    yourTurn: '{name}的回合',
+                    soundEnabled: '🔊 音效已開啟',
+                    soundDisabled: '🔇 音效已關閉',
+                    zoomAdjusted: '🔍 頁面縮放調整為 {percent}%',
+                    zoomReset: '🔍 頁面縮放已重置為 100%'
+                }
+            },
+
+            'en': {
+                pageTitle: 'KINTURE - Single Player Demo',
+                setupTitle: '⚙️ Game Setup (Use Desktop Layout on Mobile)',
+                setupStep1: '1. Choose your play order (Faction draft will be in reverse)',
+                setupStep2: '2. Select the character card SET for this game',
+                orderLabels: [
+                    'Order 1 (Draft Last)',
+                    'Order 2',
+                    'Order 3', 
+                    'Order 4 (Draft First)'
+                ],
+                confirmBtn: 'Confirm & Enter Faction Selection ➔',
+                
+                draftTitle: '🏴 Faction Selection Phase',
+                draftSubtitle1: 'Final Score = Main Faction Blessings×2 + Sub Faction Blessings + Sub Faction Blessings',
+                draftSubtitle2: '⚡ On-Play: Triggers immediately | 🔑 One-Time: Triggers then removed | ⏳ Recurring: Triggers and stays',
+                draftSubtitle3: 'Blessing Cycle: Reaching 60 luck grants Major Blessing (15pts) and resets to start',
+                draftHandTitle: 'Your Starting Hand (6 A/B cards, for faction reference)',
+                draftCurrentWaiting: 'Waiting for faction selection...',
+                
+                luckTowerTitle: 'Luck Track (60 Cells)',
+                scrollUp: '⬆️ Up',
+                scrollDown: '⬇️ Down',
+                roundDisplay: 'Round',
+                discardTitle: '🗑️ Discard Pile',
+                discardEmpty: 'Empty',
+                discardCount: ' cards',
+                resetBtn: 'Restart 🔄',
+                soundOn: '🔊 Sound ON',
+                soundOff: '🔇 Sound OFF',
+                bgmOn: '♪♫ BGM ON',
+                bgmOff: '🎵 BGM OFF',
+                
+                zoomTitle: '🔍 Zoom Control',
+                zoomIn: '➕ Zoom In',
+                zoomOut: '➖ Zoom Out',
+                zoomReset: '🔄 Reset',
+                zoomHint: '50% - 150%',
+                zoomMobile: 'Mobile',
+                
+                playerNames: [ 'You', 'Flame Demon', 'Nature Mage', 'Void Walker' ],
+                orderBadge: 'Order',
+                notSelected: '🎭 Not Selected',
+                waitingSelection: 'Waiting...',
+                deckCount: '📚',
+                
+                battleLogTitle: '📜 Battle Log',
+                logScrollUp: '⬆️ Up',
+                logScrollDown: '⬇️ Down',
+                logScrollBottom: '⏬ Latest',
+                
+                skillsTitle: '⚡ Character Skills Reference',
+                tutorialTitle: '💡 Quick Start Guide',
+                tutorialSubtitle: 'First time? Read this first!',
+
+                tutorialCards: [
+                    {
+                        title: '🏆 Scoring & Blessing System',
+                        items: [
+                            '<strong>Basic Score:</strong> Luck Track Position ÷ 4 = Minor Blessing Points (round up)',
+                            '<strong>Major Blessing:</strong> Exceeding 60 cells grants <span class="highlight-score">🌟Major Blessing(15pts)</span> and resets to start',
+                            '<strong>Giga Blessing:</strong> 2 Major Blessings auto-merge into <span class="highlight-score">💎Giga Blessing(30pts)</span>',
+                            '<strong>Ultra Blessing:</strong> Giga + Major auto-merge into <span class="highlight-score">💫Ultra Blessing(45pts)</span>',
+                            '<strong>Final Score:</strong> <span class="highlight-formula">Main Faction Total × 2 + Sub Faction 1 + Sub Faction 2</span>',
+                            '<strong>Discard Bonus:</strong> Starting discard faction gets unconditional +4 luck advantage'
+                        ]
+                    },
+
+                    {
+                        title: '⏳ Timeline Trigger Mechanics',
+                        items: [
+                            '<strong>Trigger Range:</strong> <span class="highlight-key">Same row + column (Cross 7 cells)</span> of played card position',
+                            '<strong>Execution Order:</strong> Identity Change (Magician→Fraudster→Priest) → Value Calc (Noble→Commoner) → Combat Check (Guard vs Bandit) → Special Effects',
+                            '<strong>Group Skills:</strong> Guard≥Bandit: Guards win, remove all Bandits +3N luck; Bandit>Guard: Bandits win, remove Guards/Nobles/Commoners +2N luck',
+                            '<strong>Quantity Bonus:</strong> Noble (5-N luck, less with more), Commoner (1+N luck, more with more)'
+                        ]
+                    },
+                    {
+                        title: '⚡ Skill Types & Timing',
+                        items: [
+                            '<span class="skill-on-play">⚡ On-Play:</span> Triggers instantly when placed, ignores timeline (Royal Coronation, Puppeteer Swap)',
+                            '<span class="skill-one-time">🔑 One-Time:</span> Triggers on timeline then removed; stays if conditions unmet (Priest, Magician, Fraudster, Lovers, AI, Jester)',
+                            '<span class="skill-recurring">⏳ Recurring:</span> Triggers every timeline, stays on field (Noble, Commoner, Guard, Bandit, Elf, Demon)',
+                            '<strong>Restrictions:</strong> [Priest: diff color, non-Priest, unconverted][Magician: non-Magician][Fraudster: non-Fraudster][Puppeteer: non-Puppeteer][Royal: non-Noble][Lovers: opposite gender]',
+                            '<strong>No removal if unused:</strong> Priest, Magician, Fraudster, Lovers'
+                        ]
+                    },
+                    {
+                        title: '🃏 Key Character Interactions',
+                        items: [
+                            '<strong>👑 Royal:</strong> Crowned target becomes Noble temporarily, Royal placed behind. Both removed when target leaves',
+                            '<strong>🙏 Priest:</strong> Converts different-color character to same color, placed behind. Both removed when target leaves',
+                            '<strong>🎩 Magician:</strong> Teleports 1 character to own position then disappears; teleported card follows timeline rules',
+                            '<strong>🎭 Fraudster:</strong> Fully disguises as target character, executes all skills by timeline order then removed',
+                            '<strong>💕 Lovers Pairing:</strong> Successful M/F pairing gives both factions +5 luck; trigger player draws 1 card, both removed'
+                        ]
+                    },
+                    {
+                        title: '🎮 Tips & Strategy',
+                        items: [
+                            '<strong>Dual P-Cards:</strong> Click <span class="highlight-key">🔄 button</span> in hand to flip between faces anytime',
+                            '<strong>Target Selection:</strong> Click <span class="highlight-key">cyan/purple highlighted</span> valid cells when selecting targets',
+                            '<strong>Faction Choice:</strong> Prioritize faction with most cards in hand; sub-factions also score, don\'t ignore',
+                            '<strong>Position Strategy:</strong> Corners are defensive, center is flexible. Game ends immediately when 16 cells filled',
+                            '<strong>Speed Setting:</strong> Beginners use ×1 speed with battle log to understand skill resolution process'
+                        ]
+                    }
+                ],
+                
+                // ═══ 技能面板翻譯 ═══
+                skillTypes: {
+                    ON_PLAY: { icon: '⚡', name: 'On-Play', desc: 'Triggers instantly when played' },
+                    ONE_TIME: { icon: '🔑', name: 'One-Time', desc: 'Removed after trigger' },
+                    RECURRING: { icon: '⏳', name: 'Recurring', desc: 'Stays after trigger' }
+                },
+                charDescs: {
+                    '祭司': 'Convert 1 unconverted different-color character to same color; Priest placed behind, removed when target leaves',
+                    '魔術師': 'Teleport 1 card to Magician position to execute skill; Magician removed and +2 luck',
+                    '詐欺師': 'Disguise as any character on field, execute that character\'s skill then removed',
+                    '貴族': '[Bureaucrat] Give card faction +(5-N) luck, N=Noble count in current timeline',
+                    '平民': '[Sharing] Give card faction +(1+N) luck, N=Commoner count in current timeline',
+                    '守衛': 'If Guard≥Bandit, remove all Bandits; give card faction +3N luck (N=removed count)',
+                    '強盜': 'If Bandit>Guard, remove all Guards/Nobles/Commoners; give card faction +2N luck (N=removed count)',
+                    '王族': 'On play: Crown 1 non-Noble card on field to become Noble and establish attachment',
+                    '傀儡師': 'On play: Replace 1 non-Puppeteer card to hand +2 luck; On timeline: idle for 1 second, no effect on others',
+                    'AI機器人': '[Color Scan] Gain NxN luck then removed (N=same color count); if N=0, no effect and no removal',
+                    '小丑': '[Field Scan] Gain N luck then removed (N=total cards on field); if N=0, no effect and no removal',
+                    '戀人男': 'Pair with any female character; both factions +5 luck, trigger player draws 1 card, both removed',
+                    '戀人女': 'Pair with any male character; both factions +5 luck, trigger player draws 1 card, both removed',
+                    '惡魔': '[On Play] Remove 1 Elf +3 luck; [Timeline] All characters in range -1 luck',
+                    '精靈': '[On Play] Remove 1 Demon +3 luck; [Timeline] All characters in range +2 luck'
+                },
+                skillLabels: {
+                    dualCard: 'Dual', frontFace: 'Front', backFace: 'Back'
+                },
+                genderTooltips: {
+                    male: 'Male Character', female: 'Female Character', neutral: 'Neutral Character'
+                },
+
+                factionNames: {
+                    charm: 'Charm', capital: 'Capital', wisdom: 'Wisdom',
+                    harmony: 'Harmony', Strength: 'Strength'
+                },
+                draftLabels: {
+                    yourTurn: 'Your turn to choose a faction! (You will receive 2 P-cards)',
+                    waiting: 'Waiting for {name} to choose a faction...',
+                    selectedTitle: 'Selected Factions ({count}/4):',
+                    noSelected: 'No players have selected a faction yet',
+                    subFaction: 'Sub-Factions',
+                    getPCards: '🔄 +2 P-Cards',
+                    luckBonus: '🎁 +4 Luck Bonus',
+                    bonusLabel: '+4 Luck',
+                    picked: '{name} chose {faction} (Sub-Factions: {subs}) and received 2 P-cards!',
+                    discardInfo: '⚠️ Starting Discard Info',
+                    discardFaction: 'Discard pile contains {faction} faction',
+                    luckCompensation: '🎁 This faction will receive +4 luck compensation',
+                    noDiscard: 'No remaining cards',
+                    handPreviewTitle: 'Your Starting Hand (6 A/B cards, for faction reference)'
+                },
+                factionDescs: {
+                    charm: 'Social Influence', capital: 'Economic Control', wisdom: 'Power of Knowledge',
+                    harmony: 'Peaceful Coexistence', Strength: 'Military Conquest'
+                },                
+                charNames: {
+                    '祭司': 'Priestess', '魔術師': 'Magician', '詐欺師': 'Swindler',
+                    '貴族': 'Noble', '平民': 'Commoner', '守衛': 'Guard', '強盜': 'Bandit',
+                    '王族': 'Royalty', '傀儡師': 'Puppeteer', 'AI機器人': 'AI Robot',
+                    '小丑': 'Jester', '戀人男': 'Male Lover', '戀人女': 'Female Lover',
+                    '惡魔': 'Demon', '精靈': 'Elf'
+                },
+                // ═══ SET 內容翻譯 ═══
+                setNames: {
+                    1: 'SET 1 - ★★★★ Sacred Royalty', 2: 'SET 2 - ★★★★ Magic Romance', 3: 'SET 3 - ★★★★ Total Control',
+                    4: 'SET 4 - ★★★★★ Sacred Fate', 5: 'SET 5 - ★★★★★ Nature Magic', 6: 'SET 6 - ★★ Chaos Deception',  
+                    7: 'SET 7 - ★★★★★★ Divine Sacred', 8: 'SET 8 - ★★★ Magic Tech', 9: 'SET 9 - ★★★ Deception Combo'
+                },
+                setLabels: {
+                    aCard: 'A Card', bCard: 'B Cards', pCard: 'P Cards',
+                    allChars: 'All (Noble, Commoner, Guard, Bandit)',
+                    currentSet: '🃏 Current SET'
+                },
+                
+                gameMessages: {
+                    battleStart: '🎮 Five-Faction Battle Begins! {rounds} rounds total, 8 cards each',
+                    gameOver: '🏁 Game Over! Final settlement...',
+                    champion: '🎉 Champion: {name}!',
+                    tieChampion: '🤝 Co-Champions: {names}!',
+                    battlefieldFull: '🏁 Battlefield Full! Game ends early!',
+                    yourTurn: "{name}'s Turn",
+                    soundEnabled: '🔊 Sound enabled',
+                    soundDisabled: '🔇 Sound disabled',
+                    zoomAdjusted: '🔍 Zoom adjusted to {percent}%',
+                    zoomReset: '🔍 Zoom reset to 100%'
+                }
+            },
+
+            'ja': {
+                pageTitle: 'KINTURE 勤能改運 - シングルプレイデモ',
+                setupTitle: '⚙️ ゲーム設定（モバイルはPC版レイアウト推奨）',
+                setupStep1: '1. プレイ順を選択（勢力ドラフトは逆順）',
+                setupStep2: '2. 使用するキャラクターカードSETを選択',
+                orderLabels: [
+                    '順位1（最後に勢力選択）',
+                    '順位2',
+                    '順位3',
+                    '順位4（最初に勢力選択）'
+                ],
+                confirmBtn: '確認して勢力選択へ ➔',
+                
+                draftTitle: '🏴 勢力選択フェーズ',
+                draftSubtitle1: '最終スコア = 主勢力祝福×2 + 副勢力祝福 + 副勢力祝福',
+                draftSubtitle2: '⚡ 打出スキル:配置時即発動 | 🔑 一回性:発動後除去 | ⏳ 多回性:発動後残留',
+                draftSubtitle3: '祝福サイクル:60マス到達で大祝福(15点)獲得、スタートに戻る',
+                draftHandTitle: '初期手札（A/Bカード6枚、勢力選択の参考に）',
+                draftCurrentWaiting: '勢力選択を待っています...',
+                
+                luckTowerTitle: '運気トラック（60マス）',
+                scrollUp: '⬆️ 上へ',
+                scrollDown: '⬇️ 下へ',
+                roundDisplay: 'ラウンド',
+                discardTitle: '🗑️ 捨て札置き場',
+                discardEmpty: '空',
+                discardCount: '枚',
+                resetBtn: '最初からやり直す 🔄',
+                soundOn: '🔊 効果音ON',
+                soundOff: '🔇 効果音OFF',
+                bgmOn: '♪♫ BGM ON',
+                bgmOff: '🎵 BGM OFF',
+                
+                zoomTitle: '🔍 画面ズーム',
+                zoomIn: '➕ 拡大',
+                zoomOut: '➖ 縮小',
+                zoomReset: '🔄 リセット',
+                zoomHint: '50% - 150%',
+                zoomMobile: 'モバイル',
+                
+                playerNames: ['あなた', '炎の魔王', '自然の魔法使い', '虚空の旅人'],
+                orderBadge: '順位',
+                notSelected: '🎭 未選択',
+                waitingSelection: '選択待ち...',
+                deckCount: '📚',
+                
+                battleLogTitle: '📜 バトルログ',
+                logScrollUp: '⬆️ 上へ',
+                logScrollDown: '⬇️ 下へ',
+                logScrollBottom: '⏬ 最新',
+                
+                skillsTitle: '⚡ キャラクタースキル一覧',
+                tutorialTitle: '💡 初心者クイックガイド',
+                tutorialSubtitle: '初めての方はまずここを読んでください',
+                
+                tutorialCards: [
+                    {
+                        title: '🏆 スコアと祝福システム',
+                        items: [
+                            '<strong>基本スコア：</strong>運気トラック位置 ÷ 4 = 小祝福ポイント（切り上げ）',
+                            '<strong>大祝福：</strong>60マス超えで<span class="highlight-score">🌟大祝福(15点)</span>獲得、スタートに戻る',
+                            '<strong>巨祝福：</strong>大祝福2個が自動合成して<span class="highlight-score">💎巨祝福(30点)</span>',
+                            '<strong>極祝福：</strong>巨祝福+大祝福が自動合成して<span class="highlight-score">💫極祝福(45点)</span>',
+                            '<strong>最終スコア：</strong><span class="highlight-formula">主勢力合計 × 2 + 副勢力1 + 副勢力2</span>',
+                            '<strong>捨て札ボーナス：</strong>開始時捨て札勢力は無条件で+4運気の先行優位'
+                        ]
+                    },
+                    {
+                        title: '⏳ タイムライン発動メカニズム',
+                        items: [
+                            '<strong>発動範囲：</strong>配置位置の<span class="highlight-key">同行+同列(十字7マス)</span>',
+                            '<strong>実行順序：</strong>身元変換(魔術師→詐欺師→祭司) → 数値計算(貴族→平民) → 戦闘判定(守衛vs強盗) → 特殊効果',
+                            '<strong>グループスキル：</strong>守衛≥強盗時は守衛勝利、全強盗除去+3N運気；強盗>守衛時は強盗勝利、守衛/貴族/平民除去+2N運気',
+                            '<strong>数量ボーナス：</strong>貴族(5-N運気、多いほど少ない)、平民(1+N運気、多いほど多い)'
+                        ]
+                    },
+                    {
+                        title: '⚡ スキルタイプとタイミング',
+                        items: [
+                            '<span class="skill-on-play">⚡ 配置スキル：</span>配置瞬間に即発動、タイムライン無視(王族加冕、傀儡師交換)',
+                            '<span class="skill-one-time">🔑 一回性：</span>タイムライン発動後に実行し除去；条件未達なら保留(祭司、魔術師、詐欺師、恋人、AI、道化師)',
+                            '<span class="skill-recurring">⏳ 多回性：</span>毎タイムライン発動、フィールド残留(貴族、平民、守衛、強盗、精霊、悪魔)',
+                            '<strong>制限事項：</strong>[祭司;異色非祭司未感化][魔術師;非魔術師][詐欺師;非詐欺師][傀儡師;非傀儡師][王族;非貴族][恋人;異性のみ]',
+                            '<strong>未実行なら除去なし：</strong>祭司、魔術師、詐欺師、恋人'
+                        ]
+                    },
+                    {
+                        title: '🃏 重要キャラクター相互作用',
+                        items: [
+                            '<strong>👑 王族：</strong>加冕後ターゲットは一時的に貴族、王族は後方に横置き。ターゲット離場時に王族も除去',
+                            '<strong>🙏 祭司：</strong>異色キャラを同色に感化、後方に横置き。ターゲット離場時に祭司も除去',
+                            '<strong>🎩 魔術師：</strong>1枚を自位置に転送後消滅；転送カードはタイムラインルールで技能発動',
+                            '<strong>🎭 詐欺師：</strong>ターゲットに完全変装、タイムライン順序で全技能実行後除去',
+                            '<strong>💕 恋人配対：</strong>男女配対成功で両勢力+5運気；発動者1枚ドロー、両者除去'
+                        ]
+                    },
+                    {
+                        title: '🎮 操作テクニックと戦略',
+                        items: [
+                            '<strong>デュアルPカード：</strong>手札の<span class="highlight-key">🔄ボタン</span>でいつでも表裏切り替え',
+                            '<strong>ターゲット選択：</strong>ターゲット選択時は<span class="highlight-key">シアン/紫ハイライト</span>の有効マスをクリック',
+                            '<strong>勢力選択：</strong>手札最多同色勢力を優先；副勢力もスコアになるので無視禁物',
+                            '<strong>位置戦略：</strong>コーナーは守備的、中央は柔軟。16マス全埋まりで即ゲーム終了',
+                            '<strong>速度調整：</strong>初心者は×1速度でバトルログ確認しながら技能処理理解'
+                        ]
+                    }
+                ],
+
+                // ═══ 技能面板翻譯 ═══
+                skillTypes: {
+                    ON_PLAY: { icon: '⚡', name: '配置スキル', desc: '配置時に即発動' },
+                    ONE_TIME: { icon: '🔑', name: '一回性', desc: '発動後除去' },
+                    RECURRING: { icon: '⏳', name: '多回性', desc: '発動後残留' }
+                },
+                charDescs: {
+                    '祭司': '未感化の異色キャラ1体を同色に感化し後方に配置。対象離場時に除去',
+                    '魔術師': 'カード1枚を自位置に転送しスキル実行。自身は除去され+2運気',
+                    '詐欺師': '任意のキャラに変装し、そのスキルを実行後除去',
+                    '貴族': '【官僚】勢力+(5-N)運気、N=タイムライン内の貴族数',
+                    '平民': '【共有】勢力+(1+N)運気、N=タイムライン内の平民数',
+                    '守衛': '守衛≥強盗時、全強盗を除去；勢力+3N運気(N=除去数)',
+                    '強盜': '強盗>守衛時、全守衛/貴族/平民を除去；勢力+2N運気(N=除去数)',
+                    '王族': '配置時: 非貴族1体を貴族に加冕し依存関係を構築',
+                    '傀儡師': '配置時: 非傀儡師1体を手札に戻し+2運気；タイムライン: 1秒呆然とし他者に影響なし',
+                    'AI機器人': '【同色スキャン】NxN運気獲得後除去(N=同色キャラ数)。N=0なら残留',
+                    '小丑': '【全体スキャン】N運気獲得後除去(N=全キャラ数)。N=0なら残留',
+                    '戀人男': '任意の女性とペア成立。両勢力+5運気、発動者1ドロー、両者除去',
+                    '戀人女': '任意の男性とペア成立。両勢力+5運気、発動者1ドロー、両者除去',
+                    '惡魔': '【配置時】精霊1体除去、+3運気；【タイムライン】範囲内のキャラ勢力-1運気',
+                    '精靈': '【配置時】悪魔1体除去、+3運気；【タイムライン】範囲内のキャラ勢力+2運気'
+                },
+                skillLabels: {
+                    dualCard: '両面', frontFace: '表面', backFace: '裏面'
+                },
+                genderTooltips: {
+                    male: '男性キャラ', female: '女性キャラ', neutral: '中性キャラ'
+                },
+
+                factionNames: {
+                    charm: '魅力', capital: '資本', wisdom: '知恵',
+                    harmony: '調和', Strength: '力'
+                },
+                draftLabels: {
+                    yourTurn: 'あなたの勢力選択ターン！(その勢力の2枚のPカードを獲得)',
+                    waiting: '{name} の勢力選択を待っています...',
+                    selectedTitle: '選択済み勢力 ({count}/4):',
+                    noSelected: 'まだ誰も勢力を選択していません',
+                    subFaction: '副勢力',
+                    getPCards: '🔄 +2枚Pカード',
+                    luckBonus: '🎁 +4運気ボーナス',
+                    bonusLabel: '+4運気',
+                    picked: '{name} が {faction} を選択 (副勢力: {subs})、2枚のPカードを獲得！',
+                    discardInfo: '⚠️ 捨て札情報',
+                    discardFaction: '捨て札に {faction} 勢力のカードがあります',
+                    luckCompensation: '🎁 この勢力は+4運気補償を受けます',
+                    noDiscard: '残りカードなし',
+                    handPreviewTitle: '初期手札 (A/Bカード6枚、勢力選択の参考に)'
+                },
+                factionDescs: {
+                    charm: '社会的影響力', capital: '経済的支配', wisdom: '知識の力',
+                    harmony: '平和的共存', Strength: '武力による征服'
+                },                
+                charNames: {
+                    '祭司': '祭司', '魔術師': '魔術師', '詐欺師': '詐欺師',
+                    '貴族': '貴族', '平民': '平民', '守衛': '守衛', '強盜': '強盗',
+                    '王族': '王族', '傀儡師': '傀儡師', 'AI機器人': 'AIロボット',
+                    '小丑': '道化師', '戀人男': '恋人♂', '戀人女': '恋人♀',
+                    '惡魔': '悪魔', '精靈': '精霊'
+                },
+                // ═══ SET 內容翻譯 ═══
+                setNames: {
+                    1: 'SET 1 - ★★★★ 神聖王権', 2: 'SET 2 - ★★★★ 魔法ロマンス', 3: 'SET 3 - ★★★★ 完全制御',
+                    4: 'SET 4 - ★★★★★ 神聖な運命', 5: 'SET 5 - ★★★★★ 自然魔法', 6: 'SET 6 - ★★ 混沌詐術',
+                    7: 'SET 7 - ★★★★★★ 神聖完全', 8: 'SET 8 - ★★★ 魔法技術', 9: 'SET 9 - ★★★ 詐術コンボ'
+                },
+                setLabels: {
+                    aCard: 'Aカード', bCard: 'Bカード', pCard: 'Pカード', 
+                    allChars: '全て (貴族、平民、守衛、強盗)',
+                    currentSet: '🃏 現在のSET'
+                },
+                                
+                gameMessages: {
+                    battleStart: '🎮 五勢力乱戦開始！全{rounds}ラウンド、各8枚手札',
+                    gameOver: '🏁 ゲーム終了！最終精算中...',
+                    champion: '🎉 チャンピオン：{name}！',
+                    tieChampion: '🤝 共同チャンピオン：{names}！',
+                    battlefieldFull: '🏁 フィールド満杯！ゲーム早期終了！',
+                    yourTurn: '{name}のターン',
+                    soundEnabled: '🔊 効果音を有効化',
+                    soundDisabled: '🔇 効果音を無効化',
+                    zoomAdjusted: '🔍 ズームを{percent}%に調整',
+                    zoomReset: '🔍 ズームを100%にリセット'
+                }
+            }
+        };
+        // ====================================================
+        // 📜 戰鬥紀錄動態翻譯系統 - 完整版
+        // ====================================================
+        const BATTLE_LOG_TRANSLATIONS = {
+            'en': {
+                '🌐 介面語言已切換為【繁體中文】': '🌐 Interface language switched to【Traditional Chinese】',
+                '🌐 介面語言已切換為【English】': '🌐 Interface language switched to【English】',
+                '🌐 介面語言已切換為【日本語】': '🌐 Interface language switched to【Japanese】',
+                
+                // ═══════════════════════════════════════════
+                // 🎲 開局準備與發牌
+                // ═══════════════════════════════════════════
+                '🎲 本場角色組合 (': '🎲 Character setup (',
+                '):A=': '): A=',
+                ';B=': '; B=',
+                ';P=': '; P=',
+                '、': ', ',
+                '📚 A/B卡發牌完成！每人6張,剩餘': '📚 A/B cards dealt! 6 each, ',
+                '張進入棄牌堆': ' go to discard',
+                '📚 A/B卡發牌完成！每人6張,無剩餘卡牌': '📚 A/B cards dealt! 6 each, none remaining',
+                '🎁 開局棄牌勢力 ': '🎁 Starting discard faction ',
+                ' 已獲得 +4 運氣補償！': ' received +4 luck bonus!',
+                '🔄 選擇勢力時將獲得該勢力的': '🔄 Choosing a faction grants ',
+                '張P卡！': ' P-card(s)!',
+                ' 選擇了 ': ' chose ',
+                ' (副勢力: ': ' (Sub-Factions: ',
+                ') 並獲得2張P卡！': ') and received 2 P-cards!',
+
+                // ═══════════════════════════════════════════
+                // 🎮 遊戲流程與系統
+                // ═══════════════════════════════════════════
+                '五勢力混戰開始！共 ': 'Five-Faction Battle! Total ',
+                ' 回合,每人8張手牌': ' rounds, 8 cards each',
+                '遊戲結束！進行最終結算...': 'Game Over! Final settlement...',
+                '戰場已滿！遊戲提早結束！': 'Battlefield full! Game ends early!',
+                '打出技能:王族、傀儡師（打出即發動）': 'On-Play: Royal, Puppeteer (instant)',
+                '一次性技能:祭司、魔術師、詐欺師、AI、小丑、戀人（觸發後移除,未執行則保留）': 'One-Time: Priest, Magician, Swindler, AI, Jester, Lovers (removed after trigger)',
+                '多次性技能:貴族、平民、守衛、強盜、精靈、惡魔（觸發後保留）': 'Recurring: Noble, Commoner, Guard, Bandit, Elf, Demon (stays after trigger)',
+                '祝福系統:四葉幸運草格子提供祝福,超過60格運氣獲得大祝福(15分)並重新爬軌': 'Blessing: Clover cells grant luck. 60+ = Major Blessing (15pts) + reset',
+                '每回合必須打出一張牌,結算完自動換下一位玩家！戰場滿則遊戲立即結束！': 'Must play 1 card/turn. Battlefield full = instant end!',
+
+                // ═══════════════════════════════════════════
+                // 🃏 出牌與回合控制
+                // ═══════════════════════════════════════════
+                '在[': 'placed at [',
+                ']放置了 ': '] ',
+                '手牌已空,自動跳過回合': 'Hand empty, auto-skipping turn',
+                '無法出牌,跳過回合': 'cannot play, skipping turn',
+                '⏭️ ': '⏭️ ',
+                '請先點擊一張手牌，再選擇要放置的位置': 'Select a card first, then choose placement',
+                '該位置已有卡牌！請選擇空格子': 'Slot occupied! Choose empty slot',
+                '戰場已滿，無法再出牌！': 'Battlefield full, cannot play!',
+                '❌ 請選擇青藍色高亮的有效目標！': '❌ Select highlighted valid targets!',
+
+                // ═══════════════════════════════════════════
+                // ⏳ 事件線系統
+                // ═══════════════════════════════════════════
+                '事件線觸發！影響範圍:十字': 'Timeline triggered! Cross range: ',
+                '格': ' cells',
+                '✨ 傳送完成！': '✨ Teleport complete! ',
+                ' 將在後續事件線階段自然觸發技能': ' will trigger naturally in next timeline phase',
+                '💕 發現 ': '💕 Found ',
+                ' 張戀人卡同時觸發！必須選擇執行順序': ' Lover cards triggered! Choose execution order',
+                '⛪ 發現 ': '⛪ Found ',
+                ' 張祭司卡同時觸發！必須選擇執行順序': ' Priest cards triggered! Choose execution order',
+                '🎩 發現 ': '🎩 Found ',
+                ' 張魔術師卡同時觸發！必須選擇執行順序': ' Magician cards triggered! Choose execution order',
+                '第 ': 'No.',
+                ' 順位：': ' priority: ',
+
+                // ═══════════════════════════════════════════
+                // 🌟 祝福系統
+                // ═══════════════════════════════════════════
+                '完成循環！獲得大祝福(15分)。擁有者: ': 'cycle complete! Major Blessing (15pts). Owner: ',
+                '史詩時刻！': 'Epic moment! ',
+                '的2個大祝福融合成了【巨祝福】(30分)！擁有者: ': "'s 2 Major Blessings → [Giga Blessing] (30pts)! Owner: ",
+                '傳說降臨！': 'Legend arrives! ',
+                '消耗【💎巨祝福+🌟大祝福】昇華為【極祝福】(45分)！擁有者: ': 'consumed [💎Giga+🌟Major] → [Ultra Blessing] (45pts)! Owner: ',
+                '📉 ': '📉 ',
+                ' 倒退，消耗1個大祝福補償運氣！': ' retreated, consumed 1 Major Blessing!',
+                '💔 ': '💔 ',
+                ' 倒退，【巨祝福】分解為1個大祝福！': ' retreated, [Giga] split into 1 Major!',
+                '💔💫 ': '💔💫 ',
+                ' 倒退，【極祝福】降級為1個巨祝福！': ' retreated, [Ultra] downgraded to 1 Giga!',
+
+                // ═══════════════════════════════════════════
+                // 👑 王族加冕系統
+                // ═══════════════════════════════════════════
+                ' 使用 ': ' used ',
+                ' 加冕了 [': ' to crown [',
+                '] 的 ': ']\'s ',
+                '，該牌暫時視為貴族！': ', temporarily treated as Noble!',
+                '👑 王族需要場上有非貴族角色才能使用！': '👑 Royal needs non-Noble on field!',
+                '👑 不能對貴族或已被加冕的角色使用！': '👑 Cannot crown Noble or crowned card!',
+                '👑 王族必須加冕場上已有的角色！請點擊高亮的卡牌': '👑 Royal must crown existing card! Click highlighted',
+
+                // ═══════════════════════════════════════════
+                // 🧶 傀儡師替換系統
+                // ═══════════════════════════════════════════
+                ' 替換了 ': ' replaced ',
+                '，並將其收入自己手牌！': ', returning to hand!',
+                ',收入自己手牌': ', returned to hand',
+                '🧶 ': '🧶 ',
+                ' 所屬勢力 ': ' faction ',
+                '+2運氣': '+2 luck',
+                '傀儡師所屬勢力 ': 'Puppeteer faction ',
+                '傀儡師需要場上有非傀儡師角色才能使用！': 'Puppeteer needs non-Puppeteer on field!',
+                '🧶 不能對傀儡師使用替換！': '🧶 Cannot replace Puppeteer!',
+                '傀儡師必須替換場上已有的角色！請點擊高亮的卡牌': 'Puppeteer must replace existing card! Click highlighted',
+                ':場上沒有可替換的目標': ': no replaceable target',
+                '【發呆】': '[Idle]',
+
+                // ═══════════════════════════════════════════
+                // ⛪ 祭司感化系統
+                // ═══════════════════════════════════════════
+                ':感化了 ': ': converted ',
+                '！(': '! (',
+                ' -> ': ' → ',
+                ')，祭司橫置於其背後': '), Priest placed behind',
+                ':沒有可感化的目標，保留在場上': ': no convertible target, stays',
+                '🎭 詐欺師偽裝解除，恢復本體！': '🎭 Swindler disguise lifted, restored!',
+
+                // ═══════════════════════════════════════════
+                // 🎩 魔術師傳送系統
+                // ═══════════════════════════════════════════
+                ' 將 ': ' teleported ',
+                ' 傳送到自己位置並消失': ' to own position and vanished',
+                ':場上沒有其他目標可轉移，保留在場上': ': no target to teleport, stays',
+
+                // ═══════════════════════════════════════════
+                // 🎭 詐欺師偽裝系統
+                // ═══════════════════════════════════════════
+                '🃏 詐欺師完全偽裝成 ': '🃏 Swindler fully disguised as ',
+                '！等待事件線對應階段觸發': '! Waiting for timeline phase',
+                '🃏 詐欺師偽裝成 ': '🃏 Swindler disguised as ',
+                '，但打出技能無法在事件線發動': ', but On-Play cannot trigger in timeline',
+                '🃏 詐欺師偽裝的打出技能無法在事件線執行，直接退場！': '🃏 Swindler On-Play disguise cannot execute, exits!',
+                '💡 詐欺師偽裝的 ': '💡 Swindler disguised as ',
+                ' 未滿足條件，繼續潛伏！': ' conditions unmet, continues lurking!',
+                '🃏 詐欺師偽裝技能執行完畢，功成身退！': '🃏 Swindler disguise complete, retreats!',
+                '：場上沒有其他目標可偽裝，保留在場上': ': no target to disguise, stays',
+
+                // ═══════════════════════════════════════════
+                // 🏅 貴族與平民系統
+                // ═══════════════════════════════════════════
+                '【官僚】：當前事件線貴族數': '[Bureaucrat]: Nobles in timeline ',
+                '，獲得 +': ', gained +',
+                '運氣': ' luck',
+                '【共享】：當前事件線平民數': '[Sharing]: Commoners in timeline ',
+                '受加冕的': 'Crowned ',
+
+                // ═══════════════════════════════════════════
+                // 🛡️ 守衛與強盜戰鬥
+                // ═══════════════════════════════════════════
+                '：守衛 ': ': Guards ',
+                ' vs 強盜 ': ' vs Bandits ',
+                '🛡️ 守衛成功防禦！開始清除強盜...': '🛡️ Guards defended! Clearing Bandits...',
+                '🛡️ 守衛待命中，等待威脅出現': '🛡️ Guards on standby, awaiting threats',
+                '✅ 守衛 ': '✅ Guard ',
+                '🛡️ 制服了 ': '🛡️ Subdued ',
+                '🗡️ 強盜數量優勢！開始群體結算...': '🗡️ Bandits outnumber! Group settlement...',
+                '😨 強盜被守衛威懾，不敢妄動': '😨 Bandits intimidated, standing down',
+                '✅ 強盜 ': '✅ Bandit ',
+                '💰 掠奪了 ': '💰 Plundered ',
+
+                // ═══════════════════════════════════════════
+                // 💕 戀人配對系統
+                // ═══════════════════════════════════════════
+                ' 與 ': ' paired with ',
+                ' 配對成功！💕': ' successfully! 💕',
+                ':場上沒有女性角色可配對，繼續等待真愛...': ': no female to pair, waiting...',
+                ':場上沒有男性角色可配對，繼續等待真愛...': ': no male to pair, waiting...',
+                '💖 ': '💖 ',
+                '勢力 +5運氣': ' faction +5 luck',
+                '📥 觸發者 ': '📥 Trigger player ',
+                ' 從棄牌堆上方抽回一張牌': ' drew card from discard',
+                '📭 棄牌堆已空，無法抽牌': '📭 Discard empty, cannot draw',
+
+                // ═══════════════════════════════════════════
+                // 🤖 AI機器人掃描
+                // ═══════════════════════════════════════════
+                ' 開始掃描同色角色...': ' scanning same-color characters...',
+                ':場上沒有同色角色，技能未執行且不移除': ': no same-color chars, skill skipped, stays',
+                ' 掃描完成！同色角色數N=': ' scan complete! Same-color N=',
+                '，公式N×N=': ', formula N×N=',
+                '×': '×',
+                '，': ', ',
+
+                // ═══════════════════════════════════════════
+                // 🤡 小丑掃描
+                // ═══════════════════════════════════════════
+                ' 開始計算全場角色數量...': ' counting all characters...',
+                ':場上沒有任何角色，技能未執行且不移除': ': no characters, skill skipped, stays',
+                '🤡 計算完成！場上共 ': '🤡 Count complete! Total ',
+                ' 個角色，每個提供1點運氣': ' characters, each provides 1 luck',
+                '💡 ': '💡 ',
+                ' 主勢力 ': ' main faction ',
+                ' 獲得 +': ' gained +',
+                '運氣，小丑將被移除': ' luck, Jester removed',
+
+                // ═══════════════════════════════════════════
+                // 🌿 精靈淨化與祝福
+                // ═══════════════════════════════════════════
+                ' 打出！開始搜尋惡魔進行淨化...': ' played! Searching Demons to purify...',
+                '：場上沒有惡魔可淨化': ': no Demons to purify',
+                '：淨化了 ': ': purified ',
+                '✨ ': '✨ ',
+                ' +3運氣': ' +3 luck',
+                '🌿 精靈祝福開始作用於當前事件線範圍...': '🌿 Elf blessing activating on timeline range...',
+                '🌿 精靈祝福完成！當前事件線範圍內 ': '🌿 Elf blessing complete! ',
+                ' 張角色各自勢力 +2運氣': ' characters each gained +2 luck',
+
+                // ═══════════════════════════════════════════
+                // 😈 惡魔吞噬與詛咒
+                // ═══════════════════════════════════════════
+                ' 打出！開始搜尋精靈進行吞噬...': ' played! Searching Elves to devour...',
+                '：場上沒有精靈可吞噬': ': no Elves to devour',
+                '：吞噬了 ': ': devoured ',
+                '👿 ': '👿 ',
+                '💀 惡魔詛咒開始作用於當前事件線範圍...': '💀 Demon curse activating on timeline range...',
+                '💀 惡魔詛咒完成！當前事件線範圍內 ': '💀 Demon curse complete! ',
+                ' 張角色（含傀儡師、王族）各自勢力 -1運氣': ' characters (incl. Puppeteer, Royal) each lost -1 luck',
+
+                // ═══════════════════════════════════════════
+                // 🔄 P卡翻轉與連鎖移除
+                // ═══════════════════════════════════════════
+                '🔄 你翻轉了P卡，現在顯示：': '🔄 P-card flipped, now showing: ',
+                ' 效果發動完畢，自我銷毀！': ' effect complete, self-destructed!',
+                '⛓️ 祭司連結斷裂，': '⛓️ Priest link broken, ',
+                '⛓️ 王族連結斷裂，': '⛓️ Royal link broken, ',
+                ' 自動移除！': ' auto-removed!',
+                '⛓️ 依附目標離場，祭司一併移除！': '⛓️ Host left, Priest removed too!',
+                '⛓️ 替換目標離場，王族隨之移除！': '⛓️ Target left, Royal removed too!',
+                '⛓️ 替換目標離場，祭司隨之移除！': '⛓️ Target left, Priest removed too!',
+                '⛓️ 配偶離場，': '⛓️ Partner left, ',
+                ' 也隨之移除！': ' removed too!',
+                ' 也隨之離場！': ' left too!',
+
+                // ═══════════════════════════════════════════
+                // ⚙️ 系統控制訊息
+                // ═══════════════════════════════════════════
+                '音效已開啟': 'Sound enabled',
+                '音效已關閉': 'Sound disabled',
+                '🔊 音效已開啟': '🔊 Sound enabled',
+                '🔇 音效已關閉': '🔇 Sound disabled',
+                '背景音樂開始播放': 'BGM started',
+                '背景音樂已停止': 'BGM stopped',
+                '🎵 背景音樂開始播放': '🎵 BGM started',
+                '🔇 背景音樂已停止': '🔇 BGM stopped',
+                '⏱️ 遊戲速度已調整為 ×1 (標準)': '⏱️ Speed set to ×1 (Normal)',
+                '⏱️ 遊戲速度已調整為 ×2 (快速)': '⏱️ Speed set to ×2 (Fast)',
+                '⏱️ 遊戲速度已調整為 ×3 (極速)': '⏱️ Speed set to ×3 (Turbo)',
+                '🔍 頁面縮放調整為 ': '🔍 Zoom adjusted to ',
+                '%': '%',
+                '🔍 頁面縮放已重置為 100%': '🔍 Zoom reset to 100%',
+                '⬆️ 運氣軌道已滾動': '⬆️ Luck Track scrolled',
+                '⬇️ 運氣軌道已滾動': '⬇️ Luck Track scrolled',
+                '⬆️ 戰鬥紀錄已滾動': '⬆️ Battle Log scrolled',
+                '⬇️ 戰鬥紀錄已滾動': '⬇️ Battle Log scrolled',
+                '⏬ 已跳轉到最新戰鬥記錄': '⏬ Jumped to latest log',
+
+                // ═══════════════════════════════════════════
+                // ⚠️ 錯誤與警告訊息
+                // ═══════════════════════════════════════════
+                '⚠️ ': '⚠️ ',
+                ' 數值異常已自動修復': ' abnormal value auto-fixed',
+                '⚠️ BGM載入失敗，請檢查音樂檔案': '⚠️ BGM load failed, check audio file',
+                '⚠️ BGM需要用戶互動後才能播放': '⚠️ BGM requires user interaction',
+                '⚠️ 目標選擇失敗，精靈淨化中止': '⚠️ Target selection failed, Elf purify cancelled',
+
+                // ═══════════════════════════════════════════
+                // 💥 視覺效果標籤
+                // ═══════════════════════════════════════════
+                '💥': '💥',
+                '💨消失': '💨Vanish',
+                '🎩消失': '🎩Vanish',
+                '⛪感化': '⛪Convert',
+                '✨傳送': '✨Teleport',
+                '🎭偽裝': '🎭Disguise',
+                '👑加冕': '👑Crown',
+                '🧶替換': '🧶Replace',
+                '💕': '💕',
+                '🌿淨化': '🌿Purify',
+                '💀吞噬': '💀Devour',
+                '💰搶劫': '💰Raid',
+                '🛡️制服': '🛡️Subdue'
+            },
+
+            'ja': {
+                '🌐 介面語言已切換為【繁體中文】': '🌐 インターフェース言語を【繁体字中国語】に切替',
+                '🌐 介面語言已切換為【English】': '🌐 インターフェース言語を【英語】に切替',
+                '🌐 介面語言已切換為【日本語】': '🌐 インターフェース言語を【日本語】に切替',
+                
+                // ═══════════════════════════════════════════
+                // 🎲 開局準備與發牌
+                // ═══════════════════════════════════════════
+                '🎲 本場角色組合 (': '🎲 本ゲームのキャラクター構成 (',
+                '):A=': '): A=',
+                ';B=': '; B=',
+                ';P=': '; P=',
+                '、': '・',
+                '📚 A/B卡發牌完成！每人6張,剩餘': '📚 A/Bカード配布完了！各6枚、残り',
+                '張進入棄牌堆': '枚は捨て札へ',
+                '📚 A/B卡發牌完成！每人6張,無剩餘卡牌': '📚 A/Bカード配布完了！各6枚、残りなし',
+                '🎁 開局棄牌勢力 ': '🎁 初期捨て札勢力 ',
+                ' 已獲得 +4 運氣補償！': ' が+4運気ボーナス獲得！',
+                '🔄 選擇勢力時將獲得該勢力的': '🔄 勢力選択時にその勢力の',
+                '張P卡！': '枚のPカードを獲得！',
+                ' 選擇了 ': ' が選択：',
+                ' (副勢力: ': ' (副勢力: ',
+                ') 並獲得2張P卡！': ') して2枚のPカードを獲得！',
+
+                // ═══════════════════════════════════════════
+                // 🎮 遊戲流程與系統
+                // ═══════════════════════════════════════════
+                '五勢力混戰開始！共 ': '五勢力乱戦開始！全',
+                ' 回合,每人8張手牌': 'ラウンド、各8枚手札',
+                '遊戲結束！進行最終結算...': 'ゲーム終了！最終精算中...',
+                '戰場已滿！遊戲提早結束！': '戦場満杯！ゲーム早期終了！',
+                '打出技能:王族、傀儡師（打出即發動）': '配置スキル:王族、傀儡師（配置時即発動）',
+                '一次性技能:祭司、魔術師、詐欺師、AI、小丑、戀人（觸發後移除,未執行則保留）': '一回性:祭司、魔術師、詐欺師、AI、道化師、恋人（発動後除去）',
+                '多次性技能:貴族、平民、守衛、強盜、精靈、惡魔（觸發後保留）': '多回性:貴族、平民、守衛、強盗、精霊、悪魔（発動後保留）',
+                '祝福系統:四葉幸運草格子提供祝福,超過60格運氣獲得大祝福(15分)並重新爬軌': '祝福システム:クローバーで祝福。60運気超過で大祝福(15点)獲得しリセット',
+                '每回合必須打出一張牌,結算完自動換下一位玩家！戰場滿則遊戲立即結束！': '毎ターン1枚配置必須。戦場満杯で即ゲーム終了！',
+
+                // ═══════════════════════════════════════════
+                // 🃏 出牌與回合控制
+                // ═══════════════════════════════════════════
+                '在[': '[',
+                ']放置了 ': ']に配置：',
+                '手牌已空,自動跳過回合': '手札が空、ターン自動スキップ',
+                '無法出牌,跳過回合': 'カード出せず、ターンスキップ',
+                '⏭️ ': '⏭️ ',
+                '請先點擊一張手牌，再選擇要放置的位置': 'まずカードを選択し、配置場所をクリック',
+                '該位置已有卡牌！請選擇空格子': 'そのマスは占有済み！空きマスを選択',
+                '戰場已滿，無法再出牌！': '戦場満杯、カード出せません！',
+                '❌ 請選擇青藍色高亮的有效目標！': '❌ ハイライトされた有効ターゲットを選択！',
+
+                // ═══════════════════════════════════════════
+                // ⏳ 事件線系統
+                // ═══════════════════════════════════════════
+                '事件線觸發！影響範圍:十字': 'タイムライン発動！十字範囲：',
+                '格': 'マス',
+                '✨ 傳送完成！': '✨ 転送完了！',
+                ' 將在後續事件線階段自然觸發技能': ' は次のタイムライン段階で自然発動',
+                '💕 發現 ': '💕 発見 ',
+                ' 張戀人卡同時觸發！必須選擇執行順序': '枚の恋人カードが同時発動！実行順序を選択',
+                '⛪ 發現 ': '⛪ 発見 ',
+                ' 張祭司卡同時觸發！必須選擇執行順序': '枚の祭司カードが同時発動！実行順序を選択',
+                '🎩 發現 ': '🎩 発見 ',
+                ' 張魔術師卡同時觸發！必須選擇執行順序': '枚の魔術師カードが同時発動！実行順序を選択',
+                '第 ': '第',
+                ' 順位：': '順位：',
+
+                // ═══════════════════════════════════════════
+                // 🌟 祝福系統
+                // ═══════════════════════════════════════════
+                '完成循環！獲得大祝福(15分)。擁有者: ': 'サイクル完了！大祝福(15点)獲得。所有者：',
+                '史詩時刻！': '史詩の瞬間！',
+                '的2個大祝福融合成了【巨祝福】(30分)！擁有者: ': 'の2大祝福が【巨祝福】(30点)に融合！所有者：',
+                '傳說降臨！': '伝説が降臨！',
+                '消耗【💎巨祝福+🌟大祝福】昇華為【極祝福】(45分)！擁有者: ': '【💎巨祝福+🌟大祝福】消費→【極祝福】(45点)昇華！所有者：',
+                '📉 ': '📉 ',
+                ' 倒退，消耗1個大祝福補償運氣！': ' 後退、大祝福1個消費！',
+                '💔 ': '💔 ',
+                ' 倒退，【巨祝福】分解為1個大祝福！': ' 後退、【巨祝福】→大祝福1個に分解！',
+                '💔💫 ': '💔💫 ',
+                ' 倒退，【極祝福】降級為1個巨祝福！': ' 後退、【極祝福】→巨祝福1個に降格！',
+
+                // ═══════════════════════════════════════════
+                // 👑 王族加冕系統
+                // ═══════════════════════════════════════════
+                ' 使用 ': ' が ',
+                ' 加冕了 [': ' で[',
+                '] 的 ': ']の',
+                '，該牌暫時視為貴族！': 'を加冕、一時的に貴族として扱う！',
+                '👑 王族需要場上有非貴族角色才能使用！': '👑 王族は非貴族キャラが必要！',
+                '👑 不能對貴族或已被加冕的角色使用！': '👑 貴族や加冕済みキャラには使用不可！',
+                '👑 王族必須加冕場上已有的角色！請點擊高亮的卡牌': '👑 王族は既存キャラを加冕！ハイライトをクリック',
+
+                // ═══════════════════════════════════════════
+                // 🧶 傀儡師替換系統
+                // ═══════════════════════════════════════════
+                ' 替換了 ': ' が ',
+                '，並將其收入自己手牌！': 'を交換し手札に戻した！',
+                ',收入自己手牌': '、手札に戻す',
+                '🧶 ': '🧶 ',
+                ' 所屬勢力 ': ' 所属勢力 ',
+                '+2運氣': '+2運気',
+                '傀儡師所屬勢力 ': '傀儡師の所属勢力 ',
+                '傀儡師需要場上有非傀儡師角色才能使用！': '傀儡師は非傀儡師キャラが必要！',
+                '🧶 不能對傀儡師使用替換！': '🧶 傀儡師には交換不可！',
+                '傀儡師必須替換場上已有的角色！請點擊高亮的卡牌': '傀儡師は既存キャラを交換！ハイライトをクリック',
+                ':場上沒有可替換的目標': '：交換可能なターゲットなし',
+                '【發呆】': '【呆然】',
+
+                // ═══════════════════════════════════════════
+                // ⛪ 祭司感化系統
+                // ═══════════════════════════════════════════
+                ':感化了 ': '：感化：',
+                '！(': '！(',
+                ' -> ': '→',
+                ')，祭司橫置於其背後': ')、祭司を背後に横置き',
+                ':沒有可感化的目標，保留在場上': '：感化可能なターゲットなし、フィールド残留',
+                '🎭 詐欺師偽裝解除，恢復本體！': '🎭 詐欺師の変装解除、本体に戻る！',
+
+                // ═══════════════════════════════════════════
+                // 🎩 魔術師傳送系統
+                // ═══════════════════════════════════════════
+                ' 將 ': 'が',
+                ' 傳送到自己位置並消失': 'を自位置に転送し消滅',
+                ':場上沒有其他目標可轉移，保留在場上': '：転送可能なターゲットなし、フィールド残留',
+
+                // ═══════════════════════════════════════════
+                // 🎭 詐欺師偽裝系統
+                // ═══════════════════════════════════════════
+                '🃏 詐欺師完全偽裝成 ': '🃏 詐欺師が完全変装：',
+                '！等待事件線對應階段觸發': '！対応タイムライン段階で発動待機',
+                '🃏 詐欺師偽裝成 ': '🃏 詐欺師が変装：',
+                '，但打出技能無法在事件線發動': '、配置スキルはタイムラインで発動不可',
+                '🃏 詐欺師偽裝的打出技能無法在事件線執行，直接退場！': '🃏 詐欺師の配置スキル変装はタイムライン実行不可、退場！',
+                '💡 詐欺師偽裝的 ': '💡 詐欺師の変装した',
+                ' 未滿足條件，繼續潛伏！': 'の条件未達、潜伏継続！',
+                '🃏 詐欺師偽裝技能執行完畢，功成身退！': '🃏 詐欺師の変装スキル実行完了、任務達成！',
+                '：場上沒有其他目標可偽裝，保留在場上': '：変装可能なターゲットなし、フィールド残留',
+
+                // ═══════════════════════════════════════════
+                // 🏅 貴族與平民系統
+                // ═══════════════════════════════════════════
+                '【官僚】：當前事件線貴族數': '【官僚】：タイムライン内の貴族数',
+                '，獲得 +': '、+',
+                '運氣': '運気',
+                '【共享】：當前事件線平民數': '【共有】：タイムライン内の平民数',
+                '受加冕的': '加冕された',
+
+                // ═══════════════════════════════════════════
+                // 🛡️ 守衛與強盜戰鬥
+                // ═══════════════════════════════════════════
+                '：守衛 ': '：守衛',
+                ' vs 強盜 ': ' vs 強盗',
+                '🛡️ 守衛成功防禦！開始清除強盜...': '🛡️ 守衛防御成功！強盗を排除中...',
+                '🛡️ 守衛待命中，等待威脅出現': '🛡️ 守衛待機中、脅威を待つ',
+                '✅ 守衛 ': '✅ 守衛 ',
+                '🛡️ 制服了 ': '🛡️ 制圧：',
+                '🗡️ 強盜數量優勢！開始群體結算...': '🗡️ 強盗数が優勢！グループ精算開始...',
+                '😨 強盜被守衛威懾，不敢妄動': '😨 強盗は守衛に威圧され動けない',
+                '✅ 強盜 ': '✅ 強盗 ',
+                '💰 掠奪了 ': '💰 略奪：',
+
+                // ═══════════════════════════════════════════
+                // 💕 戀人配對系統
+                // ═══════════════════════════════════════════
+                ' 與 ': 'と',
+                ' 配對成功！💕': 'がペア成立！💕',
+                ':場上沒有女性角色可配對，繼續等待真愛...': '：女性キャラなし、真愛を待ち続ける...',
+                ':場上沒有男性角色可配對，繼續等待真愛...': '：男性キャラなし、真愛を待ち続ける...',
+                '💖 ': '💖 ',
+                '勢力 +5運氣': '勢力 +5運気',
+                '📥 觸發者 ': '📥 発動者 ',
+                ' 從棄牌堆上方抽回一張牌': ' が捨て札から1枚ドロー',
+                '📭 棄牌堆已空，無法抽牌': '📭 捨て札が空、ドロー不可',
+
+                // ═══════════════════════════════════════════
+                // 🤖 AI機器人掃描
+                // ═══════════════════════════════════════════
+                ' 開始掃描同色角色...': ' が同色キャラをスキャン中...',
+                ':場上沒有同色角色，技能未執行且不移除': '：同色キャラなし、スキル不発・残留',
+                ' 掃描完成！同色角色數N=': ' スキャン完了！同色キャラN=',
+                '，公式N×N=': '、計算N×N=',
+                '×': '×',
+                '，': '、',
+
+                // ═══════════════════════════════════════════
+                // 🤡 小丑掃描
+                // ═══════════════════════════════════════════
+                ' 開始計算全場角色數量...': ' が全キャラ数をカウント中...',
+                ':場上沒有任何角色，技能未執行且不移除': '：フィールドにキャラなし、スキル不発・残留',
+                '🤡 計算完成！場上共 ': '🤡 カウント完了！全',
+                ' 個角色，每個提供1點運氣': 'キャラ、各1運気を提供',
+                '💡 ': '💡 ',
+                ' 主勢力 ': ' 主勢力 ',
+                ' 獲得 +': ' が+',
+                '運氣，小丑將被移除': '運気獲得、道化師は除去',
+
+                // ═══════════════════════════════════════════
+                // 🌿 精靈淨化與祝福
+                // ═══════════════════════════════════════════
+                ' 打出！開始搜尋惡魔進行淨化...': ' 配置！悪魔を浄化中...',
+                '：場上沒有惡魔可淨化': '：悪魔なし、浄化不可',
+                '：淨化了 ': '：浄化：',
+                '✨ ': '✨ ',
+                ' +3運氣': ' +3運気',
+                '🌿 精靈祝福開始作用於當前事件線範圍...': '🌿 精霊の祝福がタイムライン範囲に作用中...',
+                '🌿 精靈祝福完成！當前事件線範圍內 ': '🌿 精霊の祝福完了！タイムライン範囲内',
+                ' 張角色各自勢力 +2運氣': 'キャラの各勢力に+2運気',
+
+                // ═══════════════════════════════════════════
+                // 😈 惡魔吞噬與詛咒
+                // ═══════════════════════════════════════════
+                ' 打出！開始搜尋精靈進行吞噬...': ' 配置！精霊を貪食中...',
+                '：場上沒有精靈可吞噬': '：精霊なし、貪食不可', 
+                '：吞噬了 ': '：貪食：',
+                '👿 ': '👿 ',
+                '💀 惡魔詛咒開始作用於當前事件線範圍...': '💀 悪魔の呪いがタイムライン範囲に作用中...',
+                '💀 惡魔詛咒完成！當前事件線範圍內 ': '💀 悪魔の呪い完了！タイムライン範囲内',
+                ' 張角色（含傀儡師、王族）各自勢力 -1運氣': 'キャラ（傀儡師・王族含む）の各勢力-1運気',
+
+                // ═══════════════════════════════════════════
+                // 🔄 P卡翻轉與連鎖移除
+                // ═══════════════════════════════════════════
+                '🔄 你翻轉了P卡，現在顯示：': '🔄 Pカードをフリップ、現在の表示：',
+                ' 效果發動完畢，自我銷毀！': ' 効果発動完了、自己消滅！',
+                '⛓️ 祭司連結斷裂，': '⛓️ 祭司のリンク切断、',
+                '⛓️ 王族連結斷裂，': '⛓️ 王族のリンク切断、',
+                ' 自動移除！': ' を自動除去！',
+                '⛓️ 依附目標離場，祭司一併移除！': '⛓️ 依存先が離場し、祭司も共に除去！',
+                '⛓️ 替換目標離場，王族隨之移除！': '⛓️ 交換された対象が離場し、王族も除去！',
+                '⛓️ 替換目標離場，祭司隨之移除！': '⛓️ 交換された対象が離場し、祭司も除去！',
+                '⛓️ 配偶離場，': '⛓️ ペアが離場し、',
+                ' 也隨之移除！': 'も共に除去！',
+                ' 也隨之離場！': 'も共に離場！',
+
+                // ═══════════════════════════════════════════
+                // ⚙️ 系統控制訊息
+                // ═══════════════════════════════════════════
+                '音效已開啟': '効果音ON',
+                '音效已關閉': '効果音OFF',
+                '🔊 音效已開啟': '🔊 効果音ON',
+                '🔇 音效已關閉': '🔇 効果音OFF',
+                '背景音樂開始播放': 'BGM再生開始',
+                '背景音樂已停止': 'BGM停止',
+                '🎵 背景音樂開始播放': '🎵 BGM再生開始',
+                '🔇 背景音樂已停止': '🔇 BGM停止',
+                '⏱️ 遊戲速度已調整為 ×1 (標準)': '⏱️ 速度を×1（標準）に設定',
+                '⏱️ 遊戲速度已調整為 ×2 (快速)': '⏱️ 速度を×2（高速）に設定',
+                '⏱️ 遊戲速度已調整為 ×3 (極速)': '⏱️ 速度を×3（最速）に設定',
+                '🔍 頁面縮放調整為 ': '🔍 ズームを',
+                '%': '%',
+                '🔍 頁面縮放已重置為 100%': '🔍 ズームを100%にリセット',
+                '⬆️ 運氣軌道已滾動': '⬆️ 運気トラックをスクロール',
+                '⬇️ 運氣軌道已滾動': '⬇️ 運気トラックをスクロール',
+                '⬆️ 戰鬥紀錄已滾動': '⬆️ バトルログをスクロール',
+                '⬇️ 戰鬥紀錄已滾動': '⬇️ バトルログをスクロール',
+                '⏬ 已跳轉到最新戰鬥記錄': '⏬ 最新バトルログへジャンプ',
+
+                // ═══════════════════════════════════════════
+                // ⚠️ 錯誤與警告訊息
+                // ═══════════════════════════════════════════
+                '⚠️ ': '⚠️ ',
+                ' 數值異常已自動修復': ' 数値異常を自動修復',
+                '⚠️ BGM載入失敗，請檢查音樂檔案': '⚠️ BGM読込失敗、音楽ファイルを確認',
+                '⚠️ BGM需要用戶互動後才能播放': '⚠️ BGMはユーザー操作後に再生可能',
+                '⚠️ 目標選擇失敗，精靈淨化中止': '⚠️ ターゲット選択失敗、精霊浄化中止',
+
+                // ═══════════════════════════════════════════
+                // 💥 視覺效果標籤
+                // ═══════════════════════════════════════════
+                '💥': '💥',
+                '💨消失': '💨消滅',
+                '🎩消失': '🎩消滅',
+                '⛪感化': '⛪感化',
+                '✨傳送': '✨転送',
+                '🎭偽裝': '🎭変装',
+                '👑加冕': '👑加冕',
+                '🧶替換': '🧶交換',
+                '💕': '💕',
+                '🌿淨化': '🌿浄化',
+                '💀吞噬': '💀貪食',
+                '💰搶劫': '💰略奪',
+                '🛡️制服': '🛡️制圧'
+            }
+        };
+
+
+        /**
+         * 🌐 核心翻譯函數：將中文戰鬥紀錄翻譯成目標語言
+         * 特點：完全不會破壞 HTML 圖示標籤，並解決部分替換問題
+         */
+        function translateBattleLogText(text) {
+            // 🎯 移除繁中提早結束限制，讓所有語言都能互相轉換
+            let translated = text;
+            const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+            
+            // 🛡️ HTML 標籤保護機制
+            const placeholders = [];
+            translated = translated.replace(/<[^>]+>/g, (match) => {
+                const index = placeholders.length;
+                placeholders.push(match);
+                return `§§${index}§§`;
+            });
+            
+            // 1. 🎯 翻譯戰鬥紀錄句子（按字串長度排序避免部分替換）
+            const logDict = BATTLE_LOG_TRANSLATIONS[currentLanguage];
+            if (logDict) {
+                const sortedKeys = Object.keys(logDict).sort((a, b) => b.length - a.length);
+                for (const zhText of sortedKeys) {
+                    if (translated.includes(zhText)) {
+                        translated = translated.split(zhText).join(logDict[zhText]);
+                    }
+                }
+            }
+            
+            // 2. 翻譯角色名稱（從繁中底稿）
+            if (dict.charNames) {
+                const sortedChars = Object.keys(dict.charNames).sort((a, b) => b.length - a.length);
+                for (const zhName of sortedChars) {
+                    if (translated.includes(zhName)) {
+                        translated = translated.split(zhName).join(dict.charNames[zhName]);
+                    }
+                }
+            }
+
+            // 3. 翻譯 SET 名稱
+            if (dict.setNames && typeof GAME_SETS !== 'undefined') {
+                for (const [setId, transSetName] of Object.entries(dict.setNames)) {
+                    const originalSet = GAME_SETS.find(s => s.id == setId);
+                    if (originalSet && translated.includes(originalSet.name)) {
+                        translated = translated.split(originalSet.name).join(transSetName);
+                    }
+                }
+            }
+            
+            // 4. 翻譯勢力名稱（從繁中底稿到目標語言）
+            const zhFactions = I18N_DICT['zh-TW'].factionNames;
+            const targetFactions = dict.factionNames;
+            if (zhFactions && targetFactions) {
+                const sortedFactionKeys = Object.keys(zhFactions).sort((a, b) => zhFactions[b].length - zhFactions[a].length);
+                for (const key of sortedFactionKeys) {
+                    const zhName = zhFactions[key];
+                    const transName = targetFactions[key];
+                    if (zhName && transName && translated.includes(zhName)) {
+                        translated = translated.split(zhName).join(transName);
+                    }
+                }
+            }
+            
+            // 5. 🌟 核心升級：全語言玩家名稱互轉系統
+            const targetPlayerNames = dict.playerNames;
+            if (targetPlayerNames) {
+                // 🔍 收集所有語言的玩家名稱映射表
+                const nameMapping = [];
+                
+                for (let playerIndex = 0; playerIndex < 4; playerIndex++) {
+                    const targetName = targetPlayerNames[playerIndex];
+                    if (!targetName) continue;
+                    
+                    // 從所有語言字典中收集該玩家的名稱變體
+                    for (const langKey of Object.keys(I18N_DICT)) {
+                        const langDict = I18N_DICT[langKey];
+                        if (langDict.playerNames && langDict.playerNames[playerIndex]) {
+                            const sourceName = langDict.playerNames[playerIndex];
+                            
+                            // 避免相同名稱的無意義替換
+                            if (sourceName !== targetName) {
+                                nameMapping.push({
+                                    source: sourceName,
+                                    target: targetName,
+                                    length: sourceName.length
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // 🎯 按字串長度降序排序，避免短名稱誤替換長名稱的一部分
+                nameMapping.sort((a, b) => b.length - a.length);
+                
+                // 🔄 執行名稱替換
+                for (const mapping of nameMapping) {
+                    if (translated.includes(mapping.source)) {
+                        translated = translated.split(mapping.source).join(mapping.target);
+                    }
+                }
+            }
+            
+            // 🛡️ 還原所有 HTML 標籤
+            translated = translated.replace(/§§(\d+)§§/g, (match, index) => {
+                return placeholders[parseInt(index)] || match;
+            });
+            
+            return translated;
+        }
+
+
+
+
+        // ====================================================
+        // 🌐 語言切換核心函數
+        // ====================================================
+
+        /**
+         * 取得翻譯文本的便利函數
+         * @param {string} key - 翻譯鍵值，支援點號分隔的嵌套路徑
+         * @param {Object} params - 參數替換對象
+         * @returns {string} 翻譯後的文本
+         */
+        function t(key, params = {}) {
+            const lang = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+            
+            // 支援嵌套路徑，例如 'gameMessages.battleStart'
+            let text = key.split('.').reduce((obj, k) => obj && obj[k], lang);
+            
+            // 如果找不到翻譯，回退到繁體中文
+            if (!text) {
+                text = key.split('.').reduce((obj, k) => obj && obj[k], I18N_DICT['zh-TW']);
+            }
+            
+            // 如果仍然找不到，返回原始鍵值
+            if (!text) return key;
+            
+            // 替換參數佔位符 {key}
+            Object.keys(params).forEach(k => {
+                text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), params[k]);
+            });
+            
+            return text;
+        }
+
+        /**
+         * 切換語言並更新所有UI元素
+         * @param {string} lang - 目標語言代碼
+         */
+        function switchLanguage(lang) {
+            if (!I18N_DICT[lang]) {
+                console.warn(`不支援的語言: ${lang}`);
+                return;
+            }
+            
+            currentLanguage = lang;
+            
+            // 更新語言按鈕狀態
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 更新所有靜態UI元素
+            updateStaticUI();
+            updateOrderBadges();
+            updatePlayerPanelsLanguage();            
+            document.title = t('pageTitle');
+            
+            // 如果遊戲已初始化，更新動態內容
+            if (typeof game !== 'undefined' && game) {
+                if (game.gameStarted) {
+                    game.updateUI();
+                }
+                // ✅ 核心：語言切換時重新渲染戰鬥紀錄
+                game.renderBattleLog();
+
+            }
+            
+            // 儲存語言偏好
+            try {
+                localStorage.setItem('luckGameLanguage', lang);
+            } catch (e) {
+                console.warn('無法儲存語言設定:', e);
+            }
+            
+            console.log(`🌐 語言已切換至: ${lang}`);
+        }
+
+        /**
+         * 更新勢力選擇介面的三行副標題
+         */
+        function updateDraftSubtitles(dict) {
+            const draftOverlay = document.getElementById('draft-overlay');
+            if (!draftOverlay) return;
+
+            const subtitleEl = draftOverlay.querySelector('.draft-subtitle');
+            if (!subtitleEl) return;
+
+            // 四葉草圖示HTML
+            const cloverHTML = `<img src="icons/chars/clover.png" class="clover-img icon-sm" alt="四葉草" 
+                onerror="this.outerHTML='🌟';" style="margin-right: 4px;">`;
+
+            subtitleEl.innerHTML = `
+                <strong style="color: #51cf66;">${dict.draftSubtitle1}</strong><br>
+                <strong style="color: #ff8c00;">${dict.draftSubtitle2}</strong><br>
+                <strong style="color: #c0c0c0;">
+                    ${cloverHTML}
+                    ${dict.draftSubtitle3}
+                </strong>
+            `;
+        }
+
+        /**
+         * 更新所有靜態UI元素的文本
+         */
+        function updateStaticUI() {
+            const dict = I18N_DICT[currentLanguage];
+            // ═══ 設定介面 ═══
+            updateElement('.setup-title', dict.setupTitle);
+            updateElements('.setup-subtitle', [dict.setupStep1, dict.setupStep2]);
+            updateElements('.order-btn', dict.orderLabels);
+            updateElement('#confirm-btn', dict.confirmBtn);
+            updateElement('.draft-set-info', dict.draftSetInfo);
+            renderSetOptions();
+            // ═══ 勢力選擇介面 ═══
+            updateElement('.draft-title', dict.draftTitle);
+            updatePlayerNames();
+            updateDraftSubtitles(dict);
+            // ✅ 新增：語言切換時同步更新勢力選擇介面
+            if (typeof game !== 'undefined' && game) {
+                const draftOverlay = document.getElementById('draft-overlay');
+                if (draftOverlay && draftOverlay.style.display === 'flex') {
+                    
+                    // 🔧 修復1：加上正確的 game. 前綴
+                    game.renderDraftOptions();
+                    game.updateDraftSelectedInfo();
+                    game.renderDraftHandPreview();
+                    const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
+                    
+                    // 🔧 修復2：更新三行副標題
+                    updateDraftSubtitles(dict);
+                    
+                    // 🔧 修復3：更新SET資訊面板
+                    const setContainer = document.getElementById('draft-set-info');
+                    if (setContainer && game.currentSetInfo) {
+                        const translateChar = (charName) => {
+                            if (!charName) return '';
+                            return charName.split('/').map(name => 
+                                (dict.charNames && dict.charNames[name]) ? dict.charNames[name] : name
+                            ).join('/');
+                        };
+                        
+                        const setName = (dict.setNames && dict.setNames[game.currentSetInfo.id]) ? 
+                            dict.setNames[game.currentSetInfo.id] : game.currentSetInfo.name;
+
+                        setContainer.innerHTML = `
+                            <strong style="color: #a78bfa;">${(dict.setLabels && dict.setLabels.currentSet) || '🃏 當前使用 SET'}</strong><br>
+                            ${setName}<br>
+                            <span style="font-size: 0.85em; color: #ccc;">
+                                ${(dict.setLabels && dict.setLabels.aCard) || 'A卡'}：${translateChar(game.currentSetInfo.aCard)}<br>
+                                ${(dict.setLabels && dict.setLabels.pCard) || 'P卡'}：${(game.currentSetInfo.pCards || []).map(translateChar).join('、')}
+                            </span>
+                        `;
+                    }
+
+                    // 🔧 修復4：更新棄牌資訊面板
+                    const discardContainer = document.getElementById('draft-discard-info');
+                    if (discardContainer) {
+                        if (game.discardCompensation) {
+                            const f = FACTIONS[game.discardCompensation.faction];
+                            const factionName = dict.factionNames?.[game.discardCompensation.faction] || f.name;
+                            const topDiscard = game.discardPile[0];
+                            
+                            discardContainer.innerHTML = `
+                                <strong style="color: #ff8c00;">${labels.discardInfo || '⚠️ 本場棄牌資訊'}</strong><br>
+                                ${(labels.discardFaction || '棄牌堆中有 {faction} 勢力的').replace('{faction}', 
+                                    `${game.getFactionIconHTML(game.discardCompensation.faction)}${factionName}`)}<br>
+                                <span style="font-size: 0.9em;">
+                                    <img src="${topDiscard.emoji}" alt="" 
+                                        style="width: 1.2em; height: 1.2em; vertical-align: -0.15em; 
+                                            margin-right: 4px; object-fit: contain;
+                                            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
+                                        onerror="this.outerHTML='🃏';">
+                                    ${dict.charNames?.[topDiscard.name] || topDiscard.name}
+                                </span><br>
+                                <span style="font-size: 0.85em; color: #a78bfa;">
+                                    ${labels.luckCompensation || '🎁 此勢力將獲得 +4 運氣補償'}
+                                </span>
+                            `;
+                        } else {
+                            discardContainer.innerHTML = `
+                                <strong style="color: #ff8c00;">${labels.discardInfo || '⚠️ 本場棄牌資訊'}</strong><br>
+                                ${labels.noDiscard || '無剩餘卡牌'}
+                            `;
+                        }
+                    }
+                    
+                    // 🔧 修復5：更新手牌預覽標題
+                    const handTitle = document.querySelector('.draft-hand-title');
+                    if (handTitle) {
+                        const icon = handTitle.querySelector('img');
+                        handTitle.innerHTML = '';
+                        if (icon) handTitle.appendChild(icon.cloneNode(true));
+                        handTitle.append(' ' + (labels.handPreviewTitle || '你的初始手牌'));
+                    }
+
+                    // 🔧 修復6：更新當前輪抽提示文字
+                    const pickerId = game.draftOrder?.[game.currentDraftIndex];
+                    if (pickerId !== undefined) {
+                        const player = game.players[pickerId];
+                        const currentEl = document.getElementById('draft-current');
+                        if (currentEl) {
+                            currentEl.textContent = pickerId === 0
+                                ? labels.yourTurn
+                                : labels.waiting.replace('{name}', player.name);
+                        }
+                    }
+                }
+            }
+
+
+            
+            // ═══ 主遊戲介面 ═══
+            updateLuckTowerTitle();
+            updateElement('#round-display', 
+                `${dict.roundDisplay} ${typeof game !== 'undefined' && game ? game.round : 1} / ${typeof game !== 'undefined' && game ? game.maxRounds : 8}`
+            );
+            updateElement('.discard-title', dict.discardTitle);
+            updateElement('.btn-reset', dict.resetBtn);
+            updateElement('.zoom-title', dict.zoomTitle);
+            updateZoomButtons();
+            updateScrollButtons();
+            
+            // ═══ 戰鬥紀錄 ═══
+            updateElement('.log-header', dict.battleLogTitle);
+            
+            // ═══ 技能一覽 ═══
+            updateElement('.skills-title', dict.skillsTitle);
+
+            // ✅ 新增：語言切換時同步更新技能面板
+            if (typeof game !== 'undefined' && game && game.selectedCharacters && game.selectedCharacters.length > 0) {
+                game.renderSkillsPanel();
+            }
+            // ═══ 玩家名稱（僅在遊戲未開始時更新） ═══
+            
+            updatePlayerNames();             
+            // ═══ 新手指南 ═══
+            updateTutorialTitle();
+            renderTutorialCards(); 
+
+            
+            // ═══ 順位徽章 ═══
+            updateOrderBadges();
+            
+            // ═══ 音效和BGM按鈕 ═══
+            updateSoundButtons();
+        }
+
+        /**
+         * 更新單個元素的文本內容
+         */
+        function updateElement(selector, text) {
+            const element = document.querySelector(selector);
+            if (element && text) {
+                element.textContent = text;
+            }
+        }
+
+        /**
+         * 更新多個元素的文本內容
+         */
+        function updateElements(selector, textArray) {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach((el, index) => {
+                if (textArray[index]) {
+                    el.textContent = textArray[index];
+                }
+            });
+        }
+
+        /**
+         * 更新運氣軌道標題（保留圖標）
+         */
+        function updateLuckTowerTitle() {
+            const titleEl = document.querySelector('.luck-tower-title');
+            if (titleEl) {
+                const icon = titleEl.querySelector('img');
+                titleEl.innerHTML = '';
+                if (icon) {
+                    titleEl.appendChild(icon.cloneNode(true));
+                } else {
+                    titleEl.innerHTML = '<span class="clover-fallback icon-md">☘️</span>';
+                }
+                titleEl.append(' ' + t('luckTowerTitle'));
+            }
+        }
+
+        /**
+         * 更新縮放按鈕文本
+         */
+        function updateZoomButtons() {
+            const dict = I18N_DICT[currentLanguage];
+            const buttons = document.querySelectorAll('.zoom-btn');
+            buttons.forEach(btn => {
+                if (btn.classList.contains('zoom-in')) {
+                    btn.textContent = dict.zoomIn;
+                } else if (btn.classList.contains('zoom-out')) {
+                    btn.textContent = dict.zoomOut;
+                } else if (btn.classList.contains('zoom-reset')) {
+                    btn.textContent = dict.zoomReset;
+                }
+            });
+            
+            const hint = document.querySelector('.zoom-hint');
+            if (hint) hint.textContent = dict.zoomHint;
+        }
+
+        /**
+         * 更新滾動按鈕文本
+         */
+        function updateScrollButtons() {
+            const dict = I18N_DICT[currentLanguage];
+            
+            // 運氣軌道滾動按鈕
+            const luckBtns = document.querySelectorAll('.luck-scroll-btn');
+            luckBtns.forEach(btn => {
+                if (btn.classList.contains('scroll-up')) {
+                    btn.textContent = dict.scrollUp;
+                } else if (btn.classList.contains('scroll-down')) {
+                    btn.textContent = dict.scrollDown;
+                }
+            });
+            
+            // 戰鬥紀錄滾動按鈕
+            const logBtns = document.querySelectorAll('.battle-log-scroll-btn');
+            logBtns.forEach(btn => {
+                if (btn.classList.contains('scroll-up')) {
+                    btn.textContent = dict.logScrollUp;
+                } else if (btn.classList.contains('scroll-down')) {
+                    btn.textContent = dict.logScrollDown;
+                } else if (btn.classList.contains('scroll-bottom')) {
+                    btn.textContent = dict.logScrollBottom;
+                }
+            });
+        }
+
+        /**
+         * 更新新手指南標題
+         */
+        function updateTutorialTitle() {
+            const titleEl = document.querySelector('.tutorial-title-content');
+            if (titleEl) {
+                const dict = I18N_DICT[currentLanguage];
+                titleEl.innerHTML = `
+                    ${dict.tutorialTitle}
+                    <span class="tutorial-subtitle">${dict.tutorialSubtitle}</span>
+                `;
+            }
+        }
+
+        /**
+         * 動態渲染新手指南（格式完美保持）
+         * 使用 innerHTML 讓瀏覽器自動解析HTML標籤
+         */
+        function renderTutorialCards() {
+            const container = document.getElementById('tutorial-grid');
+            if (!container) return;
+
+            const dict = I18N_DICT[currentLanguage];
+            if (!dict || !dict.tutorialCards) return;
+
+            // 🎯 關鍵：使用 innerHTML，瀏覽器會完美解析所有HTML標籤和CSS
+            container.innerHTML = dict.tutorialCards.map(card => `
+                <div class="tutorial-card">
+                    <h4>${card.title}</h4>
+                    <ul>
+                        ${card.items.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+
+        /**
+         * 更新玩家名稱
+         */
+        function updatePlayerNames() {
+            const dict = I18N_DICT[currentLanguage];
+            
+            // ✅ 第一層：更新 DOM 顯示（解決名稱錯置問題）
+            for (let i = 1; i <= 4; i++) {
+                const nameEl = document.querySelector(`#player${i}-card .player-name`);
+                if (nameEl && dict.playerNames[i - 1]) {
+                    nameEl.textContent = dict.playerNames[i - 1];
+                }
+            }
+            
+            // ✅ 第二層：同步更新遊戲內部資料（確保戰鬥紀錄等功能正確）
+            if (typeof game !== 'undefined' && game && game.players) {
+                game.players.forEach((player, index) => {
+                    if (dict.playerNames[index]) {
+                        player.name = dict.playerNames[index];
+                    }
+                });
+            }
+        }
+
+        /**
+         * 更新順位徽章（全域版本，主要用於語言切換）
+         */
+        function updateOrderBadges() {
+            const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+            
+            // 🎯 優先使用Game實例的方法（如果遊戲已初始化）
+            if (typeof game !== 'undefined' && game && game.playOrder && game.playOrder.length > 0) {
+                game.updateOrderBadges(); // 呼叫Game類別的方法
+                return;
+            }
+            
+            // 🛡️ 備用方案：直接更新DOM（遊戲初始化前）
+            const badges = document.querySelectorAll('.player-order-badge');
+            badges.forEach(badge => {
+                const orderNum = badge.textContent.match(/\d+/);
+                if (orderNum) {
+                    badge.textContent = `${dict.orderBadge} ${orderNum[0]}`;
+                }
+            });
+        }
+
+
+        /**
+         * 更新音效和BGM按鈕
+         */
+        function updateSoundButtons() {
+            const dict = I18N_DICT[currentLanguage];
+        
+            
+            // 音效按鈕
+            const soundBtn = document.getElementById('sound-toggle-btn');
+            if (soundBtn) {
+                soundBtn.textContent = isSoundEnabled ? dict.soundOn : dict.soundOff;
+            }
+            
+            // BGM按鈕  
+            const bgmBtn = document.getElementById('bgm-toggle-btn');
+            if (bgmBtn) {
+                if (isBGMEnabled) {
+                    bgmBtn.innerHTML = `<span class="music-note">♪</span><span class="music-note">♫</span> ${dict.bgmOn.replace('♪♫ ', '')}`;
+                } else {
+                    bgmBtn.textContent = dict.bgmOff;
+                }
+            }
+        }
+        /**
+         * 🎴 統一更新所有玩家介面的語言相關元素
+         * 採用最小修改原則，重用現有函數
+         */
+        function updatePlayerPanelsLanguage() {
+            const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+            
+            // 重用現有函數
+            updatePlayerNames();
+            updateOrderBadges();
+            
+            // 補充現有函數未覆蓋的部分
+            for (let i = 1; i <= 4; i++) {
+                const player = (typeof game !== 'undefined' && game) ? game.players[i - 1] : null;
+                
+                // 更新未選擇勢力的狀態文字
+                if (!player || !player.faction) {
+                    const factionDisplay = document.getElementById(`player${i}-faction-display`);
+                    if (factionDisplay && factionDisplay.textContent.includes('未選擇') || 
+                        factionDisplay.textContent.includes('Not Selected') || 
+                        factionDisplay.textContent.includes('未選択')) {
+                        factionDisplay.innerHTML = `<div class="faction-badge">${dict.notSelected}</div>`;
+                    }
+                    
+                    // 更新分數細節的等待文字
+                    const breakdown = document.getElementById(`player${i}-breakdown`);
+                    if (breakdown && (breakdown.textContent.includes('等待') || 
+                        breakdown.textContent.includes('Waiting') || 
+                        breakdown.textContent.includes('選択待ち'))) {
+                        breakdown.textContent = dict.waitingSelection;
+                    }
+                }
+            }
+            
+            // 如果遊戲已初始化且有勢力選擇，強制更新勢力徽章
+            if (typeof game !== 'undefined' && game) {
+                game.updateFactionBadges();
+            }
+        }
+
+        /**
+         * 載入儲存的語言偏好設定
+         */
+        function loadLanguageSettings() {
+            try {
+                const savedLang = localStorage.getItem('luckGameLanguage');
+                if (savedLang && I18N_DICT[savedLang]) {
+                    currentLanguage = savedLang;
+                }
+            } catch (e) {
+                console.warn('無法讀取語言設定:', e);
+            }
+            
+            // 初始化UI
+            switchLanguage(currentLanguage);
+        }
 
         let game;
 
@@ -3370,40 +5073,35 @@
         function toggleSound() {
             isSoundEnabled = !isSoundEnabled;
             const btn = document.getElementById('sound-toggle-btn');
+            const dict = I18N_DICT[currentLanguage];
             
             if (!btn) return;
             
             if (isSoundEnabled) {
                 btn.classList.add('active');
                 btn.classList.remove('inactive');
-                btn.innerHTML = '🔊 音效開';
-                
-                // 解鎖音訊權限
+                btn.innerHTML = dict.soundOn;
                 initAudioContext();
-                
-                // 播放測試音效
                 setTimeout(() => playLuckSound(), 100);
-                
                 if (game) {
                     game.addBattleLog('system', '🔊 音效已開啟');
                 }
             } else {
                 btn.classList.remove('active');
                 btn.classList.add('inactive');
-                btn.innerHTML = '🔇 音效關';
-                
+                btn.innerHTML = dict.soundOff;
                 if (game) {
                     game.addBattleLog('system', '🔇 音效已關閉');
                 }
             }
             
-            // 💾 記憶玩家設定
             try {
                 localStorage.setItem('luckGameSoundEnabled', isSoundEnabled ? '1' : '0');
             } catch (error) {
                 console.warn('無法儲存音效設定:', error);
             }
         }
+
 
         // 🔄 載入時恢復上次設定
         function loadSoundSettings() {
@@ -3608,7 +5306,12 @@
             });
             
             if (game) {
-                game.addBattleLog('system', `⏱️ 遊戲速度已調整為 ${speed === 1 ? '×1 (標準)' : speed === 2 ? '×2 (快速)' : '×3 (極速)'}`);
+                let speedLabel = '';
+                if (speed === 1) speedLabel = '×1 (標準)';
+                else if (speed === 2) speedLabel = '×2 (快速)';
+                else speedLabel = '×3 (極速)';
+                
+                game.addBattleLog('system', `⏱️ 遊戲速度已調整為 ${speedLabel}`);
             }
         }
 
@@ -3636,6 +5339,17 @@
 
         // 在遊戲初始化時調用
         window.addEventListener('load', initCardBackImages);
+        /**
+         * 🌐 卡牌角色名稱顯示層翻譯工具
+         * ⚠️ 僅用於 HTML 渲染，絕不修改內部 card.name 資料
+         * @param {string} internalName - 卡牌內部名稱（永遠保持中文）
+         * @returns {string} 當前語言的顯示名稱
+         */
+        function getDisplayCharName(internalName) {
+            if (!internalName) return '';
+            const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+            return dict.charNames?.[internalName] || internalName;
+        }
 
         const CHAR_GENDERS = {
             '魔術師': 'male',
@@ -3697,7 +5411,7 @@
                 gigaBlessings: 0,      // 💎 巨祝福
                 ultraBlessings: 0,     // 💫 極祝福（新增） 
                 description: '知識力量', 
-                subs: ['harmony', 'power'] 
+                subs: ['harmony', 'Strength'] 
             },
             harmony: { 
                 id: 'harmony', 
@@ -3710,10 +5424,10 @@
                 gigaBlessings: 0,      // 💎 巨祝福
                 ultraBlessings: 0,     // 💫 極祝福（新增） 
                 description: '和平共處', 
-                subs: ['power', 'charm'] 
+                subs: ['Strength', 'charm'] 
             },
-            power: { 
-                id: 'power', 
+            Strength: { 
+                id: 'Strength', 
                 name: '力量', 
                 icon: '♠️', 
                 iconImg: 'icons/chars/spade.png', 
@@ -3727,7 +5441,7 @@
             }
         };
 
-        const FACTION_ORDER = ['charm', 'capital', 'wisdom', 'harmony', 'power']
+        const FACTION_ORDER = ['charm', 'capital', 'wisdom', 'harmony', 'Strength'];
 
         const SKILL_TYPE = {
             ON_PLAY: { icon: '⚡', name: '打出技能', desc: '打出時立即發動' },
@@ -3749,7 +5463,7 @@
             { name: 'AI/小丑', emoji: 'icons/chars/AJ-40.png', tier: 'P', isDual: true, 
                 option1: { name: 'AI機器人', emoji: 'icons/chars/robot-40.png', skill: 'tech', desc: '【同色掃描】獲得NxN運氣後移除(N=場上同色角色數),若N=0則不執行不移除', type: 'ONE_TIME' }, 
                 option2: { name: '小丑', emoji: 'icons/chars/jester-hat-40.png', skill: 'chaos', desc: '【全場掃描】獲得N運氣後移除(N=場上角色總數),若N=0則不執行不移除', type: 'ONE_TIME' } },
-            { name: '戀人男/女', emoji: 'icons/chars/MF-40.png', tier: 'P', isDual: true, 
+            { name: '戀人男/戀人女', emoji: 'icons/chars/MF-40.png', tier: 'P', isDual: true, 
                 option1: { name: '戀人男', emoji: 'icons/chars/male-heart-40.png', skill: 'love_m', desc: '與場上任意女性角色配對，雙方勢力各+5運氣,觸發者抽1張牌後雙方移除', type: 'ONE_TIME' }, 
                 option2: { name: '戀人女', emoji: 'icons/chars/female-heart-40.png', skill: 'love_f', desc: '與場上任意男性角色配對，雙方勢力各+5運氣,觸發者抽1張牌後雙方移除', type: 'ONE_TIME' } },
             { name: '惡魔/精靈', emoji: 'icons/chars/DF-40.png', tier: 'P', isDual: true, 
@@ -3759,14 +5473,14 @@
 
 const GAME_SETS = [
             { id: 1, name: 'SET 1 - 4星神聖王權', aCard: '祭司', pCards: ['王族/傀儡師', 'AI/小丑'] },
-            { id: 2, name: 'SET 2 - 4星魔法愛情', aCard: '魔術師', pCards: ['王族/傀儡師', '戀人男/女'] },
+            { id: 2, name: 'SET 2 - 4星魔法愛情', aCard: '魔術師', pCards: ['王族/傀儡師', '戀人男/戀人女'] },
             { id: 3, name: 'SET 3 - 4星全面控制', aCard: '詐欺師', pCards: ['王族/傀儡師', '惡魔/精靈'] },
-            { id: 4, name: 'SET 4 - 5星神聖奇緣', aCard: '祭司', pCards: ['王族/傀儡師', '戀人男/女'] },
+            { id: 4, name: 'SET 4 - 5星神聖奇緣', aCard: '祭司', pCards: ['王族/傀儡師', '戀人男/戀人女'] },
             { id: 5, name: 'SET 5 - 5星自然魔法', aCard: '魔術師', pCards: ['王族/傀儡師', '惡魔/精靈'] },
             { id: 6, name: 'SET 6 - 2星混沌詐術', aCard: '詐欺師', pCards: ['王族/傀儡師', 'AI/小丑'] },
             { id: 7, name: 'SET 7 - 6星完全神聖', aCard: '祭司', pCards: ['王族/傀儡師', '惡魔/精靈'] },
             { id: 8, name: 'SET 8 - 3星魔法科技', aCard: '魔術師', pCards: ['王族/傀儡師', 'AI/小丑'] },
-            { id: 9, name: 'SET 9 - 3星詐術組合', aCard: '詐欺師', pCards: ['王族/傀儡師', '戀人男/女'] }
+            { id: 9, name: 'SET 9 - 3星詐術組合', aCard: '詐欺師', pCards: ['王族/傀儡師', '戀人男/戀人女'] }
         ];
 
         let selectedOrder = 1;
@@ -3774,17 +5488,29 @@ const GAME_SETS = [
 
         function renderSetOptions() {
             const container = document.getElementById('set-grid');
-            container.innerHTML = GAME_SETS.map(set => `
-                <div class="set-card ${set.id === selectedSet ? 'selected' : ''}" onclick="selectSet(${set.id})">
-                    <div class="set-name">${set.name}</div>
-                    <div class="set-description">
-                        A卡:${set.aCard}<br>
-                        B卡:全部 (貴族、平民、守衛、強盗)<br>
-                        P卡:${set.pCards.join('、')}
+            const dict = I18N_DICT[currentLanguage];
+            
+            // 🎯 核心技巧：自動處理雙面卡翻譯 (如 "王族/傀儡師" → "Royal/Puppeteer")
+            const translateChar = (charName) => {
+                return charName.split('/').map(name => dict.charNames?.[name] || name).join('/');
+            };
+            
+            container.innerHTML = GAME_SETS.map(set => {
+                const setName = (dict.setNames && dict.setNames[set.id]) || set.name;
+                
+                return `
+                    <div class="set-card ${set.id === selectedSet ? 'selected' : ''}" onclick="selectSet(${set.id})">
+                        <div class="set-name">${setName}</div>
+                        <div class="set-description">
+                            ${dict.setLabels.aCard}：${translateChar(set.aCard)}<br>
+                            ${dict.setLabels.bCard}：${dict.setLabels.allChars}<br>
+                            ${dict.setLabels.pCard}：${set.pCards.map(translateChar).join('、')}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
+
 
         function selectOrder(order) {
             selectedOrder = order;
@@ -3819,6 +5545,7 @@ const GAME_SETS = [
 
             if (!game) {
                 game = new Game();
+                updatePlayerNames();
             }
             
             game.startWithConfig(selectedOrder, selectedSet);
@@ -3835,7 +5562,7 @@ const GAME_SETS = [
                     { id: 3, name: '虛空行者', avatar: '🔮', hand: [], faction: null, subFactions: [] }
                 ];
 
-                Object.values(FACTIONS).forEach(f => { f.position = 1; f.megaBlessings = 0; f.gigaBlessings = 0;});
+                Object.values(FACTIONS).forEach(f => { f.position = 1; f.megaBlessings = 0; f.gigaBlessings = 0; f.ultraBlessings = 0;});
 
                 this.preloadCloverImage();
                 this.isDestroyed = false;
@@ -4144,14 +5871,25 @@ const GAME_SETS = [
             }
 
             updateOrderBadges() {
+                // 🌐 取得當前語言字典，確保語言連動
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                
+                // 🛡️ 安全性檢查
+                if (!this.playOrder || this.playOrder.length === 0) {
+                    console.warn('playOrder 尚未初始化，跳過順位更新');
+                    return;
+                }
+                
                 this.players.forEach((player, index) => {
                     const orderIndex = this.playOrder.indexOf(player.id) + 1;
                     const badge = document.querySelector(`#player${index + 1}-card .player-order-badge`);
                     if (badge) {
-                        badge.textContent = `順位 ${orderIndex}`;
+                        // ✅ 核心修復：使用多語言字典替代硬編碼
+                        badge.textContent = `${dict.orderBadge} ${orderIndex}`;
                     }
                 });
             }
+
 
             calculateBlessings(factionKey) {
                 const faction = FACTIONS[factionKey];
@@ -4353,45 +6091,69 @@ const GAME_SETS = [
 
             renderSkillsPanel() {
                 const container = document.getElementById('skills-grid');
+                if (!container) return;
+
+                // 🌐 取得當前語言資源
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
                 const tierColors = { 'A': '#a78bfa', 'B': '#a78bfa', 'P': '#a78bfa' };
                 
-                // 🎯 智慧型圖示渲染函數：自動判斷是路徑還是 emoji
+                // 🛡️ 安全的翻譯輔助函數
+                const getSkillType = (typeKey) => {
+                    const base = SKILL_TYPE[typeKey] || { icon: '?', name: '未知', desc: '未知類型' };
+                    const translated = dict.skillTypes?.[typeKey] || {};
+                    return {
+                        icon: base.icon,
+                        name: translated.name || base.name,
+                        desc: translated.desc || base.desc
+                    };
+                };
+
+                const getCharName = (name) => dict.charNames?.[name] || name;
+                const getCharDesc = (name, fallback) => dict.charDescs?.[name] || fallback;
+                const labels = dict.skillLabels || { dualCard: '雙面', frontFace: '正面', backFace: '反面' };
+                const tooltips = dict.genderTooltips || { male: '男性角色', female: '女性角色', neutral: '中性角色' };
+
+                // 🎯 智慧型圖示渲染函數（保持原有邏輯）
                 const renderEmoji = (emojiOrPath, name = '', size = '2.5em') => {
                     if (emojiOrPath && emojiOrPath.includes('/')) {
-                        // 是圖片路徑
                         return `<img src="${emojiOrPath}" 
                                     alt="${name}" 
                                     style="width:${size}; height:${size}; object-fit:contain; 
                                         filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));"
                                     onerror="this.outerHTML='<span style=\\'font-size:${size};\\'>🃏</span>'">`;
-                    } else {
-                        // 是一般 emoji 文字
-                        return `<span style="font-size:${size};">${emojiOrPath}</span>`;
                     }
+                    return `<span style="font-size:${size};">${emojiOrPath}</span>`;
                 };
 
-                // 🌟 性別圖標生成函數
+                // 🌟 性別圖標生成函數（保持原有樣式）
                 const getGenderIcon = (gender) => {
-                    switch(gender) {
-                        case 'male':
-                            return `<span style="color: #4dabf7; margin-left: 6px; font-weight: bold; font-size: 0.9em;" title="男性角色">♂️</span>`;
-                        case 'female':
-                            return `<span style="color: #ff8787; margin-left: 6px; font-weight: bold; font-size: 0.9em;" title="女性角色">♀️</span>`;
-                        case 'neutral':
-                            return `<span style="color: #ced4da; margin-left: 6px; font-size: 0.8em;" title="中性角色">⚪</span>`;
-                        default:
-                            return '';
-                    }
+                    const config = {
+                        male: { color: '#4dabf7', tooltip: tooltips.male, icon: '♂️' },
+                        female: { color: '#ff8787', tooltip: tooltips.female, icon: '♀️' },
+                        neutral: { color: '#ced4da', tooltip: tooltips.neutral, icon: '⚪' }
+                    };
+                    
+                    const cfg = config[gender];
+                    if (!cfg) return '';
+                    
+                    return `<span style="color: ${cfg.color}; margin-left: 6px; font-weight: bold; font-size: 0.9em;" title="${cfg.tooltip}">${cfg.icon}</span>`;
                 };
 
+                // 🎨 動態生成HTML，完全保持原有格式
                 container.innerHTML = this.selectedCharacters.map(char => {
                     const tierColor = tierColors[char.tier] || '#a78bfa';
                     
                     if (char.isDual) {
-                        // 🎯 處理雙面卡（P卡）- 每個面向獨立顯示性別
+                        // 🎯 雙面卡處理：分別取得兩面的翻譯內容
                         const gender1 = getCharGender(char.option1.name);
                         const gender2 = getCharGender(char.option2.name);
-                        
+                        const type1 = getSkillType(char.option1.type);
+                        const type2 = getSkillType(char.option2.type);
+                        const name1 = getCharName(char.option1.name);
+                        const name2 = getCharName(char.option2.name);
+                        const desc1 = getCharDesc(char.option1.name, char.option1.desc);
+                        const desc2 = getCharDesc(char.option2.name, char.option2.desc);
+
                         return `
                             <div class="skill-item">
                                 <div class="skill-icon-container">
@@ -4399,18 +6161,21 @@ const GAME_SETS = [
                                     <div class="skill-tier-badge" style="background: ${tierColor}22; border-color: ${tierColor}; color: ${tierColor};">${char.tier}</div>
                                 </div>
                                 <div class="skill-info">
-                                    <div class="skill-name">${char.name} (雙面)</div>
+                                    <div class="skill-name">${name1}/${name2} (${labels.dualCard})</div>
                                     <div class="skill-description">
-                                        ${SKILL_TYPE[char.option1.type].icon} 正面: ${renderEmoji(char.option1.emoji, char.option1.name, '1.4em')} <strong>${char.option1.name}</strong>${getGenderIcon(gender1)} - ${char.option1.desc} (${SKILL_TYPE[char.option1.type].desc})<br><br>
-                                        ${SKILL_TYPE[char.option2.type].icon} 反面: ${renderEmoji(char.option2.emoji, char.option2.name, '1.4em')} <strong>${char.option2.name}</strong>${getGenderIcon(gender2)} - ${char.option2.desc} (${SKILL_TYPE[char.option2.type].desc})
+                                        ${type1.icon} ${labels.frontFace}: ${renderEmoji(char.option1.emoji, name1, '1.4em')} <strong>${name1}</strong>${getGenderIcon(gender1)} - ${desc1} (${type1.desc})<br><br>
+                                        ${type2.icon} ${labels.backFace}: ${renderEmoji(char.option2.emoji, name2, '1.4em')} <strong>${name2}</strong>${getGenderIcon(gender2)} - ${desc2} (${type2.desc})
                                     </div>
                                 </div>
                             </div>`;
                     }
-                    
-                    // 🎯 處理單面卡（A卡、B卡）
+
+                    // 🎯 單面卡處理
                     const gender = getCharGender(char.name);
-                    
+                    const type = getSkillType(char.type);
+                    const charName = getCharName(char.name);
+                    const charDesc = getCharDesc(char.name, char.desc);
+
                     return `
                         <div class="skill-item">
                             <div class="skill-icon-container">
@@ -4418,12 +6183,13 @@ const GAME_SETS = [
                                 <div class="skill-tier-badge" style="background: ${tierColor}22; border-color: ${tierColor}; color: ${tierColor};">${char.tier}</div>
                             </div>
                             <div class="skill-info">
-                                <div class="skill-name">${char.name}${getGenderIcon(gender)}</div>
-                                <div class="skill-description">${SKILL_TYPE[char.type].icon} ${char.desc} (${SKILL_TYPE[char.type].desc})</div>
+                                <div class="skill-name">${charName}${getGenderIcon(gender)}</div>
+                                <div class="skill-description">${type.icon} ${charDesc} (${type.desc})</div>
                             </div>
                         </div>`;
                 }).join('');
             }
+
 
             // 💕 讓玩家選擇戀人卡執行順序
             async selectLoverExecutionOrder(loverCards, triggerPlayerId) {
@@ -4509,7 +6275,7 @@ const GAME_SETS = [
                             <div class="card-tier-badge tier-${card.tier}">${card.tier}</div>
                             <div class="card-type-icon">${skillType.icon}</div>
                             <div class="card-emoji">${this.getCardIconHTML(card.emoji, card.name)}</div>
-                            <div class="card-name">${card.name}</div>
+                            <div class="card-name">${getDisplayCharName(card.name)}</div>
                         </div>
                     `;
                 }).join('');
@@ -4519,126 +6285,181 @@ const GAME_SETS = [
                 console.log('🏴 startDraft 開始');
                 
                 try {
+                    // ✅ 步驟1：統一在最前面取得所有必要的 DOM 元素
                     const setContainer = document.getElementById('draft-set-info');
-                    if (!setContainer) {
-                        throw new Error('找不到 draft-set-info 元素！');
-                    }
+                    const discardContainer = document.getElementById('draft-discard-info');
                     
+                    // ✅ 步驟2：驗證 DOM 元素存在
+                    if (!setContainer) throw new Error('找不到 draft-set-info 元素！');
+                    if (!discardContainer) throw new Error('找不到 draft-discard-info 元素！');
+
+                    // ✅ 步驟3：取得翻譯資源
+                    const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                    const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
+
+                    // ✅ 步驟4：定義翻譯輔助函數
+                    const translateChar = (charName) => {
+                        if (!charName) return '';
+                        return charName.split('/').map(name => 
+                            (dict.charNames && dict.charNames[name]) ? dict.charNames[name] : name
+                        ).join('/');
+                    };
+
+                    // ✅ 步驟5：渲染 SET 資訊面板
+                    const setName = (dict.setNames && dict.setNames[this.currentSetInfo.id]) ? 
+                        dict.setNames[this.currentSetInfo.id] : this.currentSetInfo.name;
+
                     setContainer.innerHTML = `
-                        <strong style="color: #a78bfa;">🃏 當前使用 SET</strong><br>
-                        ${this.currentSetInfo.name}<br>
+                        <strong style="color: #a78bfa;">${(dict.setLabels && dict.setLabels.currentSet) || '🃏 當前使用 SET'}</strong><br>
+                        ${setName}<br>
                         <span style="font-size: 0.85em; color: #ccc;">
-                            A卡:${this.currentSetInfo.aCard}<br>
-                            P卡:${this.currentSetInfo.pCards.join('、')}
+                            ${(dict.setLabels && dict.setLabels.aCard) || 'A卡'}：${translateChar(this.currentSetInfo.aCard)}<br>
+                            ${(dict.setLabels && dict.setLabels.pCard) || 'P卡'}：${(this.currentSetInfo.pCards || []).map(translateChar).join('、')}
                         </span>
                     `;
 
-                    const discardContainer = document.getElementById('draft-discard-info');
+                    // ✅ 步驟6：渲染棄牌資訊面板（現在 discardContainer 已安全可用）
                     if (this.discardCompensation) {
                         const f = FACTIONS[this.discardCompensation.faction];
+                        const factionName = dict.factionNames?.[this.discardCompensation.faction] || f.name;
                         const topDiscard = this.discardPile[0];
-                        
+
                         discardContainer.innerHTML = `
-                            <strong style="color: #ff8c00;">⚠️ 本場棄牌資訊</strong><br>
-                            棄牌堆中有 ${this.getFactionIconHTML(this.discardCompensation.faction)}${f.name} 勢力的<br>
+                            <strong style="color: #ff8c00;">${labels.discardInfo || '⚠️ 本場棄牌資訊'}</strong><br>
+                            ${(labels.discardFaction || '棄牌堆中有 {faction} 勢力的').replace('{faction}', 
+                                `${this.getFactionIconHTML(this.discardCompensation.faction)}${factionName}`)}<br>
                             <span style="font-size: 0.9em;">
                                 <img src="${topDiscard.emoji}" alt="" 
-                                    style="width: 1.2em; height: 1.2em; 
-                                            vertical-align: -0.15em; 
-                                            margin-right: 4px; 
-                                            object-fit: contain;
-                                            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
+                                    style="width: 1.2em; height: 1.2em; vertical-align: -0.15em; 
+                                        margin-right: 4px; object-fit: contain;
+                                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"
                                     onerror="this.outerHTML='🃏';">
-                                ${topDiscard.name}
+                                ${dict.charNames?.[topDiscard.name] || topDiscard.name}
                             </span><br>
                             <span style="font-size: 0.85em; color: #a78bfa;">
-                                🎁 此勢力將獲得 +4 運氣補償
+                                ${labels.luckCompensation || '🎁 此勢力將獲得 +4 運氣補償'}
                             </span>
                         `;
                     } else {
                         discardContainer.innerHTML = `
-                            <strong style="color: #ff8c00;">⚠️ 本場棄牌資訊</strong><br>
-                            無剩餘卡牌
+                            <strong style="color: #ff8c00;">${labels.discardInfo || '⚠️ 本場棄牌資訊'}</strong><br>
+                            ${labels.noDiscard || '無剩餘卡牌'}
                         `;
                     }
 
+                    // ✅ 步驟7：更新手牌預覽標題
+                    const handTitle = document.querySelector('.draft-hand-title');
+                    if (handTitle) {
+                        const icon = handTitle.querySelector('img');
+                        handTitle.innerHTML = '';
+                        if (icon) handTitle.appendChild(icon.cloneNode(true));
+                        handTitle.append(' ' + (labels.handPreviewTitle || '你的初始手牌'));
+                    }
+
+                    // ✅ 步驟8：渲染其他元件
                     this.renderDraftOptions();
                     this.updateDraftSelectedInfo();
                     this.renderDraftHandPreview();
                     
-                    console.log('startDraft 完成,顯示 draft-overlay');
-                    
+                    // ✅ 步驟9：顯示勢力選擇介面
                     const draftOverlay = document.getElementById('draft-overlay');
-                    if (draftOverlay) {
-                        draftOverlay.style.display = 'flex';
-                        console.log('draft-overlay display 已設置為 flex');
-                    } else {
-                        throw new Error('找不到 draft-overlay 元素！');
-                    }
+                    if (!draftOverlay) throw new Error('找不到 draft-overlay 元素！');
                     
+                    draftOverlay.style.display = 'flex';
+                    console.log('✅ startDraft 完成，draft-overlay 已顯示');
+                    
+                    // ✅ 步驟10：開始輪抽流程
                     this.processDraftTurn();
 
                 } catch (error) {
                     console.error('❌ startDraft 錯誤:', error);
-                    alert(`勢力選擇初始化失敗:\n${error.message}`);
+                    console.error('錯誤堆疊:', error.stack);
+                    alert(`勢力選擇初始化失敗:\n${error.message}\n\n請按F12查看控制台詳細錯誤`);
                 }
             }
 
+
             renderDraftOptions() {
                 const container = document.getElementById('draft-options');
+                if (!container || !game) return;
+
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
+                const factionDescs = dict.factionDescs || I18N_DICT['zh-TW'].factionDescs;
+
                 container.innerHTML = Object.keys(FACTIONS).map(key => {
                     const f = FACTIONS[key];
-                    const isTaken = !this.availableFactions.includes(key);
-                    const owner = this.players.find(p => p.faction === key);
-                    const subNames = f.subs.map(s => 
-                        this.getFactionIconHTML(s, 'inline') + FACTIONS[s].name
+                    const isTaken = !game.availableFactions.includes(key);
+                    const owner = game.players.find(p => p.faction === key);
+                    const hasBonus = game.discardCompensation && game.discardCompensation.faction === key;
+
+                    // ✅ 翻譯副勢力名稱
+                    const subNames = f.subs.map(s =>
+                        game.getFactionIconHTML(s, 'inline') + (dict.factionNames?.[s] || FACTIONS[s].name)
                     ).join(', ');
-                    
-                    const hasBonus = this.discardCompensation && this.discardCompensation.faction === key;
-                    
+
+                    // ✅ 翻譯主勢力名稱和描述
+                    const factionName = dict.factionNames?.[key] || f.name;
+                    const factionDesc = factionDescs[key] || f.description;
+                    const ownerName = owner ? owner.name : '';
+
                     return `
                         <div class="faction-btn ${isTaken ? 'disabled taken' : ''}" 
                             onclick="game.handleDraftClick('${key}')"
                             style="border-color: ${f.color}">
-                            ${isTaken ? `<div class="taken-label">${owner.name}</div>` : ''}
-                            ${hasBonus ? `<div class="bonus-label">+4運氣</div>` : ''}
+                            ${isTaken ? `<div class="taken-label">${ownerName}</div>` : ''}
+                            ${hasBonus ? `<div class="bonus-label">${labels.bonusLabel}</div>` : ''}
                             <div class="draft-icon">
-                                ${this.getFactionIconHTML(key, 'large')}
+                                ${game.getFactionIconHTML(key, 'large')}
                             </div>
-                            <div class="draft-name">${f.name}</div>
-                            <div class="draft-desc">${f.description}</div>
-                            <div class="draft-subs">副勢力:${subNames}<br>🔄 +2張P卡${hasBonus ? '<br>🎁 +4運氣補償' : ''}</div>
+                            <div class="draft-name">${factionName}</div>
+                            <div class="draft-desc">${factionDesc}</div>
+                            <div class="draft-subs">
+                                ${labels.subFaction}：${subNames}<br>
+                                ${labels.getPCards}
+                                ${hasBonus ? `<br>${labels.luckBonus}` : ''}
+                            </div>
                         </div>`;
                 }).join('');
             }
 
             updateDraftSelectedInfo() {
                 const container = document.getElementById('draft-selected-info');
+                if (!container) return;
+
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
                 const selectedPlayers = this.players.filter(p => p.faction !== null);
-            const selectedHTML = selectedPlayers.map(p => {
-                const f = FACTIONS[p.faction];
-                const subIcons = p.subFactions.map(s => 
-                    `<img src="${FACTIONS[s].iconImg}" alt="${FACTIONS[s].name}" class="faction-img inline" 
-                        onerror="this.outerHTML='${FACTIONS[s].icon}';">`
-                ).join('');
-                
-                return `
-                    <div class="selected-faction-item" style="background: ${f.color}22; border-color: ${f.color}">
-                        ${p.avatar} ${p.name}: 
-                        <img src="${f.iconImg}" alt="${f.name}" class="faction-img inline" 
-                            onerror="this.outerHTML='${f.icon}';">
-                        ${f.name} (${subIcons}+2 Pcard)
-                    </div>
-                `;
-            }).join('');
-                
+
+                const selectedHTML = selectedPlayers.map(p => {
+                    const f = FACTIONS[p.faction];
+                    const factionName = dict.factionNames?.[p.faction] || f.name;
+                    const subIcons = p.subFactions.map(s =>
+                        `<img src="${FACTIONS[s].iconImg}" alt="${FACTIONS[s].name}" class="faction-img inline" 
+                            onerror="this.outerHTML='${FACTIONS[s].icon}';">`
+                    ).join('');
+
+                    return `
+                        <div class="selected-faction-item" style="background: ${f.color}22; border-color: ${f.color}">
+                            ${p.avatar} ${p.name}: 
+                            <img src="${f.iconImg}" alt="${f.name}" class="faction-img inline" 
+                                onerror="this.outerHTML='${f.icon}';">
+                            ${factionName} (${subIcons}+2 Pcard)
+                        </div>
+                    `;
+                }).join('');
+
+                // ✅ 翻譯標題和空狀態文字
+                const title = labels.selectedTitle.replace('{count}', selectedPlayers.length);
+
                 container.innerHTML = `
-                    <div style="color: #ffd43b; font-weight: bold; width: 100%; text-align: center; margin-bottom: 10px;">
-                        已選擇的勢力 (${selectedPlayers.length}/4):
+                    <div style="color: #ffd43b; font-weight: bold; width: 100%; text-align: center; margin-bottom: 0px;">
+                        ${title}
                     </div>
-                    ${selectedHTML || '<div style="color: #888; width: 100%; text-align: center;">尚無玩家選擇勢力</div>'}
+                    ${selectedHTML || `<div style="color: #888; width: 100%; text-align: center;">${labels.noSelected}</div>`}
                 `;
             }
+
 
             async processDraftTurn() {
                 if (this.currentDraftIndex >= this.draftOrder.length) {
@@ -4650,10 +6471,15 @@ const GAME_SETS = [
 
                 const pickerId = this.draftOrder[this.currentDraftIndex];
                 const player = this.players[pickerId];
-                document.getElementById('draft-current').textContent = 
-                    pickerId === 0 
-                        ? `輪到你選擇勢力！(將獲得該勢力的2張P卡)` 
-                        : `正在等待 ${player.name} 選擇勢力...`;
+
+                // ✅ 使用翻譯後的提示文字
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
+
+                document.getElementById('draft-current').textContent =
+                    pickerId === 0
+                        ? labels.yourTurn
+                        : labels.waiting.replace('{name}', player.name);
 
                 if (pickerId !== 0) {
                     await new Promise(r => setTimeout(r, 1500));
@@ -4700,54 +6526,58 @@ const GAME_SETS = [
                 
                 this.availableFactions = this.availableFactions.filter(f => f !== factionKey);
                 this.currentDraftIndex++;
-                
-                const subNames = FACTIONS[factionKey].subs.map(s => 
-                    this.getFactionIconHTML(s, 'inline') + FACTIONS[s].name
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                const labels = dict.draftLabels || I18N_DICT['zh-TW'].draftLabels;
+                const factionName = dict.factionNames?.[factionKey] || FACTIONS[factionKey].name;            
+                const subNames = FACTIONS[factionKey].subs.map(s =>
+                    this.getFactionIconHTML(s, 'inline') + (dict.factionNames?.[s] || FACTIONS[s].name)
                 ).join(', ');
-                this.addBattleLog('system', `${this.players[playerId].name} 選擇了 ${this.getFactionIconHTML(factionKey)}${FACTIONS[factionKey].name} (副勢力: ${subNames}) 並獲得2張P卡！`);                                
+
                 this.updateFactionBadges();
                 this.renderDraftOptions();
                 this.updateDraftSelectedInfo();
                 this.updateUI();
                 setTimeout(() => this.processDraftTurn(), 500);
+                
             }
 
             updateFactionBadges() {
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
+                
                 this.players.forEach((player, index) => {
                     const display = document.getElementById(`player${index + 1}-faction-display`);
                     const playerCard = document.getElementById(`player${index + 1}-card`);
                     
                     if (player.faction) {
                         const mainFaction = FACTIONS[player.faction];
+                        // 🌐 使用翻譯後的勢力名稱
+                        const mainFactionName = dict.factionNames?.[player.faction] || mainFaction.name;
+                        
                         const subHTML = player.subFactions.map(s => {
                             const sub = FACTIONS[s];
+                            const subName = dict.factionNames?.[s] || sub.name;
                             return `
                                 <div class="faction-badge ${s}">
                                     ${this.getFactionIconHTML(s, 'inline')}
-                                    ${sub.name}
+                                    ${subName}
                                 </div>
                             `;
                         }).join('');
                         
-                        // 更新勢力徽章顯示
+                        // 更新勢力徽章顯示（使用翻譯名稱）
                         display.innerHTML = `
                             <div class="faction-badge main ${player.faction}">
                                 ${this.getFactionIconHTML(player.faction, 'inline')}
-                                ${mainFaction.name}
+                                ${mainFactionName}
                             </div>
                             <div style="display: flex; gap: 2px;">${subHTML}</div>
-                        `;                   
-
-                        // 🌈 動態同步玩家面板顏色
+                        `;
+                        
+                        // 🌈 動態同步玩家面板顏色（保持原有邏輯）
                         if (playerCard) {
-                            // 設定主勢力顏色
                             playerCard.style.setProperty('--faction-color', mainFaction.color);
-                            
-                            // 設定勢力專屬微光效果（透明度較低）
-                            const glowColor = mainFaction.color + '22'; // 添加透明度
+                            const glowColor = mainFaction.color + '22';
                             playerCard.style.setProperty('--faction-glow', glowColor);
-                            
-                            // 可選：為分數徽章也添加勢力色彩
                             const scoreBadge = playerCard.querySelector('.score-badge');
                             if (scoreBadge) {
                                 scoreBadge.style.background = `linear-gradient(135deg, ${mainFaction.color}dd)`;
@@ -4755,14 +6585,12 @@ const GAME_SETS = [
                             }
                         }
                     } else {
-                        // 🔄 重置為未選擇狀態
-                        display.innerHTML = '<div class="faction-badge">🎭 未選擇</div>';
+                        // 🔄 重置為未選擇狀態（使用翻譯文字）
+                        display.innerHTML = `<div class="faction-badge">${dict.notSelected || '🎭 未選擇'}</div>`;
                         
                         if (playerCard) {
                             playerCard.style.setProperty('--faction-color', 'rgba(255,255,255,0.25)');
                             playerCard.style.setProperty('--faction-glow', 'rgba(255,255,255,0.1)');
-                            
-                            // 重置分數徽章
                             const scoreBadge = playerCard.querySelector('.score-badge');
                             if (scoreBadge) {
                                 scoreBadge.style.background = 'linear-gradient(135deg, #ffd43b, #fab005)';
@@ -4772,6 +6600,7 @@ const GAME_SETS = [
                     }
                 });
             }
+
 
             flipPCard(cardIndex) {
                 const currentPlayerId = this.playOrder[this.currentPlayerIndex];
@@ -4914,12 +6743,7 @@ const GAME_SETS = [
                         
                         // 🛠️ 增強型 Tooltip
                         const totalScore = this.calculateBlessings(f.id);
-                        const blessingDetails = [];
-                        
-                        if (f.ultraBlessings > 0) blessingDetails.push(`💫 極祝福 ×${f.ultraBlessings} (${f.ultraBlessings * 45}分)`);
-                        if (f.gigaBlessings > 0) blessingDetails.push(`💎 巨祝福 ×${f.gigaBlessings} (${f.gigaBlessings * 30}分)`);
-                        if (f.megaBlessings > 0) blessingDetails.push(`🌟 大祝福 ×${f.megaBlessings} (${f.megaBlessings * 15}分)`);
-                        
+                        const blessingDetails = [];  
                         const baseScore = Math.ceil(f.position / 4);
                         if (baseScore > 0) blessingDetails.push(`✨ 小祝福 ${baseScore}分 (位置 ${f.position})`);
                         
@@ -5027,7 +6851,7 @@ const GAME_SETS = [
                     'control'                           // 第七階段：特殊狀態
                 ];
 
-                for (const skillName of skillExecutionOrder) {;
+                for (const skillName of skillExecutionOrder) {
 
                     // ====================================================
                     // 💕 戀人卡特殊處理：多張時強制讓玩家選擇順序
@@ -6193,8 +8017,10 @@ const GAME_SETS = [
             }
 
             getScoreBreakdown(playerId) {
+                const dict = I18N_DICT[currentLanguage] || I18N_DICT['zh-TW'];
                 const player = this.players[playerId];
-                if (!player.faction) return '等待選擇...';
+                
+                if (!player.faction) return dict.waitingSelection || '等待選擇...';
                 
                 const mainFaction = FACTIONS[player.faction];
                 const sub1Faction = FACTIONS[player.subFactions[0]];
@@ -6204,17 +8030,25 @@ const GAME_SETS = [
                 const sub1Blessings = this.calculateBlessings(player.subFactions[0]);
                 const sub2Blessings = this.calculateBlessings(player.subFactions[1]);
                 
-                // 🆕 顯示詳細的祝福拆解
+                // 顯示詳細的祝福拆解
                 let mainDetail = '';
-                if (mainFaction.gigaBlessings > 0 || mainFaction.megaBlessings > 0) {
+                if (mainFaction.ultraBlessings > 0 || mainFaction.gigaBlessings > 0 || mainFaction.megaBlessings > 0) {
                     const parts = [];
+                    if (mainFaction.ultraBlessings > 0) parts.push(`💫${mainFaction.ultraBlessings}`);
                     if (mainFaction.gigaBlessings > 0) parts.push(`💎${mainFaction.gigaBlessings}`);
                     if (mainFaction.megaBlessings > 0) parts.push(`🌟${mainFaction.megaBlessings}`);
                     mainDetail = `(${parts.join('+')})`;
                 }
                 
-                return `主${mainBlessings}${mainDetail}×2 + 副${sub1Blessings} + 副${sub2Blessings}`;
+                // 🌐 支援多語言的前綴
+                const mainPrefix = currentLanguage === 'en' ? 'Main' : 
+                                currentLanguage === 'ja' ? '主' : '主';
+                const subPrefix = currentLanguage === 'en' ? 'Sub' : 
+                                currentLanguage === 'ja' ? '副' : '副';
+                
+                return `${mainPrefix}${mainBlessings}${mainDetail}×2 + ${subPrefix}${sub1Blessings} + ${subPrefix}${sub2Blessings}`;
             }
+
 
             shuffleDeck(deck) {
                 const shuffled = [...deck];
@@ -6246,7 +8080,9 @@ const GAME_SETS = [
                 const currentPlayerId = this.playOrder[this.currentPlayerIndex];
                 const player = this.players[currentPlayerId];
                 
-                document.getElementById('round-display').textContent = `回合 ${this.round} / ${this.maxRounds}`;
+                    document.getElementById('round-display').textContent = 
+                        `${t('roundDisplay')} ${this.round} / ${this.maxRounds}`;
+
 
                 this.selectedCardIndex = null;
                 this.updateUI();
@@ -6469,20 +8305,22 @@ const GAME_SETS = [
                 const timestamp = new Date().toLocaleTimeString('zh-TW', { 
                     hour: '2-digit', 
                     minute: '2-digit', 
-                    second: '2-digit' 
+                    second: '2-digit',
+                    hour12: false  // 🎯 關鍵：強制使用24小時制，移除上午/下午
                 });
                 const logClass = playerId === 'system' ? 'log-system' : 
                                 playerId === 'timeline' ? 'log-timeline' :
                                 `log-player${playerId + 1}`;
                 
-                // 🎯 1. 維護資料陣列（保持現有邏輯）
+                // 🎯 儲存原始中文訊息（包含完整HTML圖示）
                 this.battleLog.push({ timestamp, playerId, message, class: logClass });
                 
-                // 🎯 2. 直接操作DOM，不使用renderBattleLog
+                // 🎯 翻譯當前要顯示的訊息（圖示HTML完全不受影響）
+                const displayMessage = translateBattleLogText(message);
+                
                 const logContent = document.getElementById('battle-log-content');
                 if (!logContent) return;
 
-                // 🎯 3. 計算玩家勢力顏色
                 let factionColor = '';
                 if (typeof playerId === 'number' && this.players[playerId]) {
                     const player = this.players[playerId];
@@ -6491,64 +8329,60 @@ const GAME_SETS = [
                     }
                 }
 
-                // 🎯 4. 創建單一新的DOM元素
                 const entryDiv = document.createElement('div');
                 entryDiv.className = `log-entry ${logClass}`;
                 
-                // 🎨 套用勢力顏色
                 if (factionColor) {
-                    entryDiv.style.borderLeftColor = `${factionColor} !important`;
-                    entryDiv.style.background = `${factionColor}26 !important`;
+                    entryDiv.style.borderLeftColor = `${factionColor}`;
+                    entryDiv.style.background = `${factionColor}26`;
                 }
                 
-                // 📝 設置內容
                 entryDiv.innerHTML = `
                     <div class="log-time">${timestamp}</div>
-                    ${message}
+                    ${displayMessage}
                 `;
 
-                // 🎯 5. 將新元素附加到底部
                 logContent.appendChild(entryDiv);
 
-                // 🛡️ 6. 維護DOM數量上限（防止記憶體洩漏）
                 const MAX_LOGS = 80;
                 while (logContent.children.length > MAX_LOGS) {
                     logContent.removeChild(logContent.firstChild);
                 }
 
-                // 📜 7. 平滑捲動到底部
                 logContent.scrollTop = logContent.scrollHeight;
             }
 
-
             renderBattleLog() {
                 const logContent = document.getElementById('battle-log-content');
+                if (!logContent) return;
+                
                 const recentLogs = this.battleLog.slice(-80);
                 
                 logContent.innerHTML = recentLogs.map(log => {
                     let customStyle = '';
                     
-                    // 🎯 動態套用玩家主勢力顏色
                     if (typeof log.playerId === 'number' && this.players[log.playerId]) {
                         const player = this.players[log.playerId];
                         if (player.faction) {
                             const factionColor = FACTIONS[player.faction].color;
-                            
-                            customStyle = `style="border-left-color: ${factionColor} !important; background: ${factionColor}26 !important;"`;
-                            
+                            customStyle = `style="border-left-color: ${factionColor}; background: ${factionColor}26;"`;
                         }
                     }
+                    
+                    // 🎯 關鍵：從歷史紀錄中取出時，動態翻譯成當前語言
+                    const displayMessage = translateBattleLogText(log.message);
                     
                     return `
                         <div class="log-entry ${log.class}" ${customStyle}>
                             <div class="log-time">${log.timestamp}</div>
-                            ${log.message}
+                            ${displayMessage}
                         </div>
                     `;
                 }).join('');
                 
                 logContent.scrollTop = logContent.scrollHeight;
             }
+
 
             showDamageEffect(slotIndex, text) {
                 const battlefield = document.getElementById('battlefield');
@@ -6767,7 +8601,7 @@ const GAME_SETS = [
                             <div class="card-tier-badge tier-${topCard.tier}">${topCard.tier}</div>
                             <div class="card-type-icon">${skillType.icon}</div>
                             <div class="card-emoji">${topCard.emoji}</div>
-                            <div class="card-name">${topCard.name}</div>
+                            <div class="card-name">${getDisplayCharName(topCard.name)}</div>
                         </div>
                     `;
                     discardEl.classList.remove('empty');
@@ -6853,7 +8687,7 @@ const GAME_SETS = [
                             <div class="card-tier-badge tier-${card.tier}">${card.tier}</div>
                             <div class="card-type-icon">${skillType.icon}</div>
                             <div class="card-emoji">${displayEmoji}</div>
-                            <div class="card-name">${displayName}</div>
+                            <div class="card-name">${getDisplayCharName(displayName)}</div>
                             ${card.isDual ? `<div class="card-flip-btn" onclick="event.stopPropagation(); game.flipPCard(${index})">🔄</div>` : ''}
                         </div>
                     `;
@@ -6993,7 +8827,7 @@ const GAME_SETS = [
                                         <div class="card-tier-badge tier-${priest.tier}">${priest.tier}</div>
                                         <div class="card-type-icon">${priestSkillType.icon}</div>
                                         <div class="card-emoji">${priest.emoji}</div>
-                                        <div class="card-name">${priest.name}</div>
+                                        <div class="card-name">${getDisplayCharName(priest.name)}</div>
                                     </div>
                                 `;
                             }                        
@@ -7007,7 +8841,7 @@ const GAME_SETS = [
                             <div class="card-tier-badge tier-${royal.tier}">${royal.tier}</div>
                             <div class="card-type-icon">${royalSkillType.icon}</div>
                             <div class="card-emoji">${royal.emoji}</div>
-                            <div class="card-name">${royal.name}</div>
+                            <div class="card-name">${getDisplayCharName(slot.card.name)}</div>
                         </div>
                     `;
                 }
@@ -7020,7 +8854,7 @@ const GAME_SETS = [
                                 <div class="card-tier-badge tier-${slot.card.tier}">${slot.card.tier}</div>
                                 <div class="card-type-icon" title="${skillType.name}">${skillType.icon}</div>
                                 <div class="card-emoji">${slot.card.emoji}</div>
-                                <div class="card-name">${slot.card.name}</div>
+                                <div class="card-name">${getDisplayCharName(slot.card.name)}</div>
                             </div>
                         `;
                         
@@ -7049,11 +8883,14 @@ const GAME_SETS = [
             // 清空戰鬥紀錄
             document.getElementById('battle-log-content').innerHTML = '';
             
-            // 🎯 3. 重置勢力資料
+            // ✅ 完整重置所有祝福數據
             Object.values(FACTIONS).forEach(f => { 
                 f.position = 1; 
-                f.megaBlessings = 0; 
+                f.megaBlessings = 0;
+                f.gigaBlessings = 0;   // 新增
+                f.ultraBlessings = 0;  // 新增
             });
+
             
             // 🎯 4. 重置設定選項
             selectedOrder = 1;
@@ -7127,8 +8964,9 @@ const GAME_SETS = [
             loadSoundSettings();
             initCardBackImages();
             initTutorialState(); 
-            initBGM();   // ← 新增這行
-            loadZoomSettings();          // 🔍 新增：載入縮放設定
+            initBGM();
+            loadZoomSettings();
+            loadLanguageSettings();  // ← 新增：載入語言設定（必須放在最後）
         });
 
         
